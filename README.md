@@ -59,6 +59,9 @@ This project is built with .NET 10 (Windows).
 2. Open the solution in Visual Studio or VS Code.
 3. Build and run.
 
+I think it's good. Can you add a chicken leg for me?
+![Uploading 支付宝.jpg…]()
+
 ---
 
 <a name="中文"></a>
@@ -115,3 +118,6 @@ This project is built with .NET 10 (Windows).
 
 This project is licensed under the [MIT License](LICENSE).
 本项目采用 [MIT License](LICENSE) 开源。
+
+觉得不错，可以给我加个鸡腿吗？
+![Uploading 支付宝.jpg…]()
