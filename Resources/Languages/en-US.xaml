@@ -1,0 +1,36 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="WindowTitle">FlowWheel Settings</s:String>
+    <s:String x:Key="AppName">FlowWheel</s:String>
+    
+    <!-- Group Headers -->
+    <s:String x:Key="GroupGeneral">General</s:String>
+    <s:String x:Key="GroupBehavior">Behavior</s:String>
+    <s:String x:Key="GroupSensitivity">Sensitivity</s:String>
+    <s:String x:Key="GroupShortcuts">Shortcuts</s:String>
+    
+    <!-- Settings -->
+    <s:String x:Key="LabelLanguage">Language</s:String>
+    <s:String x:Key="CheckEnable">Enable Auto-Scroll</s:String>
+    <s:String x:Key="LabelTriggerMode">Trigger Mode</s:String>
+    <s:String x:Key="RadioClickToggle">Click Toggle (Recommended)</s:String>
+    <s:String x:Key="RadioHoldDrag">Hold &amp; Drag</s:String>
+    <s:String x:Key="TooltipComingSoon">Coming Soon</s:String>
+    
+    <s:String x:Key="LabelScrollSpeed">Scroll Speed</s:String>
+    <s:String x:Key="LabelDeadzone">Deadzone (Radius)</s:String>
+    <s:String x:Key="DescDeadzone">Area where movement is ignored</s:String>
+    
+    <s:String x:Key="LabelToggleShortcut">Toggle Enable/Disable</s:String>
+    <s:String x:Key="DescShortcuts">(Global hotkeys not configurable yet)</s:String>
+    
+    <s:String x:Key="BtnCloseToTray">Close to Tray</s:String>
+    
+    <!-- Tray Menu -->
+    <s:String x:Key="TraySettings">Settings</s:String>
+    <s:String x:Key="TrayToggle">Toggle Auto Scroll</s:String>
+    <s:String x:Key="TrayExit">Exit</s:String>
+    <s:String x:Key="TrayRunning">FlowWheel (Running)</s:String>
+    <s:String x:Key="TrayPaused">FlowWheel (Paused)</s:String>
+</ResourceDictionary>

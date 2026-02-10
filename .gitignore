@@ -1,0 +1,17 @@
+# User specific
+.trae/
+
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini

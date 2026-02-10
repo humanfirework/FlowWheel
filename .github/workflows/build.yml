@@ -1,0 +1,41 @@
+name: Build FlowWheel
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+        # If .NET 10 is preview, we might need include-prerelease: true if using older setup-dotnet,
+        # but specifying version usually works. Since 10 is very new, we'll try standard way.
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Publish (Self-Contained)
+      run: |
+        dotnet publish FlowWheel.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
+        # Note: We copy Assets manually if SingleFile doesn't handle content files perfectly, 
+        # but CopyToOutputDirectory usually puts them next to the single exe.
+      
+    - name: Verify Assets
+      run: |
+        if (Test-Path "publish\Assets") { Write-Host "Assets folder exists." } else { Write-Host "Warning: Assets folder missing!" }
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: FlowWheel-Windows-x64
+        path: ./publish/

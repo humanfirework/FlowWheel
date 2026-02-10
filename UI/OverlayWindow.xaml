@@ -1,0 +1,71 @@
+<Window x:Class="FlowWheel.UI.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FlowWheelOverlay" 
+        WindowStyle="None" 
+        AllowsTransparency="True" 
+        Background="{x:Null}"
+        Topmost="True" 
+        ShowInTaskbar="False"
+        IsHitTestVisible="False">
+    
+    <Grid>
+        <!-- The Anchor Icon (Center Origin) -->
+        <!-- We will position this dynamically in code, or make the window fullscreen and move the canvas? -->
+        <!-- Better: Make window fullscreen transparent, and just move the element on a Canvas -->
+        <Canvas x:Name="MainCanvas">
+            <Grid x:Name="Anchor" Width="32" Height="32" Visibility="Collapsed">
+                <!-- Priority 1: Custom Image (Loaded dynamically in code if exists) -->
+                <Image x:Name="CustomAnchorImage" Stretch="Uniform" Visibility="Collapsed"/>
+                
+                <!-- Priority 2: Default Vector Icon -->
+                <!-- Use a larger grid to accommodate arrows without overlap -->
+                <!-- Inner Grid is 32x32, we center it -->
+                <Grid x:Name="DefaultAnchor" Width="32" Height="32">
+                    <!-- Center Circle (28x28) centered in 32x32 -->
+                    <!-- Center is at (16, 16) -->
+                    <Ellipse Fill="#99000000" Stroke="White" StrokeThickness="2" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    
+                    <!-- Crosshair: Center at (16,16). Length 12px. -->
+                    <!-- M16,10 L16,22 (Vertical) | M10,16 L22,16 (Horizontal) -->
+                    <!-- Using Margin to fine-tune if needed, or precise path coordinates relative to the Grid size -->
+                    <Path Data="M16,10 L16,22 M10,16 L22,16" Stroke="White" StrokeThickness="2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    
+                    <!-- Dynamic Arrows -->
+                    <!-- Arrows need to be OUTSIDE the circle (Radius ~14px + Stroke). -->
+                    <!-- Arrow Tip starts at ~20px away from center to be safe. -->
+                    
+                    <!-- Up Arrow: Tip pointing UP. -->
+                    <!-- Center X=16. Y needs to be negative relative to grid, or using Margin. -->
+                    <!-- Let's use Margin to push it out. -->
+                    <Path x:Name="ArrowUp" Data="M0,8 L6,0 L12,8" Stroke="White" StrokeThickness="3" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-12,0,0" Visibility="Collapsed">
+                        <Path.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1" Opacity="0.8"/>
+                        </Path.Effect>
+                    </Path>
+                    
+                    <!-- Down Arrow: Tip pointing DOWN. -->
+                    <Path x:Name="ArrowDown" Data="M0,0 L6,8 L12,0" Stroke="White" StrokeThickness="3" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-12" Visibility="Collapsed">
+                        <Path.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1" Opacity="0.8"/>
+                        </Path.Effect>
+                    </Path>
+
+                    <!-- Left Arrow: Tip pointing LEFT. -->
+                    <Path x:Name="ArrowLeft" Data="M8,0 L0,6 L8,12" Stroke="White" StrokeThickness="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-12,0,0,0" Visibility="Collapsed">
+                        <Path.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1" Opacity="0.8"/>
+                        </Path.Effect>
+                    </Path>
+
+                    <!-- Right Arrow: Tip pointing RIGHT. -->
+                    <Path x:Name="ArrowRight" Data="M0,0 L8,6 L0,12" Stroke="White" StrokeThickness="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-12,0" Visibility="Collapsed">
+                        <Path.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1" Opacity="0.8"/>
+                        </Path.Effect>
+                    </Path>
+                </Grid>
+            </Grid>
+        </Canvas>
+    </Grid>
+</Window>

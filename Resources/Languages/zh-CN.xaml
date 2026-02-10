@@ -1,0 +1,36 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="WindowTitle">FlowWheel 设置</s:String>
+    <s:String x:Key="AppName">FlowWheel 滚轮助手</s:String>
+    
+    <!-- Group Headers -->
+    <s:String x:Key="GroupGeneral">常规</s:String>
+    <s:String x:Key="GroupBehavior">行为设置</s:String>
+    <s:String x:Key="GroupSensitivity">灵敏度</s:String>
+    <s:String x:Key="GroupShortcuts">快捷键</s:String>
+    
+    <!-- Settings -->
+    <s:String x:Key="LabelLanguage">语言 / Language</s:String>
+    <s:String x:Key="CheckEnable">启用自动滚屏</s:String>
+    <s:String x:Key="LabelTriggerMode">触发模式</s:String>
+    <s:String x:Key="RadioClickToggle">点击切换 (推荐)</s:String>
+    <s:String x:Key="RadioHoldDrag">按住拖拽</s:String>
+    <s:String x:Key="TooltipComingSoon">即将推出</s:String>
+    
+    <s:String x:Key="LabelScrollSpeed">滚动速度</s:String>
+    <s:String x:Key="LabelDeadzone">死区半径 (防误触)</s:String>
+    <s:String x:Key="DescDeadzone">在此范围内移动鼠标不会触发滚动</s:String>
+    
+    <s:String x:Key="LabelToggleShortcut">开启/暂停 快捷键</s:String>
+    <s:String x:Key="DescShortcuts">(全局快捷键暂不可配置)</s:String>
+    
+    <s:String x:Key="BtnCloseToTray">最小化到托盘</s:String>
+    
+    <!-- Tray Menu -->
+    <s:String x:Key="TraySettings">设置</s:String>
+    <s:String x:Key="TrayToggle">开启/暂停 自动滚屏</s:String>
+    <s:String x:Key="TrayExit">退出</s:String>
+    <s:String x:Key="TrayRunning">FlowWheel (运行中)</s:String>
+    <s:String x:Key="TrayPaused">FlowWheel (已暂停)</s:String>
+</ResourceDictionary>
