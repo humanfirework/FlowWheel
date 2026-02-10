@@ -60,7 +60,6 @@ This project is built with .NET 10 (Windows).
 3. Build and run.
 
 I think it's good. Can you add a chicken leg for me?
-![支付宝](https://github.com/user-attachments/assets/26537ead-d5c3-4d74-864c-fa1d09166d69)
 
 ---
 
