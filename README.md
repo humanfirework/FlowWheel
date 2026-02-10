@@ -60,7 +60,7 @@ This project is built with .NET 10 (Windows).
 3. Build and run.
 
 I think it's good. Can you add a chicken leg for me?
-![支付宝](https://github.com/user-attachments/assets/fdb42868-23d6-46bc-a0c9-8a3003482ef6)
+![支付宝](https://github.com/user-attachments/assets/26537ead-d5c3-4d74-864c-fa1d09166d69)
 
 ---
 
@@ -120,5 +120,6 @@ This project is licensed under the [MIT License](LICENSE).
 本项目采用 [MIT License](LICENSE) 开源。
 
 觉得不错，可以给我加个鸡腿吗？
-![支付宝](https://github.com/user-attachments/assets/edfa0b5d-32df-4375-8d79-cd6871632c5e)
+![支付宝](https://github.com/user-attachments/assets/926b31b4-e4b1-4e5c-b724-63daad4c5834)
+
 
