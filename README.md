@@ -8,8 +8,8 @@
   <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/3.gif" width="30%" alt="Demo 3" />
   
   <br>
- [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-  [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg)](https://github.com/humanfirework/FlowWheel/actions)
+  [![License](https://img.shields.io/badge/license-MIT-blue.svg )](LICENSE)
+  [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg )](https://github.com/humanfirework/FlowWheel/actions )
 
   [English](#english) | [中文](#中文)
 
