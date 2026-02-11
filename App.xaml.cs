@@ -25,14 +25,21 @@ namespace FlowWheel
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             // Initialize Core Components
+            ConfigManager.Load();
             _windowManager = new WindowManager();
             _scrollEngine = new ScrollEngine();
+            
+            // Apply Config
+            LanguageManager.SetLanguage(ConfigManager.Current.Language);
+            _scrollEngine.Sensitivity = ConfigManager.Current.Sensitivity;
+            _scrollEngine.Deadzone = ConfigManager.Current.Deadzone;
             
             try
             {
                 _mouseHook = new MouseHook();
                 // MouseHook events are now handled by AutoScrollManager
                 _autoScrollManager = new AutoScrollManager(_mouseHook, _scrollEngine, _windowManager);
+                _autoScrollManager.IsEnabled = ConfigManager.Current.IsEnabled;
             }
             catch (Exception ex)
             {
@@ -122,6 +129,9 @@ namespace FlowWheel
         {
             if (_autoScrollManager == null || _notifyIcon == null) return;
             _autoScrollManager.IsEnabled = !_autoScrollManager.IsEnabled;
+            ConfigManager.Current.IsEnabled = _autoScrollManager.IsEnabled;
+            ConfigManager.Save();
+            
             bool isEnabled = _autoScrollManager.IsEnabled;
             _notifyIcon.Text = isEnabled ? GetString("TrayRunning") : GetString("TrayPaused");
             // Only change icon if paused, otherwise revert to App Icon

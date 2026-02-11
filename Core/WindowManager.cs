@@ -17,26 +17,38 @@ namespace FlowWheel.Core
 
         public WindowManager()
         {
-            _blacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            // Initial load of config
+            _blacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            SyncBlacklist();
+        }
+
+        public void SyncBlacklist()
+        {
+            _blacklist.Clear();
+            foreach (var item in ConfigManager.Current.Blacklist)
             {
-                "flowwheel", // Don't scroll ourselves (loop safety)
-                "csgo", 
-                "valorant",
-                "dota2",
-                "league of legends",
-                "overwatch",
-                "r5apex"
-            };
+                _blacklist.Add(item);
+            }
         }
 
         public void AddToBlacklist(string processName)
         {
-            _blacklist.Add(processName);
+            if (!_blacklist.Contains(processName))
+            {
+                _blacklist.Add(processName);
+                ConfigManager.Current.Blacklist.Add(processName);
+                ConfigManager.Save();
+            }
         }
 
         public void RemoveFromBlacklist(string processName)
         {
-            _blacklist.Remove(processName);
+            if (_blacklist.Contains(processName))
+            {
+                _blacklist.Remove(processName);
+                ConfigManager.Current.Blacklist.Remove(processName);
+                ConfigManager.Save();
+            }
         }
 
         public bool IsBlacklisted(NativeMethods.POINT pt)
