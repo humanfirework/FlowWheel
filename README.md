@@ -2,7 +2,10 @@
 
 <div align="center">
 
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/1.gif" width="300" alt="Demo 1" />
+  <img 
+ src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/1.gif" width="30%" alt="Demo 1" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/2.gif" width="30%" alt="Demo 2" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/3.gif" width="30%" alt="Demo 3" />
   
   <br>
   <br>
