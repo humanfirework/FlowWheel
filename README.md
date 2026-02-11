@@ -2,9 +2,9 @@
 
 <div align="center">
 
-  <img src="./Assets/1.gif" width="30%" />
-  <img src="./Assets/2.gif" width="30%" />
-  <img src="./Assets/3.gif" width="30%" />
+  <img src="Assets/1.gif" width="30%" />
+  <img src="Assets/2.gif" width="30%" />
+  <img src="Assets/3.gif" width="30%" />
   <br>
   <br>
 
@@ -36,7 +36,7 @@
 Manage all your preferences in the new Settings dashboard:
 
 <div align="center">
-  <img src="./Assets/4.png" width="380" alt="FlowWheel Settings" />
+  <img src="./Assets/4.png" width="200" alt="FlowWheel Settings" />
 </div>
 
 - **Trigger Mode**: Choose between "Click Toggle" (recommended) or "Hold & Drag".
