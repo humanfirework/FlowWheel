@@ -41,6 +41,24 @@ namespace FlowWheel.Core
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MONITORINFO
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public uint dwFlags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
         public struct MSLLHOOKSTRUCT
         {
             public POINT pt;
@@ -81,6 +99,7 @@ namespace FlowWheel.Core
         // Delegate
         public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
         public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
 
         // Imports
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -118,5 +137,26 @@ namespace FlowWheel.Core
 
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern int GetDoubleClickTime();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        public const int MONITOR_DEFAULTTONEAREST = 0x00000002;
+
     }
 }

@@ -13,6 +13,8 @@
     <!-- Settings -->
     <s:String x:Key="LabelLanguage">Language</s:String>
     <s:String x:Key="CheckEnable">Enable Auto-Scroll</s:String>
+    <s:String x:Key="CheckSyncScroll">Multi-Screen Sync Scroll</s:String>
+    <s:String x:Key="CheckReadingMode">Enable Reading Mode (Double Click)</s:String>
     <s:String x:Key="LabelTriggerMode">Trigger Mode</s:String>
     <s:String x:Key="LabelTriggerKey">Trigger Key</s:String>
     <s:String x:Key="KeyMiddleMouse">Middle Mouse Button</s:String>

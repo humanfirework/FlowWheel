@@ -13,6 +13,8 @@
     <!-- Settings -->
     <s:String x:Key="LabelLanguage">语言 / Language</s:String>
     <s:String x:Key="CheckEnable">启用自动滚屏</s:String>
+    <s:String x:Key="CheckSyncScroll">多屏/分屏 同步滚动</s:String>
+    <s:String x:Key="CheckReadingMode">启用阅读模式 (双击中键)</s:String>
     <s:String x:Key="LabelTriggerMode">触发模式</s:String>
     <s:String x:Key="LabelTriggerKey">触发按键</s:String>
     <s:String x:Key="KeyMiddleMouse">鼠标中键</s:String>

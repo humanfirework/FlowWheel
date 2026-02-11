@@ -24,6 +24,8 @@ namespace FlowWheel.UI
             FrictionSlider.Value = ConfigManager.Current.Deadzone;
             
             EnableCheck.IsChecked = ConfigManager.Current.IsEnabled;
+            SyncCheck.IsChecked = ConfigManager.Current.IsSyncScrollEnabled;
+            ReadingModeCheck.IsChecked = ConfigManager.Current.IsReadingModeEnabled;
             
             // Set Trigger Key Selection
             foreach (ComboBoxItem item in TriggerKeyCombo.Items)
@@ -140,6 +142,23 @@ namespace FlowWheel.UI
                 ConfigManager.Current.IsEnabled = _manager.IsEnabled;
                 ConfigManager.Save();
             }
+        }
+
+        private void SyncCheck_Changed(object sender, RoutedEventArgs e)
+        {
+            if (_engine != null)
+            {
+                bool val = SyncCheck.IsChecked ?? false;
+                _engine.IsSyncEnabled = val;
+                ConfigManager.Current.IsSyncScrollEnabled = val;
+                ConfigManager.Save();
+            }
+        }
+
+        private void ReadingModeCheck_Changed(object sender, RoutedEventArgs e)
+        {
+            ConfigManager.Current.IsReadingModeEnabled = ReadingModeCheck.IsChecked ?? true;
+            ConfigManager.Save();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

@@ -16,6 +16,9 @@ namespace FlowWheel.Core
         private readonly ScrollEngine _engine;
         private readonly WindowManager _windowManager;
         private OverlayWindow? _overlay;
+        private long _lastUiUpdateTick = 0;
+        private const long UiUpdateInterval = 16 * 10000; // ~16ms in ticks (1 tick = 100ns)
+        private long _lastMiddleClickTime = 0;
 
         private bool _isActive = false;
         private bool _isEnabled = true;
@@ -94,6 +97,29 @@ namespace FlowWheel.Core
 
             if (isTrigger)
             {
+                // Double Click Detection for Middle Mouse (Reading Mode)
+                if (trigger == "MiddleMouse" && ConfigManager.Current.IsReadingModeEnabled)
+                {
+                    long now = DateTime.Now.Ticks;
+                    long diffMs = (now - _lastMiddleClickTime) / 10000;
+                    _lastMiddleClickTime = now;
+
+                    if (diffMs < NativeMethods.GetDoubleClickTime())
+                    {
+                        // Double Click!
+                        if (_engine.IsReadingMode)
+                        {
+                            StopAutoScroll();
+                        }
+                        else
+                        {
+                            StartReadingMode(e.Point);
+                        }
+                        e.Handled = true;
+                        return;
+                    }
+                }
+
                 if (_isActive)
                 {
                     StopAutoScroll();
@@ -110,6 +136,17 @@ namespace FlowWheel.Core
                         return; // Let system handle it
                     }
                 }
+                e.Handled = true;
+                return;
+            }
+
+            // Handle Wheel for Reading Mode Speed Adjustment
+            if (e.Message == NativeMethods.WM_MOUSEWHEEL && _engine.IsReadingMode)
+            {
+                // MouseData is delta (e.g., 120)
+                float delta = e.MouseData;
+                // 1 notch (120) -> 20px/sec change
+                _engine.AdjustReadingSpeed((delta / 120.0f) * 20.0f);
                 e.Handled = true;
                 return;
             }
@@ -134,6 +171,44 @@ namespace FlowWheel.Core
         }
 
         private NativeMethods.POINT _currentOrigin;
+
+        private void StartReadingMode(NativeMethods.POINT origin)
+        {
+            // If normal mode was just started by first click, we don't need to re-create overlay
+            // But we need to update its state
+            
+            _isActive = true;
+            _currentOrigin = origin;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (_overlay == null) return;
+                
+                // Ensure correct position/size (in case we switched from idle)
+                _overlay.Left = SystemParameters.VirtualScreenLeft;
+                _overlay.Top = SystemParameters.VirtualScreenTop;
+                _overlay.Width = SystemParameters.VirtualScreenWidth;
+                _overlay.Height = SystemParameters.VirtualScreenHeight;
+
+                // DPI
+                var source = System.Windows.PresentationSource.FromVisual(_overlay);
+                double dpiX = 1.0, dpiY = 1.0;
+                if (source != null && source.CompositionTarget != null)
+                {
+                    dpiX = source.CompositionTarget.TransformToDevice.M11;
+                    dpiY = source.CompositionTarget.TransformToDevice.M22;
+                }
+                
+                double logicalX = origin.x / dpiX - SystemParameters.VirtualScreenLeft;
+                double logicalY = origin.y / dpiY - SystemParameters.VirtualScreenTop;
+
+                _overlay.ShowAnchor(logicalX, logicalY);
+                _overlay.SetReadingMode(true);
+            });
+
+            // Start with 30px/sec default
+            _engine.StartReadingMode(30);
+        }
 
         private void StartAutoScroll(NativeMethods.POINT origin)
         {
@@ -173,7 +248,14 @@ namespace FlowWheel.Core
 
         private void UpdateVisuals(NativeMethods.POINT current)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            // Don't update direction visuals in Reading Mode
+            if (_engine.IsReadingMode) return;
+
+            long currentTick = DateTime.Now.Ticks;
+            if (currentTick - _lastUiUpdateTick < UiUpdateInterval) return;
+            _lastUiUpdateTick = currentTick;
+
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 int dy = current.y - _currentOrigin.y;
                 int dx = current.x - _currentOrigin.x;
@@ -190,7 +272,7 @@ namespace FlowWheel.Core
                 // Update Distance for Opacity
                 double distance = Math.Sqrt(dx * dx + dy * dy);
                 _overlay?.UpdateDistance(distance);
-            });
+            }, System.Windows.Threading.DispatcherPriority.Render);
         }
 
         private void StopAutoScroll()
@@ -200,6 +282,7 @@ namespace FlowWheel.Core
 
             Application.Current.Dispatcher.Invoke(() =>
             {
+                _overlay?.SetReadingMode(false);
                 _overlay?.HideAnchor();
             });
         }

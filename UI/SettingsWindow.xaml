@@ -89,6 +89,9 @@
                              <CheckBox x:Name="EnableCheck" Content="{DynamicResource CheckEnable}" IsChecked="True" Checked="EnableCheck_Changed" Unchecked="EnableCheck_Changed" VerticalAlignment="Center"/>
                         </StackPanel>
                         
+                        <CheckBox x:Name="SyncCheck" Content="{DynamicResource CheckSyncScroll}" Margin="0,0,0,10" Checked="SyncCheck_Changed" Unchecked="SyncCheck_Changed"/>
+                        <CheckBox x:Name="ReadingModeCheck" Content="{DynamicResource CheckReadingMode}" Margin="0,0,0,10" Checked="ReadingModeCheck_Changed" Unchecked="ReadingModeCheck_Changed"/>
+
                         <TextBlock Text="{DynamicResource LabelTriggerMode}" FontWeight="SemiBold" Margin="0,5,0,5"/>
                         <RadioButton GroupName="Mode" Content="{DynamicResource RadioClickToggle}" IsChecked="True" Margin="0,0,0,5"/>
                         <RadioButton GroupName="Mode" Content="{DynamicResource RadioHoldDrag}" IsEnabled="False" Foreground="Gray" ToolTip="{DynamicResource TooltipComingSoon}"/>

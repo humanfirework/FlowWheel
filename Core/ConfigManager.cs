@@ -12,6 +12,8 @@ namespace FlowWheel.Core
         public int Deadzone { get; set; } = 20;
         public string TriggerKey { get; set; } = "MiddleMouse";
         public bool IsEnabled { get; set; } = true;
+        public bool IsSyncScrollEnabled { get; set; } = false;
+        public bool IsReadingModeEnabled { get; set; } = true;
         public List<string> Blacklist { get; set; } = new List<string>
         {
             "flowwheel",

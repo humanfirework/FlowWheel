@@ -34,6 +34,7 @@ namespace FlowWheel
             LanguageManager.SetLanguage(ConfigManager.Current.Language);
             _scrollEngine.Sensitivity = ConfigManager.Current.Sensitivity;
             _scrollEngine.Deadzone = ConfigManager.Current.Deadzone;
+            _scrollEngine.IsSyncEnabled = ConfigManager.Current.IsSyncScrollEnabled;
             
             try
             {

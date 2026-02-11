@@ -31,15 +31,54 @@ namespace FlowWheel.Core
         private double _inertiaSpeedH = 0;
         private const double Friction = 5.0; // Speed reduction factor
 
+        private readonly SyncScrollManager _syncManager = new SyncScrollManager();
+        public bool IsSyncEnabled { get; set; } = false;
+
+        // Reading Mode
+        public bool IsReadingMode { get; private set; } = false;
+        private double _readingSpeed = 0; // Pixels per second
+
         public ScrollEngine()
         {
+        }
+
+        public void StartReadingMode(double initialSpeed)
+        {
+            lock (_lock)
+            {
+                IsReadingMode = true;
+                _readingSpeed = initialSpeed;
+                _currentSpeed = -initialSpeed; // Negative is down (usually)
+                _currentHSpeed = 0;
+                _accumulatedDelta = 0;
+                
+                if (!_isRunning)
+                {
+                    _isRunning = true;
+                    Task.Run(Loop);
+                }
+            }
+        }
+
+        public void AdjustReadingSpeed(double delta)
+        {
+            lock (_lock)
+            {
+                if (!IsReadingMode) return;
+                _readingSpeed += delta;
+                if (_readingSpeed < 0) _readingSpeed = 0; // Don't reverse, just stop
+                if (_readingSpeed > 1000) _readingSpeed = 1000;
+                _currentSpeed = -_readingSpeed;
+            }
         }
 
         public void Start(NativeMethods.POINT origin)
         {
             lock (_lock)
             {
-                if (_isRunning) return;
+                if (_isRunning && !IsReadingMode) return;
+                
+                IsReadingMode = false; // Reset reading mode
                 _isRunning = true;
                 _isInertiaActive = false;
                 _origin = origin;
@@ -48,6 +87,12 @@ namespace FlowWheel.Core
                 _accumulatedDelta = 0;
                 _currentHSpeed = 0;
                 _accumulatedHDelta = 0;
+
+                if (IsSyncEnabled)
+                {
+                    _syncManager.UpdateTargets(origin);
+                }
+
                 Task.Run(Loop);
             }
         }
@@ -56,6 +101,8 @@ namespace FlowWheel.Core
         {
             lock (_lock)
             {
+                IsReadingMode = false;
+
                 // Trigger inertia if speed is significant
                 if (Math.Abs(_currentSpeed) > 100 || Math.Abs(_currentHSpeed) > 100)
                 {
@@ -72,7 +119,7 @@ namespace FlowWheel.Core
 
         public void UpdatePosition(NativeMethods.POINT pt)
         {
-            if (_isInertiaActive) return; // Ignore mouse movement during inertia
+            if (_isInertiaActive || IsReadingMode) return; // Ignore mouse movement during inertia or reading mode
             _current = pt;
             CalculateSpeed();
         }
@@ -227,6 +274,11 @@ namespace FlowWheel.Core
             };
 
             NativeMethods.SendInput(1, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
+
+            if (IsSyncEnabled)
+            {
+                _syncManager.Scroll(delta, isHorizontal);
+            }
         }
     }
 }

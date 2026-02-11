@@ -64,6 +64,8 @@ namespace FlowWheel.UI
             // Reset visibility
             CenterGraphic.Opacity = 1.0;
             if (CustomAnchorImage.Visibility == Visibility.Visible) CustomAnchorImage.Opacity = 1.0;
+            ReadingIcon.Visibility = Visibility.Collapsed;
+            CenterGraphic.Visibility = Visibility.Visible;
             
             // Reset arrows
             if (ArrowUp != null) ArrowUp.Visibility = Visibility.Collapsed;
@@ -72,6 +74,22 @@ namespace FlowWheel.UI
             if (ArrowRight != null) ArrowRight.Visibility = Visibility.Collapsed;
 
             this.Show();
+        }
+
+        public void SetReadingMode(bool enabled)
+        {
+            if (enabled)
+            {
+                CenterGraphic.Visibility = Visibility.Collapsed;
+                ReadingIcon.Visibility = Visibility.Visible;
+                // Hide arrows in reading mode
+                UpdateDirection(false, false, false, false);
+            }
+            else
+            {
+                ReadingIcon.Visibility = Visibility.Collapsed;
+                CenterGraphic.Visibility = Visibility.Visible;
+            }
         }
 
         public void UpdateDirection(bool up, bool down, bool left, bool right)

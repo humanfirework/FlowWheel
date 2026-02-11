@@ -20,6 +20,13 @@
                 
                 <!-- Priority 2: Default Vector Icon -->
                 <Grid x:Name="DefaultAnchor" Width="32" Height="32">
+                    <!-- Reading Mode Icon (Play Button) -->
+                    <Path x:Name="ReadingIcon" Data="M10,8 L22,16 L10,24 Z" Fill="#00CC00" Stroke="White" StrokeThickness="2" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Path.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.5"/>
+                        </Path.Effect>
+                    </Path>
+
                     <!-- Center Graphic Group -->
                     <Grid x:Name="CenterGraphic">
                         <Ellipse Fill="#99000000" Stroke="White" StrokeThickness="2" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
