@@ -5,9 +5,6 @@
   <img src="Assets/1.gif" width="30%" />
   <img src="Assets/2.gif" width="30%" />
   <img src="Assets/3.gif" width="30%" />
-  ![3](https://github.com/user-attachments/assets/cda5becb-f01d-4515-a977-d82250ccd9c8)
-  ![1](https://github.com/user-attachments/assets/337e156d-a6dd-4dbc-9e80-249078c08d9f)
-
   <br>
 
   <br>
