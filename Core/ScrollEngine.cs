@@ -15,8 +15,8 @@ namespace FlowWheel.Core
         // Settings
         public float Sensitivity { get; set; } = 0.5f; // Speed multiplier
         public int Deadzone { get; set; } = 20; // Pixels
-        public int TickRate { get; set; } = 60; // Updates per second
-        public int MinStep { get; set; } = 20; // Minimum delta to send (fix for Explorer/Win32)
+        public int TickRate { get; set; } = 120; // Updates per second
+        public int MinStep { get; set; } = 1; // Minimum delta to send (fix for Explorer/Win32)
 
         // Current State
         private double _currentSpeed = 0; // Delta per second
@@ -24,6 +24,12 @@ namespace FlowWheel.Core
         private double _accumulatedHDelta = 0; // Horizontal Accumulator
         private NativeMethods.POINT _origin;
         private NativeMethods.POINT _current;
+
+        // Inertia
+        private bool _isInertiaActive = false;
+        private double _inertiaSpeedV = 0;
+        private double _inertiaSpeedH = 0;
+        private const double Friction = 5.0; // Speed reduction factor
 
         public ScrollEngine()
         {
@@ -35,6 +41,7 @@ namespace FlowWheel.Core
             {
                 if (_isRunning) return;
                 _isRunning = true;
+                _isInertiaActive = false;
                 _origin = origin;
                 _current = origin;
                 _currentSpeed = 0;
@@ -49,12 +56,23 @@ namespace FlowWheel.Core
         {
             lock (_lock)
             {
-                _isRunning = false;
+                // Trigger inertia if speed is significant
+                if (Math.Abs(_currentSpeed) > 100 || Math.Abs(_currentHSpeed) > 100)
+                {
+                    _isInertiaActive = true;
+                    _inertiaSpeedV = _currentSpeed;
+                    _inertiaSpeedH = _currentHSpeed;
+                }
+                else
+                {
+                    _isRunning = false;
+                }
             }
         }
 
         public void UpdatePosition(NativeMethods.POINT pt)
         {
+            if (_isInertiaActive) return; // Ignore mouse movement during inertia
             _current = pt;
             CalculateSpeed();
         }
@@ -119,10 +137,34 @@ namespace FlowWheel.Core
                 double dt = (currentTick - lastTick) / (double)Stopwatch.Frequency;
                 lastTick = currentTick;
 
-                if (Math.Abs(_currentSpeed) > 0.1)
+                double targetSpeedV = _currentSpeed;
+                double targetSpeedH = _currentHSpeed;
+
+                // Handle Inertia
+                if (_isInertiaActive)
+                {
+                    // Apply friction
+                    double frictionFactor = Math.Exp(-Friction * dt);
+                    _inertiaSpeedV *= frictionFactor;
+                    _inertiaSpeedH *= frictionFactor;
+
+                    targetSpeedV = _inertiaSpeedV;
+                    targetSpeedH = _inertiaSpeedH;
+
+                    // Stop if too slow
+                    if (Math.Abs(_inertiaSpeedV) < 10 && Math.Abs(_inertiaSpeedH) < 10)
+                    {
+                        lock (_lock)
+                        {
+                            _isRunning = false;
+                        }
+                    }
+                }
+
+                if (Math.Abs(targetSpeedV) > 0.1)
                 {
                     // Add delta for this frame
-                    _accumulatedDelta += _currentSpeed * dt;
+                    _accumulatedDelta += targetSpeedV * dt;
 
                     int steps = 0;
                     // Compatibility Fix: Some apps (Explorer) ignore small deltas (e.g. < 10 or 30).
@@ -144,9 +186,9 @@ namespace FlowWheel.Core
                 }
 
                 // Horizontal Processing
-                if (Math.Abs(_currentHSpeed) > 0.1)
+                if (Math.Abs(targetSpeedH) > 0.1)
                 {
-                    _accumulatedHDelta += _currentHSpeed * dt;
+                    _accumulatedHDelta += targetSpeedH * dt;
                     int hSteps = 0;
                     if (Math.Abs(_accumulatedHDelta) >= MinStep)
                     {
