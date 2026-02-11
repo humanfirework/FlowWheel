@@ -17,9 +17,6 @@
 
 <a name="english"></a>
 
-![Uploading 1.gif…]()
-![Uploading 2.gif…]()
-
 ##  English
 
 **FlowWheel** is a lightweight Windows global auto-scroll utility that brings the "Middle-Click Auto-Scroll" experience from browsers to every corner of your operating system.
