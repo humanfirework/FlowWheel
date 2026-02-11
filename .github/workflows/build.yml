@@ -3,7 +3,7 @@ name: Build FlowWheel
 on:
   push:
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - '*' # Trigger on ANY tag (v1.0, app, release-2026, etc.)
   pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch: # Allows manual trigger
