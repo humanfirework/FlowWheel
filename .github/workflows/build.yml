@@ -3,7 +3,7 @@ name: Build FlowWheel
 on:
   push:
     tags:
-      - '*' # Trigger on ANY tag (v1.0, app, release-2026, etc.)
+      - 'v*' # Trigger on version tags (v1.0, v20.15.10, etc.)
   pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch: # Allows manual trigger
@@ -34,6 +34,19 @@ jobs:
     - name: Verify Assets
       run: |
         if (Test-Path "publish\Assets") { Write-Host "Assets folder exists." } else { Write-Host "Warning: Assets folder missing!" }
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          publish/FlowWheel.exe
+          publish/Assets/**
+        name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
