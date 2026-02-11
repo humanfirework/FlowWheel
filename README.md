@@ -5,7 +5,7 @@
   <img src="Assets/1.gif" width="30%" />
   <img src="Assets/2.gif" width="30%" />
   <img src="Assets/3.gif" width="30%" />
-  <br>
+
   <br>
 
   [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
