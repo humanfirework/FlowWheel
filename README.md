@@ -64,7 +64,7 @@ I think it's good. Can you add a chicken leg for me?
 ---
 
 <a name="中文"></a>
-## 📖 中文
+## 中文
 
 **FlowWheel** 是一个轻量级的 Windows 全局自动滚动工具，旨在将浏览器的“中键无极滚屏”体验带到操作系统的每一个角落。
 
@@ -81,7 +81,7 @@ I think it's good. Can you add a chicken leg for me?
   - 支持中英文界面切换。
   - 托盘化运行，极低资源占用。
 
-### 📖 使用指南
+### 使用指南
 
 1. **启动软件**：运行 `FlowWheel.exe`，系统托盘区会出现一个小图标。
 2. **激活滚动**：在屏幕任意位置按下 **鼠标中键**。
@@ -118,7 +118,19 @@ I think it's good. Can you add a chicken leg for me?
 This project is licensed under the [MIT License](LICENSE).
 本项目采用 [MIT License](LICENSE) 开源。
 
-觉得不错，可以给我加个鸡腿吗？
+---
+
+## 🍗 Buy me a coffee / 加个鸡腿
+
+If you find this project helpful, feel free to buy me a coffee! ☕
+如果觉得这个项目不错，欢迎请我喝杯咖啡或加个鸡腿！🍗
 ![支付宝](https://github.com/user-attachments/assets/926b31b4-e4b1-4e5c-b724-63daad4c5834)
+
+<div align="center">
+  <img src="https://qr.alipay.com/fkx12762j8j05m8w0e5q3ae" alt="Alipay" width="200" />
+  <br>
+  <span>(支付宝 Alipay)</span>
+</div>
+
 
 
