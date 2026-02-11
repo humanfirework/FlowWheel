@@ -2,9 +2,8 @@
 
 <div align="center">
 
-  <img src="Assets/1.gif" width="30%" />
-  <img src="Assets/2.gif" width="30%" />
-  <img src="Assets/3.gif" width="30%" />
+  <img src="Assets/2.gif" width="45%" />
+  <img src="Assets/3.gif" width="45%" />
 
   <br>
 
