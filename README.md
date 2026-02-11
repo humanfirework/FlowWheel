@@ -125,14 +125,12 @@ This project is licensed under the [MIT License](LICENSE).
 If you find this project helpful, feel free to buy me a coffee! ☕
 
 如果觉得这个项目不错，欢迎请我喝杯咖啡或加个鸡腿！🍗
-![支付宝](https://github.com/user-attachments/assets/926b31b4-e4b1-4e5c-b724-63daad4c5834)
+
 
 <div align="center">
-  <a href="https://qr.alipay.com/fkx12762j8j05m8w0e5q3ae" target="_blank">
-    <img src="https://qr.alipay.com/fkx12762j8j05m8w0e5q3ae" alt="Alipay" width="100" />
-  </a>
+  <img src="Assets/alipay_qr.png" alt="Alipay" width="180" style="max-width: 100%; height: auto;" />
   <br>
-  <span>(点击图片或扫描二维码支持我 / Click or Scan to Donate)</span>
+  <span>(扫描二维码支持我 / Click or Scan to Donate)</span>
 </div>
 
 
