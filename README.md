@@ -2,10 +2,9 @@
 
 <div align="center">
 
-  <!-- Demo GIFs -->
-  <img src="Assets/1.gif" width="30%" />
-  <img src="Assets/2.gif" width="30%" />
-  <img src="Assets/3.gif" width="30%" />
+  <img src="./Assets/1.gif" width="30%" />
+  <img src="./Assets/2.gif" width="30%" />
+  <img src="./Assets/3.gif" width="30%" />
   <br>
   <br>
 
@@ -37,7 +36,7 @@
 Manage all your preferences in the new Settings dashboard:
 
 <div align="center">
-  <img src="Assets/4.png" width="380" alt="FlowWheel Settings" />
+  <img src="./Assets/4.png" width="380" alt="FlowWheel Settings" />
 </div>
 
 - **Trigger Mode**: Choose between "Click Toggle" (recommended) or "Hold & Drag".
@@ -77,7 +76,7 @@ Manage all your preferences in the new Settings dashboard:
 您可以在全新的设置面板中管理所有功能：
 
 <div align="center">
-  <img src="Assets/4.png" width="380" alt="FlowWheel 设置界面" />
+  <img src="Assets/4.png" width="200" alt="FlowWheel 设置界面" />
 </div>
 
 - **触发模式**：支持“点击切换”（推荐）或“按住拖拽”。
