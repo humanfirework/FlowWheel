@@ -1,8 +1,12 @@
-# FlowWheel 🌊
+# FlowWheel
 
 <div align="center">
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+  <img src="Assets/demo1.gif" width="45%" />
+  <img src="Assets/demo2.gif" width="45%" />
+  <br>
+
+  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg)](https://github.com/humanfirework/FlowWheel/actions)
 
 [English](#english) | [中文](#中文)
@@ -130,7 +134,7 @@ If you find this project helpful, feel free to buy me a coffee! ☕
 <div align="center">
   <img src="Assets/alipay_qr.png" alt="Alipay" width="180" style="max-width: 100%; height: auto;" />
   <br>
-  <span>(扫描二维码支持我 / Click or Scan to Donate)</span>
+  <span>(推荐使用支付宝扫码支持 / Scan to Donate with Alipay)</span>
 </div>
 
 
