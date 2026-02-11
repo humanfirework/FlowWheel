@@ -14,6 +14,13 @@
     <s:String x:Key="LabelLanguage">语言 / Language</s:String>
     <s:String x:Key="CheckEnable">启用自动滚屏</s:String>
     <s:String x:Key="LabelTriggerMode">触发模式</s:String>
+    <s:String x:Key="LabelTriggerKey">触发按键</s:String>
+    <s:String x:Key="KeyMiddleMouse">鼠标中键</s:String>
+    <s:String x:Key="KeyXButton1">鼠标侧键 1 (后退)</s:String>
+    <s:String x:Key="KeyXButton2">鼠标侧键 2 (前进)</s:String>
+    <s:String x:Key="KeyAlt">Alt 键</s:String>
+    <s:String x:Key="KeyControl">Ctrl 键</s:String>
+    <s:String x:Key="KeyShift">Shift 键</s:String>
     <s:String x:Key="RadioClickToggle">点击切换 (推荐)</s:String>
     <s:String x:Key="RadioHoldDrag">按住拖拽</s:String>
     <s:String x:Key="TooltipComingSoon">即将推出</s:String>

@@ -12,6 +12,7 @@ namespace FlowWheel
     {
         private NotifyIcon? _notifyIcon;
         private MouseHook? _mouseHook;
+        private KeyboardHook? _keyboardHook;
         private ScrollEngine? _scrollEngine;
         private WindowManager? _windowManager;
         private AutoScrollManager? _autoScrollManager;
@@ -37,13 +38,22 @@ namespace FlowWheel
             try
             {
                 _mouseHook = new MouseHook();
+                try 
+                {
+                    _keyboardHook = new KeyboardHook();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to install keyboard hook: {ex.Message}");
+                }
+                
                 // MouseHook events are now handled by AutoScrollManager
-                _autoScrollManager = new AutoScrollManager(_mouseHook, _scrollEngine, _windowManager);
+                _autoScrollManager = new AutoScrollManager(_mouseHook, _keyboardHook, _scrollEngine, _windowManager);
                 _autoScrollManager.IsEnabled = ConfigManager.Current.IsEnabled;
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Failed to install mouse hook: {ex.Message}\nEnsure you have appropriate permissions.", "FlowWheel Error");
+                System.Windows.MessageBox.Show($"Failed to install hooks: {ex.Message}\nEnsure you have appropriate permissions.", "FlowWheel Error");
                 Shutdown();
                 return;
             }
@@ -154,6 +164,7 @@ namespace FlowWheel
             }
             _autoScrollManager?.Dispose(); // Disposes hook and overlay
             _mouseHook?.Dispose();
+            _keyboardHook?.Dispose();
             Shutdown();
         }
 
@@ -162,6 +173,7 @@ namespace FlowWheel
             _notifyIcon?.Dispose();
             _autoScrollManager?.Dispose();
             _mouseHook?.Dispose();
+            _keyboardHook?.Dispose();
             base.OnExit(e);
         }
     }

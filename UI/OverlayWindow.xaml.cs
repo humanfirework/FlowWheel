@@ -61,6 +61,10 @@ namespace FlowWheel.UI
             Canvas.SetTop(Anchor, y - Anchor.Height / 2);
             Anchor.Visibility = Visibility.Visible;
             
+            // Reset visibility
+            CenterGraphic.Opacity = 1.0;
+            if (CustomAnchorImage.Visibility == Visibility.Visible) CustomAnchorImage.Opacity = 1.0;
+            
             // Reset arrows
             if (ArrowUp != null) ArrowUp.Visibility = Visibility.Collapsed;
             if (ArrowDown != null) ArrowDown.Visibility = Visibility.Collapsed;
@@ -79,6 +83,21 @@ namespace FlowWheel.UI
                 if (ArrowLeft != null) ArrowLeft.Visibility = left ? Visibility.Visible : Visibility.Collapsed;
                 if (ArrowRight != null) ArrowRight.Visibility = right ? Visibility.Visible : Visibility.Collapsed;
             }
+        }
+
+        public void UpdateDistance(double distance)
+        {
+            // If distance > 40, fade out center
+            double opacity = 1.0;
+            if (distance > 40)
+            {
+                // Linear fade from 40 to 100
+                opacity = 1.0 - (distance - 40) / 60.0;
+                if (opacity < 0.2) opacity = 0.2;
+            }
+            
+            CenterGraphic.Opacity = opacity;
+            if (CustomAnchorImage.Visibility == Visibility.Visible) CustomAnchorImage.Opacity = opacity;
         }
 
         public void HideAnchor()

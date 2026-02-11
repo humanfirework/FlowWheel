@@ -25,6 +25,16 @@ namespace FlowWheel.UI
             
             EnableCheck.IsChecked = ConfigManager.Current.IsEnabled;
             
+            // Set Trigger Key Selection
+            foreach (ComboBoxItem item in TriggerKeyCombo.Items)
+            {
+                if (item.Tag.ToString() == ConfigManager.Current.TriggerKey)
+                {
+                    item.IsSelected = true;
+                    break;
+                }
+            }
+
             // Set Language Selection
             foreach (ComboBoxItem item in LanguageCombo.Items)
             {
@@ -76,6 +86,15 @@ namespace FlowWheel.UI
                 ConfigManager.Current.Blacklist.Remove(name);
                 ConfigManager.Save();
                 RefreshBlacklist();
+            }
+        }
+
+        private void TriggerKeyCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TriggerKeyCombo.SelectedItem is ComboBoxItem item && item.Tag is string key)
+            {
+                ConfigManager.Current.TriggerKey = key;
+                ConfigManager.Save();
             }
         }
 

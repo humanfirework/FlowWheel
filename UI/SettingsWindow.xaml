@@ -93,6 +93,17 @@
                         <RadioButton GroupName="Mode" Content="{DynamicResource RadioClickToggle}" IsChecked="True" Margin="0,0,0,5"/>
                         <RadioButton GroupName="Mode" Content="{DynamicResource RadioHoldDrag}" IsEnabled="False" Foreground="Gray" ToolTip="{DynamicResource TooltipComingSoon}"/>
                         
+                        <!-- Trigger Key Selection -->
+                        <TextBlock Text="{DynamicResource LabelTriggerKey}" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                        <ComboBox x:Name="TriggerKeyCombo" SelectionChanged="TriggerKeyCombo_SelectionChanged">
+                            <ComboBoxItem Content="{DynamicResource KeyMiddleMouse}" Tag="MiddleMouse"/>
+                            <ComboBoxItem Content="{DynamicResource KeyXButton1}" Tag="XButton1"/>
+                            <ComboBoxItem Content="{DynamicResource KeyXButton2}" Tag="XButton2"/>
+                            <ComboBoxItem Content="{DynamicResource KeyAlt}" Tag="Alt"/>
+                            <ComboBoxItem Content="{DynamicResource KeyControl}" Tag="Ctrl"/>
+                            <ComboBoxItem Content="{DynamicResource KeyShift}" Tag="Shift"/>
+                        </ComboBox>
+
                         <!-- Blacklist Manager -->
                         <TextBlock Text="Blacklist (Process Names)" FontWeight="SemiBold" Margin="0,10,0,5"/>
                         <Grid Margin="0,0,0,5">

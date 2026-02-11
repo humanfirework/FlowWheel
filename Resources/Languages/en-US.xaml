@@ -14,6 +14,13 @@
     <s:String x:Key="LabelLanguage">Language</s:String>
     <s:String x:Key="CheckEnable">Enable Auto-Scroll</s:String>
     <s:String x:Key="LabelTriggerMode">Trigger Mode</s:String>
+    <s:String x:Key="LabelTriggerKey">Trigger Key</s:String>
+    <s:String x:Key="KeyMiddleMouse">Middle Mouse Button</s:String>
+    <s:String x:Key="KeyXButton1">Mouse Side Button 1 (Back)</s:String>
+    <s:String x:Key="KeyXButton2">Mouse Side Button 2 (Forward)</s:String>
+    <s:String x:Key="KeyAlt">Alt Key</s:String>
+    <s:String x:Key="KeyControl">Ctrl Key</s:String>
+    <s:String x:Key="KeyShift">Shift Key</s:String>
     <s:String x:Key="RadioClickToggle">Click Toggle (Recommended)</s:String>
     <s:String x:Key="RadioHoldDrag">Hold &amp; Drag</s:String>
     <s:String x:Key="TooltipComingSoon">Coming Soon</s:String>

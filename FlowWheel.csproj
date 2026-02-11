@@ -9,6 +9,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
+    <Version>1.1.4</Version>
     
     <!-- Size Optimization -->
     <PublishSingleFile>true</PublishSingleFile>

@@ -120,7 +120,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-## 🍗 Buy me a coffee / 加个鸡腿
+## Buy me a coffee / 加个鸡腿
 
 If you find this project helpful, feel free to buy me a coffee! ☕
 

@@ -10,6 +10,7 @@ namespace FlowWheel.Core
         public string Language { get; set; } = "en-US";
         public float Sensitivity { get; set; } = 0.5f;
         public int Deadzone { get; set; } = 20;
+        public string TriggerKey { get; set; } = "MiddleMouse";
         public bool IsEnabled { get; set; } = true;
         public List<string> Blacklist { get; set; } = new List<string>
         {
