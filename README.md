@@ -2,9 +2,10 @@
 
 <div align="center">
 
-  <img src="Assets/2.gif" width="45%" />
-  <img src="Assets/3.gif" width="45%" />
-
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/1.gif" width="30%" alt="Demo 1" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/2.gif" width="30%" alt="Demo 2" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/3.gif" width="30%" alt="Demo 3" />
+  <br>
   <br>
 
   [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -35,7 +36,7 @@
 Manage all your preferences in the new Settings dashboard:
 
 <div align="center">
-  <img src="./Assets/4.png" width="200" alt="FlowWheel Settings" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/4.png" width="250" alt="FlowWheel Settings" />
 </div>
 
 - **Trigger Mode**: Choose between "Click Toggle" (recommended) or "Hold & Drag".
@@ -75,7 +76,7 @@ Manage all your preferences in the new Settings dashboard:
 您可以在全新的设置面板中管理所有功能：
 
 <div align="center">
-  <img src="Assets/4.png" width="200" alt="FlowWheel 设置界面" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/4.png" width="250" alt="FlowWheel 设置界面" />
 </div>
 
 - **触发模式**：支持“点击切换”（推荐）或“按住拖拽”。
@@ -96,7 +97,7 @@ Manage all your preferences in the new Settings dashboard:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
 本项目采用 [MIT License](LICENSE) 开源。
