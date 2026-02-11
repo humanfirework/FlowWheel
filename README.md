@@ -1,10 +1,11 @@
-![3](https://github.com/user-attachments/assets/6f027289-e058-4185-8158-a968d7d8d26f)# FlowWheel
+# FlowWheel
 
 <div align="center">
 
-  <img src="Assets/1.gif" width="30%" />
-  <img src="Assets/2.gif" width="30%" />
-  <img src="Assets/3.gif" width="30%" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/1.gif" width="30%" alt="Demo 1" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/2.gif" width="30%" alt="Demo 2" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/3.gif" width="30%" alt="Demo 3" />
+
   <br>
 
   <br>
