@@ -11,9 +11,10 @@ namespace FlowWheel.Core
         public float Sensitivity { get; set; } = 0.5f;
         public int Deadzone { get; set; } = 20;
         public string TriggerKey { get; set; } = "MiddleMouse";
+        public string TriggerMode { get; set; } = "Toggle"; // "Toggle" or "Hold"
         public bool IsEnabled { get; set; } = true;
         public bool IsSyncScrollEnabled { get; set; } = false;
-        public bool IsReadingModeEnabled { get; set; } = true;
+        public bool IsReadingModeEnabled { get; set; } = false;
         public List<string> Blacklist { get; set; } = new List<string>
         {
             "flowwheel",

@@ -26,9 +26,11 @@
 ### Key Features
 
 - **Universal Auto-Scroll**: Works in File Explorer, Word, IDEs, Discord, and almost any Windows application.
+- **Grab & Throw (Physics Mode)**: Hold middle button to drag the page, release to throw it with inertia. Experience the smooth, touch-screen-like scrolling on PC!
 - **Reading Mode (Teleprompter)**: **Double-click** the middle mouse button to activate hands-free automatic scrolling. Perfect for reading long docs or logs while eating!
 - **Multi-Screen Sync**: Scroll a document on your main screen, and reference documents on other screens (or side-by-side windows) will scroll in sync. Ideal for code reviews and translation.
 - **Dynamic Speed**: Non-linear speed control—the further you move from the anchor, the faster it scrolls.
+- **Smart Opacity**: The overlay anchor automatically fades out when your mouse is close to it or when moving fast, preventing text occlusion.
 - **Modern UI**: Beautiful overlay with direction indicators and custom themes.
 
 ### Settings & Configuration
@@ -39,7 +41,9 @@ Manage all your preferences in the new Settings dashboard:
  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/4.png" width="250" alt="FlowWheel Settings" />
 </div>
 
-- **Trigger Mode**: Choose between "Click Toggle" (recommended) or "Hold & Drag".
+- **Trigger Mode**: 
+    - **Click Toggle**: Classic behavior. Click to start, click to stop.
+    - **Hold & Drag**: Physics mode. Hold to drag, release to throw.
 - **Sensitivity**: Fine-tune scroll speed and deadzone.
 - **Blacklist**: Exclude specific games or apps (e.g., CS:GO).
 
@@ -66,8 +70,10 @@ Manage all your preferences in the new Settings dashboard:
 ### 核心功能
 
 - **全局自动滚屏**：支持资源管理器、Word、IDE、Discord 等几乎所有 Windows 应用。
+- **抓取与抛掷 (Grab & Throw)**：类触摸屏物理手感！按住中键拖拽页面，松开产生惯性滑动。
 - **阅读模式 (提词器)**：**双击鼠标中键**即可激活。解放双手，自动匀速滚动，看小说、看文档、看日志的摸鱼神器！
 - **多屏/分屏同步**：在主屏滚动文档时，副屏（或并排）的文档会同步滚动。非常适合代码比对、翻译对照。
+- **智能透明度**：当鼠标靠近锚点或快速滚动时，图标自动变淡，不再遮挡视线。
 - **动态变速**：基于距离的非线性速度控制，精准把控浏览节奏。
 - **现代化 UI**：提供美观的视觉反馈和方向指示。
 
@@ -79,7 +85,9 @@ Manage all your preferences in the new Settings dashboard:
  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/4.png" width="250" alt="FlowWheel 设置界面" />
 </div>
 
-- **触发模式**：支持"点击切换"（推荐）或"按住拖拽"。
+- **触发模式**：
+    - **点击切换 (Toggle)**：经典模式。点击开启，再次点击关闭。
+    - **按住拖拽 (Hold & Drag)**：物理模式。按住拖拽，松开惯性滑动。
 - **灵敏度调节**：自定义滚动速度倍率和防误触死区。
 - **黑名单管理**：自动屏蔽特定游戏或应用（如 FPS 游戏）。
 

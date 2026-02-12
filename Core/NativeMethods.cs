@@ -20,6 +20,8 @@ namespace FlowWheel.Core
         public const int WM_MBUTTONUP = 0x0208;
         public const int WM_MOUSEWHEEL = 0x020A;
         public const int WM_XBUTTONDOWN = 0x020B;
+        public const int WM_XBUTTONUP = 0x020C;
+        public const int WM_MOUSEHWHEEL = 0x020E;
 
         // Window Styles
         public const int GWL_EXSTYLE = -20;

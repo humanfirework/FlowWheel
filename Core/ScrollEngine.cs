@@ -6,17 +6,28 @@ using System.Threading.Tasks;
 
 namespace FlowWheel.Core
 {
+    public enum ScrollState
+    {
+        Idle,
+        Dragging,
+        InertialScrolling,
+        ReadingMode
+    }
+
     public class ScrollEngine
     {
         private volatile bool _isRunning = false;
         private readonly object _lock = new object();
         private double _accumulatedDelta = 0;
+
+        public ScrollState CurrentState { get; private set; } = ScrollState.Idle;
         
         // Settings
         public float Sensitivity { get; set; } = 0.5f; // Speed multiplier
         public int Deadzone { get; set; } = 20; // Pixels
         public int TickRate { get; set; } = 120; // Updates per second
         public int MinStep { get; set; } = 1; // Minimum delta to send (fix for Explorer/Win32)
+        public double Friction { get; set; } = 5.0; // Friction factor
 
         // Current State
         private double _currentSpeed = 0; // Delta per second
@@ -24,18 +35,17 @@ namespace FlowWheel.Core
         private double _accumulatedHDelta = 0; // Horizontal Accumulator
         private NativeMethods.POINT _origin;
         private NativeMethods.POINT _current;
+        private NativeMethods.POINT _lastPos; // For calculating throw velocity
+        private long _lastPosTime; // Timestamp for velocity calculation
 
         // Inertia
-        private bool _isInertiaActive = false;
         private double _inertiaSpeedV = 0;
         private double _inertiaSpeedH = 0;
-        private const double Friction = 5.0; // Speed reduction factor
 
         private readonly SyncScrollManager _syncManager = new SyncScrollManager();
         public bool IsSyncEnabled { get; set; } = false;
 
         // Reading Mode
-        public bool IsReadingMode { get; private set; } = false;
         private double _readingSpeed = 0; // Pixels per second
 
         public ScrollEngine()
@@ -46,7 +56,7 @@ namespace FlowWheel.Core
         {
             lock (_lock)
             {
-                IsReadingMode = true;
+                CurrentState = ScrollState.ReadingMode;
                 _readingSpeed = initialSpeed;
                 _currentSpeed = -initialSpeed; // Negative is down (usually)
                 _currentHSpeed = 0;
@@ -64,7 +74,7 @@ namespace FlowWheel.Core
         {
             lock (_lock)
             {
-                if (!IsReadingMode) return;
+                if (CurrentState != ScrollState.ReadingMode) return;
                 _readingSpeed += delta;
                 if (_readingSpeed < 0) _readingSpeed = 0; // Don't reverse, just stop
                 if (_readingSpeed > 1000) _readingSpeed = 1000;
@@ -72,17 +82,19 @@ namespace FlowWheel.Core
             }
         }
 
-        public void Start(NativeMethods.POINT origin)
+        public void StartDrag(NativeMethods.POINT origin)
         {
             lock (_lock)
             {
-                if (_isRunning && !IsReadingMode) return;
-                
-                IsReadingMode = false; // Reset reading mode
+                if (_isRunning && CurrentState == ScrollState.ReadingMode) return;
+
+                CurrentState = ScrollState.Dragging;
                 _isRunning = true;
-                _isInertiaActive = false;
                 _origin = origin;
                 _current = origin;
+                _lastPos = origin;
+                _lastPosTime = Stopwatch.GetTimestamp();
+                
                 _currentSpeed = 0;
                 _accumulatedDelta = 0;
                 _currentHSpeed = 0;
@@ -97,38 +109,82 @@ namespace FlowWheel.Core
             }
         }
 
-        public void Stop()
+        public void ReleaseDrag()
         {
             lock (_lock)
             {
-                IsReadingMode = false;
+                if (CurrentState != ScrollState.Dragging) return;
+
+                // Calculate release velocity
+                long now = Stopwatch.GetTimestamp();
+                double dt = (now - _lastPosTime) / (double)Stopwatch.Frequency;
+                
+                if (dt > 0.1) // If held still for too long, no inertia
+                {
+                    _currentSpeed = 0;
+                    _currentHSpeed = 0;
+                }
 
                 // Trigger inertia if speed is significant
                 if (Math.Abs(_currentSpeed) > 100 || Math.Abs(_currentHSpeed) > 100)
                 {
-                    _isInertiaActive = true;
+                    CurrentState = ScrollState.InertialScrolling;
                     _inertiaSpeedV = _currentSpeed;
                     _inertiaSpeedH = _currentHSpeed;
                 }
                 else
                 {
-                    _isRunning = false;
+                    Stop();
                 }
             }
         }
 
-        public void UpdatePosition(NativeMethods.POINT pt)
+        public void Stop()
         {
-            if (_isInertiaActive || IsReadingMode) return; // Ignore mouse movement during inertia or reading mode
+            lock (_lock)
+            {
+                CurrentState = ScrollState.Idle;
+                _isRunning = false;
+            }
+        }
+
+        public void UpdateDragPosition(NativeMethods.POINT pt)
+        {
+            if (CurrentState != ScrollState.Dragging) return;
+
+            long now = Stopwatch.GetTimestamp();
+            _lastPos = _current;
+            _lastPosTime = now;
             _current = pt;
+            
             CalculateSpeed();
         }
+        
+        // Legacy support for click-toggle mode
+        public void Start(NativeMethods.POINT origin)
+        {
+            StartDrag(origin);
+        }
+
+        public void UpdatePosition(NativeMethods.POINT pt)
+        {
+            UpdateDragPosition(pt);
+        }
+        // End legacy support
 
         private void CalculateSpeed()
         {
             // Vertical
             int dy = _current.y - _origin.y;
             int distY = Math.Abs(dy);
+
+            // ... (Calculation logic remains similar but simplified for 1:1 feel if needed)
+            // For now, keep the deadzone/sensitivity logic as it maps distance to speed well for "Joystick" style
+            // For "Grab & Throw" style (iPhone style), we actually need distance to map to position delta, not speed.
+            // But FlowWheel's core identity is "Joystick" style (middle click auto scroll).
+            // So "Grab" here means "Grab the Joystick Handle", not "Grab the Page".
+            // The user requested "Grab & Throw", which implies inertia. 
+            // So we keep the Joystick logic (Distance = Speed), but add Inertia on Release.
 
             if (distY < Deadzone)
             {
@@ -188,7 +244,7 @@ namespace FlowWheel.Core
                 double targetSpeedH = _currentHSpeed;
 
                 // Handle Inertia
-                if (_isInertiaActive)
+                if (CurrentState == ScrollState.InertialScrolling)
                 {
                     // Apply friction
                     double frictionFactor = Math.Exp(-Friction * dt);
@@ -203,7 +259,7 @@ namespace FlowWheel.Core
                     {
                         lock (_lock)
                         {
-                            _isRunning = false;
+                            Stop();
                         }
                     }
                 }
