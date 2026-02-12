@@ -1,0 +1,34 @@
+<Window x:Class="FlowWheel.UI.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FlowWheel" Height="300" Width="500"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" ResizeMode="NoResize"
+        AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ShowInTaskbar="False">
+    
+    <Border Background="White" CornerRadius="12" BorderBrush="#E0E0E0" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.3"/>
+        </Border.Effect>
+        <Grid>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- Logo / Icon Area -->
+                <Path Data="M12,2 L12,22 M2,12 L22,12" Stroke="#007ACC" StrokeThickness="4" Width="48" Height="48" HorizontalAlignment="Center" Margin="0,0,0,20">
+                    <Path.Effect>
+                        <DropShadowEffect Color="#007ACC" BlurRadius="10" Opacity="0.5"/>
+                    </Path.Effect>
+                </Path>
+                
+                <TextBlock Text="FlowWheel" FontSize="32" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Center"/>
+                <TextBlock Text="Global Auto-Scroll Utility" FontSize="14" Foreground="#666" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                
+                <ProgressBar IsIndeterminate="True" Width="200" Height="4" Margin="0,30,0,0" BorderThickness="0" Background="#F0F0F0" Foreground="#007ACC"/>
+                
+                <TextBlock x:Name="StatusText" Text="Initializing..." FontSize="12" Foreground="#999" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+            </StackPanel>
+            
+            <TextBlock Text="v1.3.0" FontSize="10" Foreground="#CCC" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,15,10"/>
+        </Grid>
+    </Border>
+</Window>

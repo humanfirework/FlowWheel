@@ -83,65 +83,14 @@ namespace FlowWheel.Core
             }
         }
 
+        private bool _isDragging = false;
+
         private void OnMouseEvent(object? sender, MouseEventArgs e)
         {
             if (!_isEnabled) return;
 
-            string trigger = ConfigManager.Current.TriggerKey;
-            
-            // Handle Triggers
-            bool isTrigger = false;
-            if (trigger == "MiddleMouse" && e.Message == NativeMethods.WM_MBUTTONDOWN) isTrigger = true;
-            else if (trigger == "XButton1" && e.Message == NativeMethods.WM_XBUTTONDOWN && (e.MouseData >> 16) == 1) isTrigger = true;
-            else if (trigger == "XButton2" && e.Message == NativeMethods.WM_XBUTTONDOWN && (e.MouseData >> 16) == 2) isTrigger = true;
-
-            if (isTrigger)
-            {
-                // Double Click Detection for Middle Mouse (Reading Mode)
-                if (trigger == "MiddleMouse" && ConfigManager.Current.IsReadingModeEnabled)
-                {
-                    long now = DateTime.Now.Ticks;
-                    long diffMs = (now - _lastMiddleClickTime) / 10000;
-                    _lastMiddleClickTime = now;
-
-                    if (diffMs < NativeMethods.GetDoubleClickTime())
-                    {
-                        // Double Click!
-                        if (_engine.IsReadingMode)
-                        {
-                            StopAutoScroll();
-                        }
-                        else
-                        {
-                            StartReadingMode(e.Point);
-                        }
-                        e.Handled = true;
-                        return;
-                    }
-                }
-
-                if (_isActive)
-                {
-                    StopAutoScroll();
-                }
-                else
-                {
-                    // Check Blacklist
-                    if (!_windowManager.IsBlacklisted(e.Point))
-                    {
-                        StartAutoScroll(e.Point);
-                    }
-                    else
-                    {
-                        return; // Let system handle it
-                    }
-                }
-                e.Handled = true;
-                return;
-            }
-
             // Handle Wheel for Reading Mode Speed Adjustment
-            if (e.Message == NativeMethods.WM_MOUSEWHEEL && _engine.IsReadingMode)
+            if (e.Message == NativeMethods.WM_MOUSEWHEEL && _engine.CurrentState == ScrollState.ReadingMode)
             {
                 // MouseData is delta (e.g., 120)
                 float delta = e.MouseData;
@@ -151,21 +100,140 @@ namespace FlowWheel.Core
                 return;
             }
 
+            string trigger = ConfigManager.Current.TriggerKey;
+            
+            // Handle Triggers
+            bool isTriggerDown = false;
+            bool isTriggerUp = false;
+
+            if (trigger == "MiddleMouse")
+            {
+                isTriggerDown = (e.Message == NativeMethods.WM_MBUTTONDOWN);
+                isTriggerUp = (e.Message == NativeMethods.WM_MBUTTONUP);
+            }
+            else if (trigger == "XButton1")
+            {
+                isTriggerDown = (e.Message == NativeMethods.WM_XBUTTONDOWN && (e.MouseData >> 16) == 1);
+                isTriggerUp = (e.Message == NativeMethods.WM_XBUTTONUP && (e.MouseData >> 16) == 1);
+            }
+            else if (trigger == "XButton2")
+            {
+                isTriggerDown = (e.Message == NativeMethods.WM_XBUTTONDOWN && (e.MouseData >> 16) == 2);
+                isTriggerUp = (e.Message == NativeMethods.WM_XBUTTONUP && (e.MouseData >> 16) == 2);
+            }
+
+            // --- Mode Logic Separation ---
+            string mode = ConfigManager.Current.TriggerMode; // "Toggle" or "Hold"
+            
+            if (isTriggerDown)
+            {
+                // 1. Reading Mode Check (Always Double Click)
+                if (trigger == "MiddleMouse" && ConfigManager.Current.IsReadingModeEnabled)
+                {
+                    long now = DateTime.Now.Ticks;
+                    long diffMs = (now - _lastMiddleClickTime) / 10000;
+                    _lastMiddleClickTime = now;
+
+                    if (diffMs < NativeMethods.GetDoubleClickTime())
+                    {
+                        if (_engine.CurrentState == ScrollState.ReadingMode)
+                            StopAutoScroll();
+                        else
+                            StartReadingMode(e.Point);
+                        
+                        e.Handled = true;
+                        return;
+                    }
+                }
+
+                // 2. Stop if Reading Mode is active
+                if (_engine.CurrentState == ScrollState.ReadingMode)
+                {
+                    StopAutoScroll();
+                    e.Handled = true;
+                    return;
+                }
+
+                // 3. Mode Specific Start Logic
+                if (mode == "Hold")
+                {
+                    // Hold Mode: Always Start Drag on Down
+                    if (_isActive) 
+                    {
+                        // If already active (e.g. inertia), restart drag
+                        StopAutoScroll(); // Reset
+                    }
+                    
+                    if (!_windowManager.IsBlacklisted(e.Point))
+                    {
+                        _isDragging = true;
+                        StartAutoScroll(e.Point);
+                        e.Handled = true;
+                    }
+                }
+                else // Toggle Mode
+                {
+                    // Toggle Mode: Start if idle, Stop if active
+                    if (_isActive)
+                    {
+                        StopAutoScroll();
+                    }
+                    else
+                    {
+                        if (!_windowManager.IsBlacklisted(e.Point))
+                        {
+                            StartAutoScroll(e.Point);
+                        }
+                    }
+                    e.Handled = true;
+                }
+                return;
+            }
+
+            if (isTriggerUp)
+            {
+                if (mode == "Hold" && _isDragging)
+                {
+                    // Hold Mode: Release -> Throw
+                    _isDragging = false;
+                    _engine.ReleaseDrag();
+                    
+                    // Hide anchor immediately for "Throw" feel
+                    Application.Current.Dispatcher.Invoke(() => _overlay?.HideAnchor());
+                    return;
+                }
+                // Toggle Mode: Ignore Up
+            }
+
             // Handle Stop Logic (Click any other button)
             if (_isActive)
             {
+                // Stop on other clicks
                 if (e.Message == NativeMethods.WM_LBUTTONDOWN || 
-                    e.Message == NativeMethods.WM_RBUTTONDOWN || 
+                    e.Message == NativeMethods.WM_RBUTTONDOWN ||
                     (e.Message == NativeMethods.WM_MBUTTONDOWN && trigger != "MiddleMouse") ||
-                    (e.Message == NativeMethods.WM_XBUTTONDOWN && !isTrigger))
+                    (e.Message == NativeMethods.WM_XBUTTONDOWN && !isTriggerDown))
                 {
                     StopAutoScroll();
-                    e.Handled = true; // Consume the click that stops it? Usually yes.
+                    e.Handled = true; 
+                    return;
                 }
-                else if (e.Message == NativeMethods.WM_MOUSEMOVE)
+                
+                // Mouse Move
+                if (e.Message == NativeMethods.WM_MOUSEMOVE)
                 {
-                    _engine.UpdatePosition(e.Point);
-                    UpdateVisuals(e.Point);
+                    if (_engine.CurrentState == ScrollState.Dragging)
+                    {
+                        // Update Position
+                        // In Hold Mode: _isDragging is true
+                        // In Toggle Mode: _isDragging is false (we didn't set it in Toggle start block above, or we should?)
+                        // Wait, StartAutoScroll calls _engine.Start(origin) which calls StartDrag.
+                        // So Engine is in Dragging state.
+                        
+                        // We just need to update position.
+                        _engine.UpdateDragPosition(e.Point);
+                        UpdateVisuals(e.Point);
+                    }
                 }
             }
         }
@@ -249,7 +317,7 @@ namespace FlowWheel.Core
         private void UpdateVisuals(NativeMethods.POINT current)
         {
             // Don't update direction visuals in Reading Mode
-            if (_engine.IsReadingMode) return;
+            if (_engine.CurrentState == ScrollState.ReadingMode) return;
 
             long currentTick = DateTime.Now.Ticks;
             if (currentTick - _lastUiUpdateTick < UiUpdateInterval) return;

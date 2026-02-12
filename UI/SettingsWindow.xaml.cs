@@ -27,6 +27,16 @@ namespace FlowWheel.UI
             SyncCheck.IsChecked = ConfigManager.Current.IsSyncScrollEnabled;
             ReadingModeCheck.IsChecked = ConfigManager.Current.IsReadingModeEnabled;
             
+            // Set Trigger Mode
+            if (ConfigManager.Current.TriggerMode == "Hold")
+            {
+                RadioHoldDrag.IsChecked = true;
+            }
+            else
+            {
+                RadioClickToggle.IsChecked = true;
+            }
+
             // Set Trigger Key Selection
             foreach (ComboBoxItem item in TriggerKeyCombo.Items)
             {
@@ -158,6 +168,19 @@ namespace FlowWheel.UI
         private void ReadingModeCheck_Changed(object sender, RoutedEventArgs e)
         {
             ConfigManager.Current.IsReadingModeEnabled = ReadingModeCheck.IsChecked ?? true;
+            ConfigManager.Save();
+        }
+
+        private void RadioMode_Changed(object sender, RoutedEventArgs e)
+        {
+            if (RadioHoldDrag.IsChecked == true)
+            {
+                ConfigManager.Current.TriggerMode = "Hold";
+            }
+            else
+            {
+                ConfigManager.Current.TriggerMode = "Toggle";
+            }
             ConfigManager.Save();
         }
 

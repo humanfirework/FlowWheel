@@ -105,13 +105,26 @@ namespace FlowWheel.UI
 
         public void UpdateDistance(double distance)
         {
-            // If distance > 40, fade out center
+            // Dynamic Opacity Logic
+            // 1. Fade out when dragging far away (existing logic)
+            // 2. Fade out when mouse is TOO CLOSE (new logic to prevent occlusion)
+            
             double opacity = 1.0;
-            if (distance > 40)
+
+            if (distance < 100)
             {
-                // Linear fade from 40 to 100
-                opacity = 1.0 - (distance - 40) / 60.0;
-                if (opacity < 0.2) opacity = 0.2;
+                // Fade out when close to anchor (prevent occlusion)
+                // 0px -> 0.2 opacity
+                // 100px -> 1.0 opacity
+                opacity = 0.2 + (distance / 100.0) * 0.8;
+            }
+            else if (distance > 200)
+            {
+                // Fade out when far away (existing logic, adjusted range)
+                // 200px -> 1.0
+                // 500px -> 0.4
+                opacity = 1.0 - (distance - 200) / 600.0;
+                if (opacity < 0.4) opacity = 0.4;
             }
             
             CenterGraphic.Opacity = opacity;
