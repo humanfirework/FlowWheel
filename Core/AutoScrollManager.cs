@@ -58,29 +58,73 @@ namespace FlowWheel.Core
             // Only handle Key Down for toggle
             if (e.Message == NativeMethods.WM_KEYDOWN || e.Message == NativeMethods.WM_SYSKEYDOWN)
             {
-                string trigger = ConfigManager.Current.TriggerKey;
-                bool match = false;
-
-                // VK Codes: Alt=0x12, Ctrl=0x11, Shift=0x10
-                if (trigger == "Alt" && (e.VkCode == 0x12 || e.VkCode == 0xA4 || e.VkCode == 0xA5)) match = true;
-                else if (trigger == "Ctrl" && (e.VkCode == 0x11 || e.VkCode == 0xA2 || e.VkCode == 0xA3)) match = true;
-                else if (trigger == "Shift" && (e.VkCode == 0x10 || e.VkCode == 0xA0 || e.VkCode == 0xA1)) match = true;
-
-                if (match)
+                // Custom Hotkey Check
+                if (IsHotkeyMatch(e.VkCode))
                 {
-                    if (_isActive)
-                    {
-                        StopAutoScroll();
-                    }
-                    else
-                    {
-                        NativeMethods.POINT pt;
-                        NativeMethods.GetCursorPos(out pt);
-                        StartAutoScroll(pt);
-                    }
+                    ToggleAutoScroll();
                     e.Handled = true;
+                    return;
                 }
             }
+        }
+
+        private bool IsHotkeyMatch(int vkCode)
+        {
+            string hotkey = ConfigManager.Current.ToggleHotkey; // e.g., "Ctrl+Alt+S"
+            if (string.IsNullOrEmpty(hotkey)) return false;
+
+            string[] parts = hotkey.Split('+');
+            bool ctrl = false, alt = false, shift = false;
+            string key = "";
+
+            foreach (var part in parts)
+            {
+                var p = part.Trim();
+                if (p.Equals("Ctrl", StringComparison.OrdinalIgnoreCase)) ctrl = true;
+                else if (p.Equals("Alt", StringComparison.OrdinalIgnoreCase)) alt = true;
+                else if (p.Equals("Shift", StringComparison.OrdinalIgnoreCase)) shift = true;
+                else key = p;
+            }
+
+            // Check Modifiers
+            bool isCtrl = (NativeMethods.GetKeyState(0x11) & 0x8000) != 0;
+            bool isAlt = (NativeMethods.GetKeyState(0x12) & 0x8000) != 0;
+            bool isShift = (NativeMethods.GetKeyState(0x10) & 0x8000) != 0;
+
+            if (ctrl != isCtrl) return false;
+            if (alt != isAlt) return false;
+            if (shift != isShift) return false;
+
+            // Check Key (Simple mapping for now, assuming letters/numbers match VK codes mostly)
+            // A-Z: 65-90
+            // 0-9: 48-57
+            if (key.Length == 1)
+            {
+                char k = char.ToUpper(key[0]);
+                if (vkCode == (int)k) return true;
+            }
+            
+            // F1-F12: 112-123
+            if (key.StartsWith("F") && int.TryParse(key.Substring(1), out int fNum))
+            {
+                if (vkCode == 111 + fNum) return true;
+            }
+
+            return false;
+        }
+
+        private void ToggleAutoScroll()
+        {
+             if (_isActive)
+             {
+                 StopAutoScroll();
+             }
+             else
+             {
+                 NativeMethods.POINT pt;
+                 NativeMethods.GetCursorPos(out pt);
+                 StartAutoScroll(pt);
+             }
         }
 
         private bool _isDragging = false;
@@ -164,8 +208,13 @@ namespace FlowWheel.Core
                         StopAutoScroll(); // Reset
                     }
                     
-                    if (!_windowManager.IsBlacklisted(e.Point))
+                    var (isBlocked, profile) = _windowManager.CheckProcessState(e.Point);
+                    if (!isBlocked)
                     {
+                        // Use global settings only (Per-App removed as requested)
+                        _engine.Sensitivity = ConfigManager.Current.Sensitivity;
+                        _engine.Deadzone = ConfigManager.Current.Deadzone;
+
                         _isDragging = true;
                         StartAutoScroll(e.Point);
                         e.Handled = true;
@@ -176,12 +225,34 @@ namespace FlowWheel.Core
                     // Toggle Mode: Start if idle, Stop if active
                     if (_isActive)
                     {
-                        StopAutoScroll();
+                        // Fix for Inertia in Toggle Mode:
+                        // Instead of abrupt Stop(), we check if we are already in Inertia.
+                        // If in Inertia, Stop(). If in Dragging, Start Inertia (ReleaseDrag).
+                        
+                        if (_engine.CurrentState == ScrollState.Dragging)
+                        {
+                            // Trigger Inertia
+                            _engine.ReleaseDrag();
+                            
+                            // Visual feedback: Hide anchor but maybe keep some indication? 
+                            // For now, let's just hide anchor to mimic "throw"
+                            Application.Current.Dispatcher.Invoke(() => _overlay?.HideAnchor());
+                        }
+                        else
+                        {
+                            // Already in Inertia or Reading -> Full Stop
+                            StopAutoScroll();
+                        }
                     }
                     else
                     {
-                        if (!_windowManager.IsBlacklisted(e.Point))
+                        var (isBlocked, profile) = _windowManager.CheckProcessState(e.Point);
+                        if (!isBlocked)
                         {
+                            // Use global settings only
+                            _engine.Sensitivity = ConfigManager.Current.Sensitivity;
+                            _engine.Deadzone = ConfigManager.Current.Deadzone;
+
                             StartAutoScroll(e.Point);
                         }
                     }
@@ -194,7 +265,7 @@ namespace FlowWheel.Core
             {
                 if (mode == "Hold" && _isDragging)
                 {
-                    // Hold Mode: Release -> Throw
+                    // Hold Mode: Release -> Throw (Inertia)
                     _isDragging = false;
                     _engine.ReleaseDrag();
                     

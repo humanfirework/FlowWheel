@@ -6,6 +6,13 @@
         Background="#F5F5F7" FontFamily="Segoe UI">
     
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <!-- Icon Paths -->
+        <Geometry x:Key="IconPlus">M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z</Geometry>
+        <Geometry x:Key="IconFolder">M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z</Geometry>
+        <Geometry x:Key="IconDelete">M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z</Geometry>
+        <Geometry x:Key="IconClear">M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z</Geometry>
+        
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="0,0,0,15"/>
             <Setter Property="Padding" Value="10"/>
@@ -50,6 +57,35 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#0062A3"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Icon Button Style -->
+        <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="#EEEEEE"/>
+            <Setter Property="Foreground" Value="#555555"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <Path Data="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" 
+                                  Fill="{TemplateBinding Foreground}" 
+                                  Stretch="Uniform" 
+                                  Width="12" Height="12"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#DDDDDD"/>
+                                <Setter Property="Foreground" Value="#333333"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -106,33 +142,53 @@
                             <ComboBoxItem Content="{DynamicResource KeyControl}" Tag="Ctrl"/>
                             <ComboBoxItem Content="{DynamicResource KeyShift}" Tag="Shift"/>
                         </ComboBox>
+                    </StackPanel>
+                </GroupBox>
 
-                        <!-- Blacklist Manager -->
-                        <TextBlock Text="Blacklist (Process Names)" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                <!-- Whitelist/Blacklist Manager -->
+                <GroupBox Header="{DynamicResource GroupFiltering}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="{DynamicResource LabelFilterMode}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <RadioButton x:Name="RadioBlacklist" GroupName="FilterMode" Content="{DynamicResource RadioBlacklist}" Margin="0,0,10,0" Checked="RadioFilterMode_Changed" IsChecked="True"/>
+                            <RadioButton x:Name="RadioWhitelist" GroupName="FilterMode" Content="{DynamicResource RadioWhitelist}" Checked="RadioFilterMode_Changed"/>
+                        </StackPanel>
+                        
+                        <TextBlock x:Name="FilterModeHelpText" Text="Processes in this list will be ignored." FontSize="11" Foreground="#666" Margin="0,0,0,5" TextWrapping="Wrap"/>
+
                         <Grid Margin="0,0,0,5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="BlacklistInput" Margin="0,0,5,0" Padding="2"/>
-                            <Button Grid.Column="1" Content="+" Width="30" Click="AddBlacklist_Click"/>
+                            <TextBox x:Name="BlacklistInput" Margin="0,0,5,0" Padding="5" VerticalContentAlignment="Center" ToolTip="Enter process name (e.g. notepad)"/>
+                            <Button Grid.Column="1" Style="{StaticResource IconButton}" Content="{StaticResource IconFolder}" Margin="0,0,5,0" Click="BrowseApp_Click" ToolTip="Browse for executable"/>
+                            <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="{StaticResource IconPlus}" Click="AddBlacklist_Click" ToolTip="Add to list"/>
                         </Grid>
-                        <ListBox x:Name="BlacklistList" Height="100" BorderBrush="#DDD" BorderThickness="1">
+                        
+                        <ListBox x:Name="BlacklistList" Height="150" BorderBrush="#DDD" BorderThickness="1" AllowDrop="True" Drop="BlacklistList_Drop" Background="#FAFAFA">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
+                                    <Grid Margin="0,2">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-                                        <Button Grid.Column="1" Content="x" Width="20" Height="20" Margin="10,0,0,0" 
-                                                Background="Transparent" Foreground="Red" BorderThickness="0" 
-                                                Click="RemoveBlacklist_Click" Tag="{Binding}"/>
+                                        
+                                        <TextBlock Text="{Binding ProcessName}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#444"/>
+
+                                        <Button Grid.Column="1" Style="{StaticResource IconButton}" 
+                                                Content="{StaticResource IconDelete}" 
+                                                Width="24" Height="24" Padding="6"
+                                                Margin="5,0,0,0" 
+                                                Background="Transparent" Foreground="#FF6B6B"
+                                                Click="RemoveBlacklist_Click" Tag="{Binding ProcessName}" ToolTip="Remove"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                        <TextBlock Text="Tip: Drag &amp; drop .exe files here" FontSize="10" Foreground="#999" Margin="0,2,0,0"/>
                     </StackPanel>
                 </GroupBox>
 
@@ -152,14 +208,33 @@
                         <TextBlock Text="{DynamicResource DescDeadzone}" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
                     </StackPanel>
                 </GroupBox>
-                
+
                 <GroupBox Header="{DynamicResource GroupShortcuts}">
                     <StackPanel>
-                        <Grid Margin="0,0,0,5">
-                            <TextBlock Text="{DynamicResource LabelToggleShortcut}" VerticalAlignment="Center"/>
-                            <TextBlock Text="Ctrl + Alt + S" HorizontalAlignment="Right" Foreground="#666" FontStyle="Italic"/>
+                        <TextBlock Text="{DynamicResource LabelToggleShortcut}" Margin="0,0,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="HotkeyInput" Padding="5" IsReadOnly="True" 
+                                     PreviewKeyDown="HotkeyInput_PreviewKeyDown" 
+                                     GotFocus="HotkeyInput_GotFocus"
+                                     LostFocus="HotkeyInput_LostFocus"
+                                     Background="White"
+                                     VerticalContentAlignment="Center"
+                                     Text="Click to set hotkey..."/>
+                            <Button Grid.Column="1" Style="{StaticResource IconButton}" Content="{StaticResource IconClear}" Margin="5,0,0,0" Click="ClearHotkey_Click" ToolTip="Clear Hotkey"/>
                         </Grid>
-                        <TextBlock Text="{DynamicResource DescShortcuts}" FontSize="11" Foreground="#999"/>
+                        <TextBlock Text="Click box and press keys to record" FontSize="10" Foreground="#999" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="{DynamicResource GroupAbout}">
+                    <StackPanel>
+                        <TextBlock Text="FlowWheel" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="VersionText" Text="Version 1.0.0" Foreground="#666" Margin="0,0,0,10"/>
+                        <Button Content="{DynamicResource BtnCheckUpdate}" Click="CheckUpdate_Click" HorizontalAlignment="Left" Padding="15,5"/>
                     </StackPanel>
                 </GroupBox>
             </StackPanel>

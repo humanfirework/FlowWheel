@@ -31,9 +31,15 @@
     <s:String x:Key="LabelDeadzone">Deadzone (Radius)</s:String>
     <s:String x:Key="DescDeadzone">Area where movement is ignored</s:String>
     
-    <s:String x:Key="LabelToggleShortcut">Toggle Enable/Disable</s:String>
-    <s:String x:Key="DescShortcuts">(Global hotkeys not configurable yet)</s:String>
-    
+    <s:String x:Key="LabelToggleShortcut">Global Hotkey (Toggle)</s:String>
+    <s:String x:Key="BtnApply">Apply</s:String>
+
+    <!-- Filtering -->
+    <s:String x:Key="GroupFiltering">App Filtering</s:String>
+    <s:String x:Key="LabelFilterMode">Mode:</s:String>
+    <s:String x:Key="RadioBlacklist">Blacklist (Block selected)</s:String>
+    <s:String x:Key="RadioWhitelist">Whitelist (Allow only selected)</s:String>
+
     <s:String x:Key="BtnCloseToTray">Close to Tray</s:String>
     
     <!-- Tray Menu -->
@@ -42,4 +48,7 @@
     <s:String x:Key="TrayExit">Exit</s:String>
     <s:String x:Key="TrayRunning">FlowWheel (Running)</s:String>
     <s:String x:Key="TrayPaused">FlowWheel (Paused)</s:String>
+
+    <s:String x:Key="GroupAbout">About</s:String>
+    <s:String x:Key="BtnCheckUpdate">Check for Updates</s:String>
 </ResourceDictionary>

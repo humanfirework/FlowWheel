@@ -5,6 +5,16 @@ using System.Text.Json;
 
 namespace FlowWheel.Core
 {
+    public class AppProfile
+    {
+        public string ProcessName { get; set; } = "";
+        public float Sensitivity { get; set; } = 0.5f;
+        public int Deadzone { get; set; } = 20;
+        public bool UseCustomSettings { get; set; } = false;
+        
+        public override string ToString() => ProcessName;
+    }
+
     public class AppConfig
     {
         public string Language { get; set; } = "en-US";
@@ -15,16 +25,23 @@ namespace FlowWheel.Core
         public bool IsEnabled { get; set; } = true;
         public bool IsSyncScrollEnabled { get; set; } = false;
         public bool IsReadingModeEnabled { get; set; } = false;
-        public List<string> Blacklist { get; set; } = new List<string>
+        public bool IsWhitelistMode { get; set; } = false; // New: Whitelist Mode
+        public string ToggleHotkey { get; set; } = "Ctrl+Alt+S"; // New: Custom Hotkey
+        public List<AppProfile> AppProfiles { get; set; } = new List<AppProfile>
         {
-            "flowwheel",
-            "csgo", 
-            "valorant",
-            "dota2",
-            "league of legends",
-            "overwatch",
-            "r5apex"
+            new AppProfile { ProcessName = "flowwheel" },
+            new AppProfile { ProcessName = "csgo" }, 
+            new AppProfile { ProcessName = "valorant" },
+            new AppProfile { ProcessName = "dota2" },
+            new AppProfile { ProcessName = "league of legends" },
+            new AppProfile { ProcessName = "overwatch" },
+            new AppProfile { ProcessName = "r5apex" }
         };
+        
+        // Legacy Support: Only used for migration if needed, but JSON serializer handles missing properties gracefully.
+        // We removed List<string> Blacklist. 
+        // Note: Existing config.json might have "Blacklist": ["..."] which will be ignored.
+        // We should probably migrate if possible, but for now let's assume fresh start or just overwrite.
     }
 
     public static class ConfigManager

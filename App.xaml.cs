@@ -154,11 +154,20 @@ namespace FlowWheel
 
         private void ShowSettings()
         {
-            if (_scrollEngine == null || _autoScrollManager == null) return;
+            if (_scrollEngine == null || _autoScrollManager == null || _windowManager == null) return;
 
             if (_settingsWindow == null)
             {
-                _settingsWindow = new SettingsWindow(_scrollEngine, _autoScrollManager);
+                _settingsWindow = new SettingsWindow(_scrollEngine, _autoScrollManager, _windowManager);
+            }
+            else
+            {
+                // Re-create or re-show? Usually re-show is fine, but if it was closed, it might be disposed.
+                // SettingsWindow hides on close usually.
+                if (!_settingsWindow.IsLoaded)
+                {
+                    _settingsWindow = new SettingsWindow(_scrollEngine, _autoScrollManager, _windowManager);
+                }
             }
             _settingsWindow.Show();
             _settingsWindow.Activate();

@@ -10,6 +10,7 @@
  
  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
  [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg)](https://github.com/humanfirework/FlowWheel/actions)
+ [![Version](https://img.shields.io/badge/version-1.5.0-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
 
  [English](#english) | [中文](#中文)
 
@@ -21,17 +22,41 @@
 
 ## English
 
-**FlowWheel** is a powerful Windows utility that brings smooth, browser-style "Middle-Click Auto-Scroll" to the entire operating system. It now features advanced productivity tools like **Multi-Screen Sync** and **Reading Mode**.
+**FlowWheel** is a powerful Windows utility that brings smooth, browser-style "Middle-Click Auto-Scroll" to the entire operating system. It now features advanced productivity tools like **Inertia Scrolling**, **Multi-Screen Sync** and **Reading Mode**.
+
+### ✨ New in v1.5.0
+- **Inertia Scrolling**: Experience silky-smooth scrolling with physics! When you release the auto-scroll, the page glides to a stop instead of halting abruptly, just like on a smartphone.
+- **Global Hotkey Recorder**: Easily record any key combination to toggle auto-scroll on/off globally.
+- **Drag & Drop Filtering**: Simply drag `.exe` files into the Settings window to add them to the Blacklist/Whitelist.
+- **Auto-Update**: Automatically checks for updates on startup so you never miss new features.
 
 ### Key Features
 
 - **Universal Auto-Scroll**: Works in File Explorer, Word, IDEs, Discord, and almost any Windows application.
-- **Grab & Throw (Physics Mode)**: Hold middle button to drag the page, release to throw it with inertia. Experience the smooth, touch-screen-like scrolling on PC!
+- **Inertia Physics**: Hold middle button to drag the page, release to throw it with inertia.
 - **Reading Mode (Teleprompter)**: **Double-click** the middle mouse button to activate hands-free automatic scrolling. Perfect for reading long docs or logs while eating!
 - **Multi-Screen Sync**: Scroll a document on your main screen, and reference documents on other screens (or side-by-side windows) will scroll in sync. Ideal for code reviews and translation.
 - **Dynamic Speed**: Non-linear speed control—the further you move from the anchor, the faster it scrolls.
 - **Smart Opacity**: The overlay anchor automatically fades out when your mouse is close to it or when moving fast, preventing text occlusion.
 - **Modern UI**: Beautiful overlay with direction indicators and custom themes.
+
+### Installation
+
+#### Method 1: Scoop (Recommended)
+You can easily install and update FlowWheel using [Scoop](https://scoop.sh/):
+
+```powershell
+scoop bucket add extras
+scoop install flowwheel
+```
+
+To update:
+```powershell
+scoop update flowwheel
+```
+
+#### Method 2: Manual Download
+Download the latest `FlowWheel.exe` from the [Releases](https://github.com/humanfirework/FlowWheel/releases) page. No installation required, just run it!
 
 ### Settings & Configuration
 
@@ -45,19 +70,19 @@ Manage all your preferences in the new Settings dashboard:
     - **Click Toggle**: Classic behavior. Click to start, click to stop.
     - **Hold & Drag**: Physics mode. Hold to drag, release to throw.
 - **Sensitivity**: Fine-tune scroll speed and deadzone.
-- **Blacklist**: Exclude specific games or apps (e.g., CS:GO).
+- **App Filtering**: 
+    - **Blacklist**: Disable auto-scroll for specific games (e.g., CS:GO).
+    - **Whitelist**: Only enable auto-scroll for specific apps.
+    - **Drag & Drop**: Drag `.exe` files directly into the list to add them.
+- **Global Hotkey**: Click the box and press your desired keys to set a toggle shortcut.
 
 ### Usage Guide
 
-1.  **Auto-Scroll**: Click **Middle Mouse Button** once. Move mouse to scroll. Click again to stop.
+1.  **Auto-Scroll**: Click **Middle Mouse Button** once. Move mouse to scroll. Click again to stop (or release to throw if inertia is active).
 2.  **Reading Mode**: **Double-click** Middle Mouse Button.
    *   Use **Mouse Wheel** to adjust reading speed on the fly.
    *   Click any button to stop.
 3.  **Sync Scroll**: Enable it in Settings. Open two documents (on different screens or side-by-side). Start scrolling one, and the other follows!
-
-### Customization
-
-- **Custom Anchor**: Place a transparent PNG named `anchor.png` in the `Assets` folder to change the center icon.
 
 ---
 
@@ -65,7 +90,13 @@ Manage all your preferences in the new Settings dashboard:
 
 ## 中文
 
-**FlowWheel** 是一款强大的 Windows 全局自动滚动工具，它不仅将浏览器的"中键无极滚屏"体验带到了系统每个角落，还新增了**多屏同步**和**阅读模式**等生产力功能。
+**FlowWheel** 是一款强大的 Windows 全局自动滚动工具，它不仅将浏览器的"中键无极滚屏"体验带到了系统每个角落，还新增了**惯性滚动**、**多屏同步**和**阅读模式**等生产力功能。
+
+### ✨ v1.5.0 新功能
+- **惯性滚动 (Inertia Scrolling)**：丝般顺滑的物理手感！松开自动滚动时，页面会像手机屏幕一样带有阻尼感地滑行停止，而不是生硬地骤停。
+- **全局快捷键录制**：支持录制任意组合键，一键开启/暂停全局自动滚动。
+- **拖拽添加过滤**：直接将 `.exe` 文件拖入设置界面的黑/白名单列表即可添加，无需手动输入进程名。
+- **自动检查更新**：启动时自动检查新版本，确保你始终使用最新功能。
 
 ### 核心功能
 
@@ -77,6 +108,24 @@ Manage all your preferences in the new Settings dashboard:
 - **动态变速**：基于距离的非线性速度控制，精准把控浏览节奏。
 - **现代化 UI**：提供美观的视觉反馈和方向指示。
 
+### 安装方法
+
+#### 方法 1: Scoop (推荐)
+如果你是开发者或极客，推荐使用 [Scoop](https://scoop.sh/) 进行安装和管理：
+
+```powershell
+scoop bucket add extras
+scoop install flowwheel
+```
+
+更新软件：
+```powershell
+scoop update flowwheel
+```
+
+#### 方法 2: 手动下载
+前往 [Releases](https://github.com/humanfirework/FlowWheel/releases) 页面下载最新的 `FlowWheel.exe`。绿色单文件，解压即用！
+
 ### 设置界面
 
 您可以在全新的设置面板中管理所有功能：
@@ -86,22 +135,22 @@ Manage all your preferences in the new Settings dashboard:
 </div>
 
 - **触发模式**：
-    - **点击切换 (Toggle)**：经典模式。点击开启，再次点击关闭。
+    - **点击切换 (Toggle)**：经典模式。点击开启，再次点击关闭（支持惯性停止）。
     - **按住拖拽 (Hold & Drag)**：物理模式。按住拖拽，松开惯性滑动。
 - **灵敏度调节**：自定义滚动速度倍率和防误触死区。
-- **黑名单管理**：自动屏蔽特定游戏或应用（如 FPS 游戏）。
+- **应用过滤**：
+    - **黑名单**：在特定游戏（如 CS:GO）中禁用自动滚动。
+    - **白名单**：仅在特定应用中启用。
+    - **拖拽支持**：支持直接拖拽 `.exe` 文件进列表。
+- **全局快捷键**：点击输入框并按下键盘，即可快速录制开关快捷键。
 
 ### 使用指南
 
-1.  **自动滚屏**：单击 **鼠标中键** 激活。移动鼠标控制方向。再次点击停止。
+1.  **自动滚屏**：单击 **鼠标中键** 激活。移动鼠标控制方向。再次点击停止（或利用惯性滑行停止）。
 2.  **阅读模式**：**双击** 鼠标中键。
    *   滚动 **鼠标滚轮** 可实时调整自动播放速度。
    *   点击任意键停止。
 3.  **同步滚动**：在设置中开启。打开两个文档（分屏或并排），滚动其中一个，另一个紧随其后！
-
-### 个性化
-
-- **自定义图标**：只需将背景透明的图片命名为 `anchor.png` 放入 `Assets` 文件夹，即可替换默认锚点。
 
 ---
 
