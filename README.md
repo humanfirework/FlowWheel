@@ -24,7 +24,7 @@
 
 **FlowWheel** is a powerful Windows utility that brings smooth, browser-style "Middle-Click Auto-Scroll" to the entire operating system. It now features advanced productivity tools like **Inertia Scrolling**, **Multi-Screen Sync** and **Reading Mode**.
 
-### ✨ New in v1.5.0
+###  New in v1.5.0
 - **Inertia Scrolling**: Experience silky-smooth scrolling with physics! When you release the auto-scroll, the page glides to a stop instead of halting abruptly, just like on a smartphone.
 - **Global Hotkey Recorder**: Easily record any key combination to toggle auto-scroll on/off globally.
 - **Drag & Drop Filtering**: Simply drag `.exe` files into the Settings window to add them to the Blacklist/Whitelist.
@@ -46,7 +46,7 @@
 You can easily install and update FlowWheel using [Scoop](https://scoop.sh/):
 
 ```powershell
-scoop bucket add extras
+scoop bucket add humanfirework https://github.com/humanfirework/scoop-bucket
 scoop install flowwheel
 ```
 
@@ -92,7 +92,7 @@ Manage all your preferences in the new Settings dashboard:
 
 **FlowWheel** 是一款强大的 Windows 全局自动滚动工具，它不仅将浏览器的"中键无极滚屏"体验带到了系统每个角落，还新增了**惯性滚动**、**多屏同步**和**阅读模式**等生产力功能。
 
-### ✨ v1.5.0 新功能
+###  v1.5.0 新功能
 - **惯性滚动 (Inertia Scrolling)**：丝般顺滑的物理手感！松开自动滚动时，页面会像手机屏幕一样带有阻尼感地滑行停止，而不是生硬地骤停。
 - **全局快捷键录制**：支持录制任意组合键，一键开启/暂停全局自动滚动。
 - **拖拽添加过滤**：直接将 `.exe` 文件拖入设置界面的黑/白名单列表即可添加，无需手动输入进程名。
@@ -114,7 +114,7 @@ Manage all your preferences in the new Settings dashboard:
 如果你是开发者或极客，推荐使用 [Scoop](https://scoop.sh/) 进行安装和管理：
 
 ```powershell
-scoop bucket add extras
+scoop bucket add humanfirework https://github.com/humanfirework/scoop-bucket
 scoop install flowwheel
 ```
 
