@@ -4,7 +4,7 @@
     "homepage": "https://github.com/humanfirework/FlowWheel",
     "license": "MIT",
     "url": "https://github.com/humanfirework/FlowWheel/releases/download/v1.5.0/FlowWheel.zip",
-    "hash": "checkver",
+    "hash": "3175DE686006A428ABC00B764DEECDF32E6E3009BE6F2C4383944FD0C6856965",
     "bin": "FlowWheel.exe",
     "shortcuts": [
         [
