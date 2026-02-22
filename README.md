@@ -24,7 +24,7 @@
 
 **FlowWheel** is a powerful Windows utility that brings smooth, browser-style "Middle-Click Auto-Scroll" to the entire operating system. It now features advanced productivity tools like **Inertia Scrolling**, **Multi-Screen Sync** and **Reading Mode**.
 
-###  New in v1.5.0
+### New in v1.5.0
 - **Inertia Scrolling**: Experience silky-smooth scrolling with physics! When you release the auto-scroll, the page glides to a stop instead of halting abruptly, just like on a smartphone.
 - **Global Hotkey Recorder**: Easily record any key combination to toggle auto-scroll on/off globally.
 - **Drag & Drop Filtering**: Simply drag `.exe` files into the Settings window to add them to the Blacklist/Whitelist.
