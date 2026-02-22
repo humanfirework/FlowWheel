@@ -43,11 +43,10 @@
 ### Installation
 
 #### Method 1: Scoop (Recommended)
-You can easily install and update FlowWheel using [Scoop](https://scoop.sh/):
+You can easily install FlowWheel directly from this repository:
 
 ```powershell
-scoop bucket add humanfirework https://github.com/humanfirework/scoop-bucket
-scoop install flowwheel
+scoop install https://github.com/humanfirework/FlowWheel/raw/main/flowwheel.json
 ```
 
 To update:
@@ -111,11 +110,10 @@ Manage all your preferences in the new Settings dashboard:
 ### 安装方法
 
 #### 方法 1: Scoop (推荐)
-如果你是开发者或极客，推荐使用 [Scoop](https://scoop.sh/) 进行安装和管理：
+如果你是开发者或极客，推荐使用 [Scoop](https://scoop.sh/) 直接安装：
 
 ```powershell
-scoop bucket add humanfirework https://github.com/humanfirework/scoop-bucket
-scoop install flowwheel
+scoop install https://github.com/humanfirework/FlowWheel/raw/main/flowwheel.json
 ```
 
 更新软件：
