@@ -24,7 +24,7 @@
 
 **FlowWheel** is a powerful Windows utility that brings smooth, browser-style "Middle-Click Auto-Scroll" to the entire operating system. It now features advanced productivity tools like **Inertia Scrolling**, **Multi-Screen Sync** and **Reading Mode**.
 
-### New in v1.5.1
+### New in v1.5.2
 - **Smoother Scrolling Feel**: Reduced jitter and improved responsiveness with a more stable scroll loop and smoother speed ramping.
 - **Better Update Experience**: More robust GitHub release checking with clearer error handling and improved download behavior.
 - **Higher Default Speed**: Default sensitivity is slightly increased for a faster out-of-box experience.
@@ -116,7 +116,7 @@ Manage all your preferences in the new Settings dashboard:
 
 **FlowWheel** 是一款强大的 Windows 全局自动滚动工具，它不仅将浏览器的"中键无极滚屏"体验带到了系统每个角落，还新增了**惯性滚动**、**多屏同步**和**阅读模式**等生产力功能。
 
-###  v1.5.1 新功能
+###  v1.5.2 新功能
 - **更丝滑的滚动手感**：滚动节拍更稳定、响应更及时，并改善了速度的平滑过渡。
 - **更好的更新体验**：GitHub Release 检查更健壮，错误提示更清晰，下载行为更符合预期。
 - **更高的默认速度**：默认灵敏度略微上调。
