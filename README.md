@@ -81,6 +81,7 @@ scoop update flowwheel
 
 #### Method 2: Manual Download
 **(In the settings interface, "one-click check/automatic check" update and jump download are already supported. Be careful not to use a ladder, which may show API problems)**
+
 Download the latest `FlowWheel.exe` from the [Releases](https://github.com/humanfirework/FlowWheel/releases) page. No installation required, just run it!
 
 ### Settings & Configuration
@@ -174,6 +175,7 @@ scoop update flowwheel
 
 #### 方法 2: 手动下载
 **(在设置界面，已经支持 "一键检查/自动检查" 更新并跳转下载，注意不要使用梯子，有可能会显示API问题)**
+
 前往 [Releases](https://github.com/humanfirework/FlowWheel/releases) 页面下载最新的 `FlowWheel.exe`。绿色单文件，解压即用！
 
 ### 设置界面
