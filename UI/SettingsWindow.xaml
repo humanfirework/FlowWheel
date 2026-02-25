@@ -104,7 +104,7 @@
                         </Path>
                         <TextBlock Text="FlowWheel" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Brush.Text.Primary}"/>
                     </StackPanel>
-                    <TextBlock x:Name="VersionLabel" Text="v1.5.4" FontSize="11" 
+                    <TextBlock x:Name="VersionLabel" Text="v1.5.5" FontSize="11" 
                                Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 </StackPanel>
                 
@@ -488,7 +488,7 @@
                                       Width="48" Height="48" Stretch="Uniform" Margin="0,0,0,12"/>
                                 <TextBlock Text="FlowWheel" FontSize="22" FontWeight="Bold" 
                                            Foreground="{DynamicResource Brush.Text.Primary}" HorizontalAlignment="Center"/>
-                                <TextBlock x:Name="VersionText" Text="Version 1.5.4" FontSize="13" 
+                                <TextBlock x:Name="VersionText" Text="Version 1.5.5" FontSize="13" 
                                            Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                 <TextBlock Text="{DynamicResource AppDescription}" FontSize="12" 
                                            Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" 
