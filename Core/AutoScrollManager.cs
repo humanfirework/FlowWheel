@@ -17,7 +17,7 @@ namespace FlowWheel.Core
         private readonly WindowManager _windowManager;
         private OverlayWindow? _overlay;
         private long _lastUiUpdateTick = 0;
-        private const long UiUpdateInterval = 16 * 10000; // ~16ms in ticks (1 tick = 100ns)
+        private const long UiUpdateInterval = 50 * 10000; // ~50ms in ticks (1 tick = 100ns) - reduced from 16ms for lower CPU
         private long _lastMiddleClickTime = 0;
 
         private bool _isActive = false;

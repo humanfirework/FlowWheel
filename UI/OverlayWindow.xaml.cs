@@ -7,6 +7,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using FlowWheel.Core;
 
 // Alias to resolve naming conflicts
@@ -20,17 +21,26 @@ namespace FlowWheel.UI
         private double _currentRotation = 0;
         private double _rotationSpeed = 0;
         private bool _isSpinning = false;
-        private System.Diagnostics.Stopwatch? _spinTimer;
-        private bool _isRenderingSubscribed = false;
         private int _currentIconSize = 48;
+        
+        // Use DispatcherTimer instead of CompositionTarget.Rendering for better CPU efficiency
+        private readonly DispatcherTimer _animationTimer;
+        private DateTime _lastAnimationTime;
 
         public OverlayWindow()
         {
             InitializeComponent();
-            _spinTimer = new System.Diagnostics.Stopwatch();
+            
+            // Use 30fps animation timer instead of per-frame rendering (saves significant CPU)
+            _animationTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(33) // ~30fps
+            };
+            _animationTimer.Tick += OnAnimationTick;
+            _lastAnimationTime = DateTime.Now;
+            
             // Apply initial size
             ApplyIconSize(ConfigManager.Current.IconSize);
-            // Don't subscribe to Rendering event here - only subscribe when needed
         }
 
         /// <summary>
@@ -190,14 +200,19 @@ namespace FlowWheel.UI
             NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, exStyle | NativeMethods.WS_EX_TRANSPARENT | NativeMethods.WS_EX_TOOLWINDOW);
         }
 
-        private void OnRendering(object? sender, EventArgs e)
+        private void OnAnimationTick(object? sender, EventArgs e)
         {
-            if (!_isSpinning || SpinningWheel == null || _spinTimer == null) return;
+            if (!_isSpinning || SpinningWheel == null) 
+            {
+                _animationTimer.Stop();
+                return;
+            }
             
-            var dt = _spinTimer.Elapsed.TotalSeconds;
-            if (dt <= 0) return;
+            var now = DateTime.Now;
+            var dt = (now - _lastAnimationTime).TotalSeconds;
+            _lastAnimationTime = now;
             
-            _spinTimer.Restart();
+            if (dt <= 0 || dt > 0.1) return; // Skip if too much time passed
             
             _currentRotation += _rotationSpeed * dt;
             if (SpinningWheel.RenderTransform is RotateTransform rt)
@@ -236,15 +251,9 @@ namespace FlowWheel.UI
             {
                 _rotationSpeed = 30; // Slow idle rotation
                 _isSpinning = true;
+                _lastAnimationTime = DateTime.Now;
+                _animationTimer.Start();
             }
-            
-            // Subscribe to rendering only when visible
-            if (!_isRenderingSubscribed)
-            {
-                CompositionTarget.Rendering += OnRendering;
-                _isRenderingSubscribed = true;
-            }
-            _spinTimer?.Restart();
 
             this.Show();
         }
@@ -313,16 +322,9 @@ namespace FlowWheel.UI
         public void HideAnchor()
         {
             _isSpinning = false;
+            _animationTimer.Stop();
             Anchor.Visibility = Visibility.Collapsed;
             this.Hide();
-            
-            // Unsubscribe from rendering when hidden to save CPU
-            if (_isRenderingSubscribed)
-            {
-                CompositionTarget.Rendering -= OnRendering;
-                _isRenderingSubscribed = false;
-            }
-            _spinTimer?.Stop();
         }
     }
 }
