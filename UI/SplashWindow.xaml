@@ -28,7 +28,7 @@
                 <TextBlock x:Name="StatusText" Text="Initializing..." FontSize="12" Foreground="#999" HorizontalAlignment="Center" Margin="0,10,0,0"/>
             </StackPanel>
             
-            <TextBlock Text="v1.6.0" FontSize="10" Foreground="#CCC" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,15,10"/>
+            <TextBlock Text="v1.7.0" FontSize="10" Foreground="#CCC" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,15,10"/>
         </Grid>
     </Border>
 </Window>

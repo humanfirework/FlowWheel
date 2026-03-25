@@ -10,7 +10,7 @@
  
  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
  [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg)](https://github.com/humanfirework/FlowWheel/actions)
-[![Version](https://img.shields.io/badge/version-1.5.5-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
+[![Version](https://img.shields.io/badge/version-1.7.0-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
 
  [English](#english) | [中文](#中文)
 
@@ -120,12 +120,9 @@ Manage all your preferences in the new Settings dashboard:
 
 **FlowWheel** 是一款强大的 Windows 全局自动滚动工具，它不仅将浏览器的"中键无极滚屏"体验带到了系统每个角落，还新增了**惯性滚动**、**多屏同步**和**阅读模式**等生产力功能。
 
-###  v1.5.5 新功能
-- **流畅的主题切换**：新增昼夜主题切换过渡动画，切换更加丝滑自然。
-- **自定义快捷键**：支持自定义全局快捷键，一键切换自动滚动。
-- **自定义图标**：新增图标选项，视觉设计更加精美。
-- **界面美化**：优化设置界面，视觉反馈更佳，风格更加现代。
-- **问题修复**：修复了启动时主题资源中 `DropShadowEffect.Color` 类型绑定错误导致的崩溃问题。
+###  v1.7.0 新功能
+- **自定义加速度曲线**：用户现在可以通过拖拽控制点来创建和调整自定义加速度曲线。支持多种曲线类型，包括线性、指数、对数、S形以及完全自定义的曲线。
+- **修复自定义曲线拖拽**：解决了自定义曲线控制点无法通过拖拽调整曲线形状的问题。
 
 ### 核心功能
 

@@ -67,6 +67,45 @@
     <s:String x:Key="LabelScrollSpeed">Scroll Speed</s:String>
     <s:String x:Key="LabelDeadzone">Deadzone (Radius)</s:String>
     <s:String x:Key="DescDeadzone">Area where movement is ignored</s:String>
+    
+    <!-- Independent Sensitivity -->
+    <s:String x:Key="LabelIndependentSensitivity">Independent Sensitivity</s:String>
+    <s:String x:Key="DescIndependentSensitivity">Set vertical and horizontal scroll sensitivity separately</s:String>
+    <s:String x:Key="LabelVerticalSpeed">Vertical Speed</s:String>
+    <s:String x:Key="LabelHorizontalSpeed">Horizontal Speed</s:String>
+    
+    <!-- Reading Mode -->
+    <s:String x:Key="SectionReadingMode">Reading Mode</s:String>
+    <s:String x:Key="LabelReadingSpeed">Initial Speed</s:String>
+    <s:String x:Key="LabelReadingMaxSpeed">Max Speed</s:String>
+    
+    <!-- Acceleration Curve -->
+    <s:String x:Key="SectionAccelerationCurve">Acceleration Curve</s:String>
+    <s:String x:Key="LabelCurveType">Curve Type</s:String>
+    <s:String x:Key="CurveLinear">Linear</s:String>
+    <s:String x:Key="CurveExponential">Exponential</s:String>
+    <s:String x:Key="CurveLogarithmic">Logarithmic</s:String>
+    <s:String x:Key="CurveSigmoid">S-Curve</s:String>
+    <s:String x:Key="CurveCustom">Custom(Not Implemented)</s:String>
+    <s:String x:Key="LabelExponent">Exponent Value</s:String>
+    <s:String x:Key="LabelLogBase">Logarithm Base</s:String>
+    <s:String x:Key="LabelSigmoidMidpoint">Midpoint Position</s:String>
+    <s:String x:Key="LabelSigmoidSteepness">Curve Steepness</s:String>
+    <s:String x:Key="DescCustomCurve">Right-click to add control points, drag to adjust curve shape</s:String>
+    <s:String x:Key="BtnResetCurve">Reset Curve</s:String>
+    
+    <!-- Advanced Parameters -->
+    <s:String x:Key="SectionAdvancedParams">Advanced Parameters</s:String>
+    <s:String x:Key="LabelFriction">Friction Coefficient</s:String>
+    <s:String x:Key="DescFriction">Controls how quickly inertial scrolling slows down. Higher values = faster stop</s:String>
+    <s:String x:Key="LabelInertia">Inertia Multiplier</s:String>
+    <s:String x:Key="DescInertia">Initial inertia velocity multiplier after release</s:String>
+    <s:String x:Key="LabelResponseTime">Response Time</s:String>
+    <s:String x:Key="DescResponseTime">Smooth transition time for scroll speed changes</s:String>
+    <s:String x:Key="LabelAxisLock">Axis Lock Ratio</s:String>
+    <s:String x:Key="DescAxisLock">Lock the other axis when movement in one direction exceeds this ratio</s:String>
+    <s:String x:Key="LabelSoftStart">Soft Start Range</s:String>
+    <s:String x:Key="DescSoftStart">Smooth transition zone at deadzone edge to avoid sudden start</s:String>
 
     <!-- Filtering -->
     <s:String x:Key="RadioBlacklist">Blacklist (Block selected)</s:String>

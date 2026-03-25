@@ -22,11 +22,44 @@ namespace FlowWheel.Core
         HighPerformance // 高性能模式 - 120Hz
     }
 
+    public enum AccelerationCurveType
+    {
+        Linear,      // 线性
+        Exponential, // 指数
+        Logarithmic, // 对数
+        Sigmoid,     // S曲线
+        Custom       // 自定义
+    }
+
+    public class CustomCurvePoint
+    {
+        public double X { get; set; } // 输入 (0-1)
+        public double Y { get; set; } // 输出 (0-1)
+        
+        public CustomCurvePoint() { }
+        
+        public CustomCurvePoint(double x, double y)
+        {
+            X = Math.Clamp(x, 0, 1);
+            Y = Math.Clamp(y, 0, 1);
+        }
+    }
+
     public class AppConfig
     {
         public string Language { get; set; } = "en-US";
+        
+        // 独立的灵敏度设置
         public float Sensitivity { get; set; } = 0.8f;
+        public float SensitivityVertical { get; set; } = 1.0f;   // 垂直方向独立灵敏度
+        public float SensitivityHorizontal { get; set; } = 0.8f; // 水平方向独立灵敏度
+        public bool UseIndependentSensitivity { get; set; } = false; // 是否使用独立灵敏度
+        
         public int Deadzone { get; set; } = 20;
+        public int DeadzoneVertical { get; set; } = 20;   // 垂直方向死区
+        public int DeadzoneHorizontal { get; set; } = 20; // 水平方向死区
+        public bool UseIndependentDeadzone { get; set; } = false; // 是否使用独立死区
+        
         public string TriggerKey { get; set; } = "MiddleMouse";
         public string TriggerMode { get; set; } = "Toggle"; // "Toggle" or "Hold"
         public bool IsEnabled { get; set; } = true;
@@ -37,6 +70,33 @@ namespace FlowWheel.Core
         public bool IsDarkMode { get; set; } = false; // Dark Mode
         public bool StartupEnabled { get; set; } = false; // Auto-start on boot
         public PerformanceMode PerformanceMode { get; set; } = PerformanceMode.Balanced; // Performance mode
+        
+        // 阅读模式设置
+        public float ReadingModeSpeed { get; set; } = 30.0f; // 默认阅读模式速度 (像素/秒)
+        public float ReadingModeMaxSpeed { get; set; } = 500.0f; // 阅读模式最大速度
+        
+        // 加速度曲线设置
+        public AccelerationCurveType AccelerationCurve { get; set; } = AccelerationCurveType.Linear;
+        public double AccelerationExponent { get; set; } = 1.5; // 指数曲线的指数值
+        public double AccelerationLogBase { get; set; } = 2.0; // 对数曲线的底数
+        public double SigmoidMidpoint { get; set; } = 0.5; // S曲线中点
+        public double SigmoidSteepness { get; set; } = 8.0; // S曲线陡峭度
+        public List<CustomCurvePoint> CustomCurvePoints { get; set; } = new List<CustomCurvePoint>
+        {
+            new CustomCurvePoint(0.0, 0.0),
+            new CustomCurvePoint(0.25, 0.15),
+            new CustomCurvePoint(0.5, 0.4),
+            new CustomCurvePoint(0.75, 0.7),
+            new CustomCurvePoint(1.0, 1.0)
+        };
+        
+        // 高级参数
+        public double Friction { get; set; } = 5.0; // 摩擦系数 (惯性衰减)
+        public double InertiaMultiplier { get; set; } = 1.0; // 惯性大小乘数
+        public double ResponseTime { get; set; } = 0.04; // 响应时间
+        public double AxisLockRatio { get; set; } = 1.8; // 轴锁定比例
+        public int SoftStartRange { get; set; } = 12; // 软启动范围
+        public bool ShowAdvancedSettings { get; set; } = false; // 是否显示高级设置
         
         // Custom Icon Settings
         private string _customIconPath = "";
@@ -63,11 +123,6 @@ namespace FlowWheel.Core
             new AppProfile { ProcessName = "overwatch" },
             new AppProfile { ProcessName = "r5apex" }
         };
-        
-        // Legacy Support: Only used for migration if needed, but JSON serializer handles missing properties gracefully.
-        // We removed List<string> Blacklist. 
-        // Note: Existing config.json might have "Blacklist": ["..."] which will be ignored.
-        // We should probably migrate if possible, but for now let's assume fresh start or just overwrite.
     }
 
     public static class ConfigManager

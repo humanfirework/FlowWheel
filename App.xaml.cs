@@ -46,8 +46,7 @@ namespace FlowWheel
 
                 if (_scrollEngine != null)
                 {
-                    _scrollEngine.Sensitivity = ConfigManager.Current.Sensitivity;
-                    _scrollEngine.Deadzone = ConfigManager.Current.Deadzone;
+                    _scrollEngine.ApplyConfig(ConfigManager.Current);
                     _scrollEngine.IsSyncEnabled = ConfigManager.Current.IsSyncScrollEnabled;
                     
                     // Set TickRate based on performance mode

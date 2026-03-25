@@ -67,6 +67,45 @@
     <s:String x:Key="LabelScrollSpeed">滚动速度</s:String>
     <s:String x:Key="LabelDeadzone">死区半径 (防误触)</s:String>
     <s:String x:Key="DescDeadzone">在此范围内移动鼠标不会触发滚动</s:String>
+    
+    <!-- Independent Sensitivity -->
+    <s:String x:Key="LabelIndependentSensitivity">独立灵敏度</s:String>
+    <s:String x:Key="DescIndependentSensitivity">分别设置垂直和水平方向的滚动灵敏度</s:String>
+    <s:String x:Key="LabelVerticalSpeed">垂直速度</s:String>
+    <s:String x:Key="LabelHorizontalSpeed">水平速度</s:String>
+    
+    <!-- Reading Mode -->
+    <s:String x:Key="SectionReadingMode">阅读模式</s:String>
+    <s:String x:Key="LabelReadingSpeed">初始速度</s:String>
+    <s:String x:Key="LabelReadingMaxSpeed">最大速度</s:String>
+    
+    <!-- Acceleration Curve -->
+    <s:String x:Key="SectionAccelerationCurve">加速度曲线</s:String>
+    <s:String x:Key="LabelCurveType">曲线类型</s:String>
+    <s:String x:Key="CurveLinear">线性</s:String>
+    <s:String x:Key="CurveExponential">指数</s:String>
+    <s:String x:Key="CurveLogarithmic">对数</s:String>
+    <s:String x:Key="CurveSigmoid">S曲线</s:String>
+    <s:String x:Key="CurveCustom">自定义(未实现)</s:String>
+    <s:String x:Key="LabelExponent">指数值</s:String>
+    <s:String x:Key="LabelLogBase">对数底数</s:String>
+    <s:String x:Key="LabelSigmoidMidpoint">中点位置</s:String>
+    <s:String x:Key="LabelSigmoidSteepness">曲线陡峭度</s:String>
+    <s:String x:Key="DescCustomCurve">右键点击添加控制点，拖拽调整曲线形状</s:String>
+    <s:String x:Key="BtnResetCurve">重置曲线</s:String>
+    
+    <!-- Advanced Parameters -->
+    <s:String x:Key="SectionAdvancedParams">高级参数</s:String>
+    <s:String x:Key="LabelFriction">摩擦系数</s:String>
+    <s:String x:Key="DescFriction">控制惯性滚动的衰减速度，值越大停止越快</s:String>
+    <s:String x:Key="LabelInertia">惯性大小</s:String>
+    <s:String x:Key="DescInertia">释放后的初始惯性速度乘数</s:String>
+    <s:String x:Key="LabelResponseTime">响应时间</s:String>
+    <s:String x:Key="DescResponseTime">滚动速度变化的平滑过渡时间</s:String>
+    <s:String x:Key="LabelAxisLock">轴锁定比例</s:String>
+    <s:String x:Key="DescAxisLock">当某一方向移动距离超过另一方向此比例时，锁定另一方向</s:String>
+    <s:String x:Key="LabelSoftStart">软启动范围</s:String>
+    <s:String x:Key="DescSoftStart">在死区边缘的平滑过渡区域，避免突然启动</s:String>
 
     <!-- Filtering -->
     <s:String x:Key="RadioBlacklist">黑名单 (屏蔽以下)</s:String>

@@ -55,6 +55,47 @@ namespace FlowWheel.UI
             SpeedSlider.Value = ConfigManager.Current.Sensitivity;
             DeadzoneSlider.Value = ConfigManager.Current.Deadzone;
             
+            // 独立灵敏度设置
+            IndependentSensitivityToggle.IsOn = ConfigManager.Current.UseIndependentSensitivity;
+            VerticalSpeedSlider.Value = ConfigManager.Current.SensitivityVertical;
+            HorizontalSpeedSlider.Value = ConfigManager.Current.SensitivityHorizontal;
+            UpdateSensitivityPanelVisibility();
+            
+            // 阅读模式设置
+            ReadingSpeedSlider.Value = ConfigManager.Current.ReadingModeSpeed;
+            ReadingMaxSpeedSlider.Value = ConfigManager.Current.ReadingModeMaxSpeed;
+            
+            // 加速度曲线设置
+            foreach (ComboBoxItem item in AccelerationCurveCombo.Items)
+            {
+                if (item.Tag?.ToString() == ConfigManager.Current.AccelerationCurve.ToString())
+                {
+                    item.IsSelected = true;
+                    break;
+                }
+            }
+            ExponentSlider.Value = ConfigManager.Current.AccelerationExponent;
+            LogBaseSlider.Value = ConfigManager.Current.AccelerationLogBase;
+            SigmoidMidpointSlider.Value = ConfigManager.Current.SigmoidMidpoint;
+            SigmoidSteepnessSlider.Value = ConfigManager.Current.SigmoidSteepness;
+            
+            if (CurveEditorControl != null)
+            {
+                CurveEditorControl.CurvePoints = ConfigManager.Current.CustomCurvePoints;
+                CurveEditorControl.CurveType = ConfigManager.Current.AccelerationCurve;
+                CurveEditorControl.Config = ConfigManager.Current;
+            }
+            
+            // 高级参数设置
+            AdvancedSettingsToggle.IsOn = ConfigManager.Current.ShowAdvancedSettings;
+            FrictionSlider.Value = ConfigManager.Current.Friction;
+            InertiaSlider.Value = ConfigManager.Current.InertiaMultiplier;
+            ResponseTimeSlider.Value = ConfigManager.Current.ResponseTime * 1000;
+            AxisLockSlider.Value = ConfigManager.Current.AxisLockRatio;
+            SoftStartSlider.Value = ConfigManager.Current.SoftStartRange;
+            UpdateAdvancedParamsVisibility();
+            UpdateCurveParamsVisibility();
+            
             EnableToggle.IsOn = ConfigManager.Current.IsEnabled;
             StartupToggle.IsOn = ConfigManager.Current.StartupEnabled;
             SyncToggle.IsOn = ConfigManager.Current.IsSyncScrollEnabled;
@@ -65,7 +106,6 @@ namespace FlowWheel.UI
             else
                 RadioClickToggle.IsChecked = true;
 
-            // Initialize Trigger Key Input
             TriggerKeyInput.Text = ConfigManager.Current.TriggerKey;
 
             if (ConfigManager.Current.IsWhitelistMode)
@@ -79,7 +119,6 @@ namespace FlowWheel.UI
                 FilterModeHelpText.Text = "Processes in this list will be ignored (auto-scroll disabled).";
             }
             
-            // Initialize App Status Toggle
             AppStatusToggle.IsOn = ConfigManager.Current.IsEnabled;
 
             foreach (ComboBoxItem item in LanguageCombo.Items)
@@ -91,7 +130,6 @@ namespace FlowWheel.UI
                 }
             }
 
-            // Initialize Performance Mode
             foreach (ComboBoxItem item in PerformanceModeCombo.Items)
             {
                 if (item.Tag?.ToString() == ConfigManager.Current.PerformanceMode.ToString())
@@ -101,7 +139,6 @@ namespace FlowWheel.UI
                 }
             }
 
-            // Initialize Custom Icon
             CustomIconPathInput.Text = ConfigManager.Current.CustomIconPath;
             IconSizeSlider.Value = ConfigManager.Current.IconSize;
 
@@ -1132,6 +1169,197 @@ namespace FlowWheel.UI
                 ConfigManager.Current.Sensitivity = _engine.Sensitivity;
                 ConfigManager.Save();
             }
+        }
+        
+        private void IndependentSensitivityToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            bool useIndependent = IndependentSensitivityToggle.IsOn;
+            ConfigManager.Current.UseIndependentSensitivity = useIndependent;
+            if (_engine != null) _engine.UseIndependentSensitivity = useIndependent;
+            UpdateSensitivityPanelVisibility();
+            ConfigManager.Save();
+        }
+        
+        private void UpdateSensitivityPanelVisibility()
+        {
+            bool useIndependent = IndependentSensitivityToggle.IsOn;
+            UnifiedSensitivityPanel.Visibility = useIndependent ? Visibility.Collapsed : Visibility.Visible;
+            SpeedSlider.Visibility = useIndependent ? Visibility.Collapsed : Visibility.Visible;
+            IndependentSensitivityPanel.Visibility = useIndependent ? Visibility.Visible : Visibility.Collapsed;
+        }
+        
+        private void AdvancedSettingsToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            bool showAdvanced = AdvancedSettingsToggle.IsOn;
+            ConfigManager.Current.ShowAdvancedSettings = showAdvanced;
+            UpdateAdvancedParamsVisibility();
+            ConfigManager.Save();
+        }
+        
+        private void UpdateAdvancedParamsVisibility()
+        {
+            bool showAdvanced = AdvancedSettingsToggle.IsOn;
+            AdvancedParamsPanel.Visibility = showAdvanced ? Visibility.Visible : Visibility.Collapsed;
+        }
+        
+        private void VerticalSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)e.NewValue;
+            ConfigManager.Current.SensitivityVertical = value;
+            if (_engine != null) _engine.SensitivityVertical = value;
+            if (VerticalSpeedValueText != null) VerticalSpeedValueText.Text = $"{value:F1}x";
+            ConfigManager.Save();
+        }
+        
+        private void HorizontalSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)e.NewValue;
+            ConfigManager.Current.SensitivityHorizontal = value;
+            if (_engine != null) _engine.SensitivityHorizontal = value;
+            if (HorizontalSpeedValueText != null) HorizontalSpeedValueText.Text = $"{value:F1}x";
+            ConfigManager.Save();
+        }
+        
+        private void ReadingSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)e.NewValue;
+            ConfigManager.Current.ReadingModeSpeed = value;
+            if (_engine != null) _engine.ReadingModeSpeed = value;
+            if (ReadingSpeedValueText != null) ReadingSpeedValueText.Text = $"{(int)value} px/s";
+            ConfigManager.Save();
+        }
+        
+        private void ReadingMaxSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)e.NewValue;
+            ConfigManager.Current.ReadingModeMaxSpeed = value;
+            if (_engine != null) _engine.ReadingModeMaxSpeed = value;
+            if (ReadingMaxSpeedValueText != null) ReadingMaxSpeedValueText.Text = $"{(int)value} px/s";
+            ConfigManager.Save();
+        }
+        
+        private void AccelerationCurveCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AccelerationCurveCombo == null) return;
+            
+            if (AccelerationCurveCombo.SelectedItem is ComboBoxItem item && item.Tag is string curveStr)
+            {
+                if (Enum.TryParse<AccelerationCurveType>(curveStr, out var curveType))
+                {
+                    ConfigManager.Current.AccelerationCurve = curveType;
+                    if (_engine != null) _engine.CurveType = curveType;
+                    
+                    if (CurveEditorControl != null)
+                    {
+                        CurveEditorControl.CurveType = curveType;
+                        CurveEditorControl.CurvePoints = ConfigManager.Current.CustomCurvePoints;
+                        CurveEditorControl.Config = ConfigManager.Current;
+                    }
+                    
+                    UpdateCurveParamsVisibility();
+                    ConfigManager.Save();
+                }
+            }
+        }
+        
+        private void UpdateCurveParamsVisibility()
+        {
+            var curveType = ConfigManager.Current.AccelerationCurve;
+            ExponentialParamsPanel.Visibility = curveType == AccelerationCurveType.Exponential ? Visibility.Visible : Visibility.Collapsed;
+            LogarithmicParamsPanel.Visibility = curveType == AccelerationCurveType.Logarithmic ? Visibility.Visible : Visibility.Collapsed;
+            SigmoidParamsPanel.Visibility = curveType == AccelerationCurveType.Sigmoid ? Visibility.Visible : Visibility.Collapsed;
+            CustomCurvePanel.Visibility = curveType == AccelerationCurveType.Custom ? Visibility.Visible : Visibility.Collapsed;
+        }
+        
+        private void ExponentSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.AccelerationExponent = value;
+            if (ExponentValueText != null) ExponentValueText.Text = $"{value:F1}";
+            ConfigManager.Save();
+        }
+        
+        private void LogBaseSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.AccelerationLogBase = value;
+            if (LogBaseValueText != null) LogBaseValueText.Text = $"{value:F1}";
+            ConfigManager.Save();
+        }
+        
+        private void SigmoidMidpointSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.SigmoidMidpoint = value;
+            if (SigmoidMidpointValueText != null) SigmoidMidpointValueText.Text = $"{value:F2}";
+            ConfigManager.Save();
+        }
+        
+        private void SigmoidSteepnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.SigmoidSteepness = value;
+            if (SigmoidSteepnessValueText != null) SigmoidSteepnessValueText.Text = $"{value:F1}";
+            ConfigManager.Save();
+        }
+        
+        private void CurveEditorControl_CurveChanged(object sender, EventArgs e)
+        {
+            if (CurveEditorControl?.CurvePoints != null)
+            {
+                ConfigManager.Current.CustomCurvePoints = CurveEditorControl.CurvePoints;
+                ConfigManager.Save();
+            }
+        }
+        
+        private void ResetCurve_Click(object sender, RoutedEventArgs e)
+        {
+            CurveEditorControl?.ResetToDefault();
+        }
+        
+        private void FrictionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.Friction = value;
+            if (_engine != null) _engine.Friction = value;
+            if (FrictionValueText != null) FrictionValueText.Text = $"{value:F1}";
+            ConfigManager.Save();
+        }
+        
+        private void InertiaSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.InertiaMultiplier = value;
+            if (_engine != null) _engine.InertiaMultiplier = value;
+            if (InertiaValueText != null) InertiaValueText.Text = $"{value:F1}x";
+            ConfigManager.Save();
+        }
+        
+        private void ResponseTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue / 1000.0;
+            ConfigManager.Current.ResponseTime = value;
+            if (_engine != null) _engine.ResponseTime = value;
+            if (ResponseTimeValueText != null) ResponseTimeValueText.Text = $"{(int)e.NewValue}ms";
+            ConfigManager.Save();
+        }
+        
+        private void AxisLockSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = e.NewValue;
+            ConfigManager.Current.AxisLockRatio = value;
+            if (_engine != null) _engine.AxisLockRatio = value;
+            if (AxisLockValueText != null) AxisLockValueText.Text = $"{value:F1}";
+            ConfigManager.Save();
+        }
+        
+        private void SoftStartSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            int value = (int)e.NewValue;
+            ConfigManager.Current.SoftStartRange = value;
+            if (_engine != null) _engine.SoftStartRange = value;
+            if (SoftStartValueText != null) SoftStartValueText.Text = $"{value}px";
+            ConfigManager.Save();
         }
 
         private void DeadzoneSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

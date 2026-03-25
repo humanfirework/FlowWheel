@@ -19,45 +19,104 @@ namespace FlowWheel.Core
         private volatile bool _isRunning = false;
         private readonly object _lock = new object();
         private double _accumulatedDelta = 0;
+        private double _accumulatedHDelta = 0;
         private int _runId = 0;
         private double _filteredSpeedV = 0;
         private double _filteredSpeedH = 0;
+        
+        private double _currentSpeed = 0;
+        private double _currentHSpeed = 0;
+        private NativeMethods.POINT _origin;
+        private NativeMethods.POINT _current;
+        private NativeMethods.POINT _lastPos;
+        private long _lastPosTime;
+        
+        private double _inertiaSpeedV = 0;
+        private double _inertiaSpeedH = 0;
+        
+        private readonly SyncScrollManager _syncManager = new SyncScrollManager();
+        private double _readingSpeed = 0;
 
         public event EventHandler? Stopped;
 
         public ScrollState CurrentState { get; private set; } = ScrollState.Idle;
+        public bool IsSyncEnabled { get; set; } = false;
         
-        // Settings
-        public float Sensitivity { get; set; } = 0.8f; // Speed multiplier
-        public int Deadzone { get; set; } = 20; // Pixels
-        public int TickRate { get; set; } = 60; // Updates per second (reduced from 120 for lower CPU usage)
-        public int MinStep { get; set; } = 1; // Minimum delta to send (fix for Explorer/Win32)
-        public double Friction { get; set; } = 5.0; // Friction factor
+        // 基础设置
+        public float Sensitivity { get; set; } = 0.8f;
+        public float SensitivityVertical { get; set; } = 1.0f;
+        public float SensitivityHorizontal { get; set; } = 0.8f;
+        public bool UseIndependentSensitivity { get; set; } = false;
+        
+        public int Deadzone { get; set; } = 20;
+        public int DeadzoneVertical { get; set; } = 20;
+        public int DeadzoneHorizontal { get; set; } = 20;
+        public bool UseIndependentDeadzone { get; set; } = false;
+        
+        public int TickRate { get; set; } = 60;
+        public int MinStep { get; set; } = 1;
+        
+        // 高级参数
+        public double Friction { get; set; } = 5.0;
+        public double InertiaMultiplier { get; set; } = 1.0;
         public double ResponseTime { get; set; } = 0.04;
         public double AxisLockRatio { get; set; } = 1.8;
         public int SoftStartRange { get; set; } = 12;
-
-        // Current State
-        private double _currentSpeed = 0; // Delta per second
-        private double _currentHSpeed = 0; // Horizontal Speed
-        private double _accumulatedHDelta = 0; // Horizontal Accumulator
-        private NativeMethods.POINT _origin;
-        private NativeMethods.POINT _current;
-        private NativeMethods.POINT _lastPos; // For calculating throw velocity
-        private long _lastPosTime; // Timestamp for velocity calculation
-
-        // Inertia
-        private double _inertiaSpeedV = 0;
-        private double _inertiaSpeedH = 0;
-
-        private readonly SyncScrollManager _syncManager = new SyncScrollManager();
-        public bool IsSyncEnabled { get; set; } = false;
-
-        // Reading Mode
-        private double _readingSpeed = 0; // Pixels per second
+        
+        // 加速度曲线
+        public AccelerationCurveType CurveType { get; set; } = AccelerationCurveType.Linear;
+        private AppConfig? _config;
+        
+        // 阅读模式
+        public float ReadingModeSpeed { get; set; } = 30.0f;
+        public float ReadingModeMaxSpeed { get; set; } = 500.0f;
 
         public ScrollEngine()
         {
+        }
+        
+        public void ApplyConfig(AppConfig config)
+        {
+            _config = config;
+            Sensitivity = config.Sensitivity;
+            SensitivityVertical = config.SensitivityVertical;
+            SensitivityHorizontal = config.SensitivityHorizontal;
+            UseIndependentSensitivity = config.UseIndependentSensitivity;
+            
+            Deadzone = config.Deadzone;
+            DeadzoneVertical = config.DeadzoneVertical;
+            DeadzoneHorizontal = config.DeadzoneHorizontal;
+            UseIndependentDeadzone = config.UseIndependentDeadzone;
+            
+            Friction = config.Friction;
+            InertiaMultiplier = config.InertiaMultiplier;
+            ResponseTime = config.ResponseTime;
+            AxisLockRatio = config.AxisLockRatio;
+            SoftStartRange = config.SoftStartRange;
+            
+            CurveType = config.AccelerationCurve;
+            ReadingModeSpeed = config.ReadingModeSpeed;
+            ReadingModeMaxSpeed = config.ReadingModeMaxSpeed;
+        }
+        
+        private float GetVerticalSensitivity()
+        {
+            return UseIndependentSensitivity ? SensitivityVertical : Sensitivity;
+        }
+        
+        private float GetHorizontalSensitivity()
+        {
+            return UseIndependentSensitivity ? SensitivityHorizontal : Sensitivity;
+        }
+        
+        private int GetVerticalDeadzone()
+        {
+            return UseIndependentDeadzone ? DeadzoneVertical : Deadzone;
+        }
+        
+        private int GetHorizontalDeadzone()
+        {
+            return UseIndependentDeadzone ? DeadzoneHorizontal : Deadzone;
         }
 
         public void StartReadingMode(double initialSpeed)
@@ -67,7 +126,7 @@ namespace FlowWheel.Core
             {
                 CurrentState = ScrollState.ReadingMode;
                 _readingSpeed = initialSpeed;
-                _currentSpeed = -initialSpeed; // Negative is down (usually)
+                _currentSpeed = -initialSpeed;
                 _currentHSpeed = 0;
                 _accumulatedDelta = 0;
                 _accumulatedHDelta = 0;
@@ -87,8 +146,8 @@ namespace FlowWheel.Core
             {
                 if (CurrentState != ScrollState.ReadingMode) return;
                 _readingSpeed += delta;
-                if (_readingSpeed < 0) _readingSpeed = 0; // Don't reverse, just stop
-                if (_readingSpeed > 1000) _readingSpeed = 1000;
+                if (_readingSpeed < 0) _readingSpeed = 0;
+                if (_readingSpeed > ReadingModeMaxSpeed) _readingSpeed = ReadingModeMaxSpeed;
                 _currentSpeed = -_readingSpeed;
             }
         }
@@ -131,17 +190,18 @@ namespace FlowWheel.Core
             {
                 if (CurrentState != ScrollState.Dragging) return;
 
-                // Calculate release velocity
                 long now = Stopwatch.GetTimestamp();
                 double dt = (now - _lastPosTime) / (double)Stopwatch.Frequency;
                 
-                if (dt > 0.1) // If held still for too long, no inertia
+                if (dt > 0.1)
                 {
                     _currentSpeed = 0;
                     _currentHSpeed = 0;
                 }
 
-                // Trigger inertia if speed is significant
+                _currentSpeed *= InertiaMultiplier;
+                _currentHSpeed *= InertiaMultiplier;
+
                 if (Math.Abs(_currentSpeed) > 100 || Math.Abs(_currentHSpeed) > 100)
                 {
                     CurrentState = ScrollState.InertialScrolling;
@@ -187,7 +247,6 @@ namespace FlowWheel.Core
             CalculateSpeed();
         }
         
-        // Legacy support for click-toggle mode
         public void Start(NativeMethods.POINT origin)
         {
             StartDrag(origin);
@@ -197,43 +256,46 @@ namespace FlowWheel.Core
         {
             UpdateDragPosition(pt);
         }
-        // End legacy support
 
         private void CalculateSpeed()
         {
+            int vDeadzone = GetVerticalDeadzone();
+            int hDeadzone = GetHorizontalDeadzone();
+            float vSensitivity = GetVerticalSensitivity();
+            float hSensitivity = GetHorizontalSensitivity();
+            
             // Vertical
             int dy = _current.y - _origin.y;
             int distY = Math.Abs(dy);
 
-            // ... (Calculation logic remains similar but simplified for 1:1 feel if needed)
-            // For now, keep the deadzone/sensitivity logic as it maps distance to speed well for "Joystick" style
-            // For "Grab & Throw" style (iPhone style), we actually need distance to map to position delta, not speed.
-            // But FlowWheel's core identity is "Joystick" style (middle click auto scroll).
-            // So "Grab" here means "Grab the Joystick Handle", not "Grab the Page".
-            // The user requested "Grab & Throw", which implies inertia. 
-            // So we keep the Joystick logic (Distance = Speed), but add Inertia on Release.
-
-            if (distY < Deadzone)
+            if (distY < vDeadzone)
             {
                 _currentSpeed = 0;
             }
             else
             {
-                double effective = distY - Deadzone;
-                double rawSpeed = effective * Sensitivity;
+                double effective = distY - vDeadzone;
+                double maxDistance = 500.0;
+                double normalizedInput = Math.Min(effective / maxDistance, 1.0);
+                
+                double curveOutput = ApplyAccelerationCurve(normalizedInput);
+                
+                double rawSpeed = curveOutput * maxDistance * vSensitivity;
+                
                 if (SoftStartRange > 0 && effective < SoftStartRange)
                 {
                     double t = effective / SoftStartRange;
                     t = t * t * (3.0 - 2.0 * t);
                     rawSpeed *= t;
                 }
+                
                 if (rawSpeed > 5000) rawSpeed = 5000;
 
-                if (dy > 0) // Mouse Down -> Scroll Down (Negative)
+                if (dy > 0)
                 {
                     _currentSpeed = -rawSpeed;
                 }
-                else // Mouse Up -> Scroll Up (Positive)
+                else
                 {
                     _currentSpeed = rawSpeed;
                 }
@@ -243,33 +305,40 @@ namespace FlowWheel.Core
             int dx = _current.x - _origin.x;
             int distX = Math.Abs(dx);
 
-            if (distX < Deadzone)
+            if (distX < hDeadzone)
             {
                 _currentHSpeed = 0;
             }
             else
             {
-                double effective = distX - Deadzone;
-                double rawHSpeed = effective * Sensitivity;
+                double effective = distX - hDeadzone;
+                double maxDistance = 500.0;
+                double normalizedInput = Math.Min(effective / maxDistance, 1.0);
+                
+                double curveOutput = ApplyAccelerationCurve(normalizedInput);
+                
+                double rawHSpeed = curveOutput * maxDistance * hSensitivity;
+                
                 if (SoftStartRange > 0 && effective < SoftStartRange)
                 {
                     double t = effective / SoftStartRange;
                     t = t * t * (3.0 - 2.0 * t);
                     rawHSpeed *= t;
                 }
+                
                 if (rawHSpeed > 5000) rawHSpeed = 5000;
 
-                if (dx > 0) // Mouse Right -> Scroll Right
+                if (dx > 0)
                 {
                     _currentHSpeed = rawHSpeed; 
                 }
-                else // Mouse Left -> Scroll Left
+                else
                 {
                     _currentHSpeed = -rawHSpeed;
                 }
             }
 
-            if (AxisLockRatio > 1.0 && distX >= Deadzone && distY >= Deadzone)
+            if (AxisLockRatio > 1.0 && distX >= hDeadzone && distY >= vDeadzone)
             {
                 if (distY > distX * AxisLockRatio)
                 {
@@ -280,6 +349,16 @@ namespace FlowWheel.Core
                     _currentSpeed = 0;
                 }
             }
+        }
+        
+        private double ApplyAccelerationCurve(double normalizedInput)
+        {
+            if (_config == null)
+            {
+                return normalizedInput;
+            }
+            
+            return AccelerationCurve.ApplyCurve(normalizedInput, CurveType, _config);
         }
 
         private async Task Loop(int runId)
@@ -300,10 +379,8 @@ namespace FlowWheel.Core
                 double targetSpeedV = _currentSpeed;
                 double targetSpeedH = _currentHSpeed;
 
-                // Handle Inertia
                 if (CurrentState == ScrollState.InertialScrolling)
                 {
-                    // Apply friction
                     double frictionFactor = Math.Exp(-Friction * dt);
                     _inertiaSpeedV *= frictionFactor;
                     _inertiaSpeedH *= frictionFactor;
@@ -313,7 +390,6 @@ namespace FlowWheel.Core
                     _filteredSpeedV = targetSpeedV;
                     _filteredSpeedH = targetSpeedH;
 
-                    // Stop if too slow
                     if (Math.Abs(_inertiaSpeedV) < 10 && Math.Abs(_inertiaSpeedH) < 10)
                     {
                         lock (_lock)
@@ -341,12 +417,9 @@ namespace FlowWheel.Core
 
                 if (Math.Abs(targetSpeedV) > 0.1)
                 {
-                    // Add delta for this frame
                     _accumulatedDelta += targetSpeedV * dt;
 
                     int steps = 0;
-                    // Compatibility Fix: Some apps (Explorer) ignore small deltas (e.g. < 10 or 30).
-                    // We accumulate until we reach MinStep.
                     if (Math.Abs(_accumulatedDelta) >= MinStep)
                     {
                         steps = (int)_accumulatedDelta;
@@ -363,7 +436,6 @@ namespace FlowWheel.Core
                     _accumulatedDelta = 0;
                 }
 
-                // Horizontal Processing
                 if (Math.Abs(targetSpeedH) > 0.1)
                 {
                     _accumulatedHDelta += targetSpeedH * dt;
@@ -406,7 +478,7 @@ namespace FlowWheel.Core
             {
                 dx = 0,
                 dy = 0,
-                mouseData = (uint)delta, // Cast acts as signed short representation
+                mouseData = (uint)delta,
                 dwFlags = isHorizontal ? (uint)NativeMethods.MOUSEEVENTF_HWHEEL : (uint)NativeMethods.MOUSEEVENTF_WHEEL,
                 time = 0,
                 dwExtraInfo = MouseHook.INJECTED_SIGNATURE

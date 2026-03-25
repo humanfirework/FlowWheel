@@ -104,7 +104,7 @@
                         </Path>
                         <TextBlock Text="FlowWheel" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Brush.Text.Primary}"/>
                     </StackPanel>
-                    <TextBlock x:Name="VersionLabel" Text="v1.6.0" FontSize="11" 
+                    <TextBlock x:Name="VersionLabel" Text="v1.7.0" FontSize="11" 
                                Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 </StackPanel>
                 
@@ -280,6 +280,18 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelIndependentSensitivity}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescIndependentSensitivity}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <controls:ToggleSwitch x:Name="IndependentSensitivityToggle" Grid.Column="1" Width="44" Height="24" IsOnChanged="IndependentSensitivityToggle_IsOnChanged"/>
+                                </Grid>
+                                
+                                <Grid Style="{StaticResource SettingRow}" x:Name="UnifiedSensitivityPanel">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
                                     <TextBlock Text="{DynamicResource LabelScrollSpeed}" Style="{StaticResource SettingLabel}"/>
                                     <TextBlock x:Name="SpeedValueText" Text="0.8x" Grid.Column="1" 
                                                Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
@@ -287,6 +299,34 @@
                                 <Slider x:Name="SpeedSlider" Minimum="0.1" Maximum="3.0" Value="0.8" 
                                         TickFrequency="0.1" IsSnapToTickEnabled="True" 
                                         ValueChanged="SpeedSlider_ValueChanged"/>
+                                
+                                <StackPanel x:Name="IndependentSensitivityPanel" Visibility="Collapsed">
+                                    <Grid Style="{StaticResource SettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource LabelVerticalSpeed}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock x:Name="VerticalSpeedValueText" Text="1.0x" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="VerticalSpeedSlider" Minimum="0.1" Maximum="5.0" Value="1.0" 
+                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                            ValueChanged="VerticalSpeedSlider_ValueChanged"/>
+                                    
+                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource LabelHorizontalSpeed}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock x:Name="HorizontalSpeedValueText" Text="0.8x" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="HorizontalSpeedSlider" Minimum="0.1" Maximum="5.0" Value="0.8" 
+                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                            ValueChanged="HorizontalSpeedSlider_ValueChanged"/>
+                                </StackPanel>
                                 
                                 <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
                                     <Grid.ColumnDefinitions>
@@ -300,6 +340,221 @@
                                 <Slider x:Name="DeadzoneSlider" Minimum="5" Maximum="50" Value="20" 
                                         ValueChanged="DeadzoneSlider_ValueChanged"/>
                                 <TextBlock Text="{DynamicResource DescDeadzone}" Style="{StaticResource SettingDescription}"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource SectionReadingMode}" Style="{StaticResource SectionTitle}"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LabelReadingSpeed}" Style="{StaticResource SettingLabel}"/>
+                                    <TextBlock x:Name="ReadingSpeedValueText" Text="30 px/s" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="ReadingSpeedSlider" Minimum="10" Maximum="200" Value="30" 
+                                        TickFrequency="5" IsSnapToTickEnabled="True" 
+                                        ValueChanged="ReadingSpeedSlider_ValueChanged"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LabelReadingMaxSpeed}" Style="{StaticResource SettingLabel}"/>
+                                    <TextBlock x:Name="ReadingMaxSpeedValueText" Text="500 px/s" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="ReadingMaxSpeedSlider" Minimum="100" Maximum="1000" Value="500" 
+                                        TickFrequency="50" IsSnapToTickEnabled="True" 
+                                        ValueChanged="ReadingMaxSpeedSlider_ValueChanged"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource SectionAccelerationCurve}" Style="{StaticResource SectionTitle}"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LabelCurveType}" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox x:Name="AccelerationCurveCombo" Grid.Column="1" Style="{StaticResource ModernComboBox}"
+                                              Width="200" SelectionChanged="AccelerationCurveCombo_SelectionChanged">
+                                        <ComboBoxItem Content="{DynamicResource CurveLinear}" Tag="Linear"/>
+                                        <ComboBoxItem Content="{DynamicResource CurveExponential}" Tag="Exponential"/>
+                                        <ComboBoxItem Content="{DynamicResource CurveLogarithmic}" Tag="Logarithmic"/>
+                                        <ComboBoxItem Content="{DynamicResource CurveSigmoid}" Tag="Sigmoid"/>
+                                        <ComboBoxItem Content="{DynamicResource CurveCustom}" Tag="Custom"/>
+                                    </ComboBox>
+                                </Grid>
+                                
+                                <StackPanel x:Name="ExponentialParamsPanel" Visibility="Collapsed" Margin="0,8,0,0">
+                                    <Grid Style="{StaticResource SettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource LabelExponent}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock x:Name="ExponentValueText" Text="1.5" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="ExponentSlider" Minimum="0.5" Maximum="4.0" Value="1.5" 
+                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                            ValueChanged="ExponentSlider_ValueChanged"/>
+                                </StackPanel>
+                                
+                                <StackPanel x:Name="LogarithmicParamsPanel" Visibility="Collapsed" Margin="0,8,0,0">
+                                    <Grid Style="{StaticResource SettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource LabelLogBase}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock x:Name="LogBaseValueText" Text="2.0" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="LogBaseSlider" Minimum="1.5" Maximum="10.0" Value="2.0" 
+                                            TickFrequency="0.5" IsSnapToTickEnabled="True" 
+                                            ValueChanged="LogBaseSlider_ValueChanged"/>
+                                </StackPanel>
+                                
+                                <StackPanel x:Name="SigmoidParamsPanel" Visibility="Collapsed" Margin="0,8,0,0">
+                                    <Grid Style="{StaticResource SettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource LabelSigmoidMidpoint}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock x:Name="SigmoidMidpointValueText" Text="0.5" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="SigmoidMidpointSlider" Minimum="0.1" Maximum="0.9" Value="0.5" 
+                                            TickFrequency="0.05" IsSnapToTickEnabled="True" 
+                                            ValueChanged="SigmoidMidpointSlider_ValueChanged"/>
+                                    
+                                    <Grid Style="{StaticResource SettingRow}" Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource LabelSigmoidSteepness}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock x:Name="SigmoidSteepnessValueText" Text="8.0" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="SigmoidSteepnessSlider" Minimum="2.0" Maximum="20.0" Value="8.0" 
+                                            TickFrequency="0.5" IsSnapToTickEnabled="True" 
+                                            ValueChanged="SigmoidSteepnessSlider_ValueChanged"/>
+                                </StackPanel>
+                                
+                                <StackPanel x:Name="CustomCurvePanel" Visibility="Collapsed" Margin="0,8,0,0">
+                                    <TextBlock Text="{DynamicResource DescCustomCurve}" Style="{StaticResource SettingDescription}" Margin="0,0,0,8"/>
+                                    <controls:CurveEditor x:Name="CurveEditorControl" Width="280" Height="180" 
+                                                          CurveChanged="CurveEditorControl_CurveChanged"/>
+                                    <Button Content="{DynamicResource BtnResetCurve}" Style="{StaticResource ModernButton}" 
+                                            Margin="0,8,0,0" Click="ResetCurve_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <Grid Style="{StaticResource SettingRow}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource SectionAdvancedParams}" Style="{StaticResource SectionTitle}"/>
+                                    <controls:ToggleSwitch x:Name="AdvancedSettingsToggle" Grid.Column="1" Width="44" Height="24" IsOnChanged="AdvancedSettingsToggle_IsOnChanged"/>
+                                </Grid>
+                                
+                                <StackPanel x:Name="AdvancedParamsPanel" Visibility="Collapsed">
+                                    <Grid Style="{StaticResource SettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{DynamicResource LabelFriction}" Style="{StaticResource SettingLabel}"/>
+                                            <TextBlock Text="{DynamicResource DescFriction}" Style="{StaticResource SettingDescription}"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="FrictionValueText" Text="5.0" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="FrictionSlider" Minimum="1.0" Maximum="20.0" Value="5.0" 
+                                            TickFrequency="0.5" IsSnapToTickEnabled="True" 
+                                            ValueChanged="FrictionSlider_ValueChanged"/>
+                                    
+                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{DynamicResource LabelInertia}" Style="{StaticResource SettingLabel}"/>
+                                            <TextBlock Text="{DynamicResource DescInertia}" Style="{StaticResource SettingDescription}"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="InertiaValueText" Text="1.0x" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="InertiaSlider" Minimum="0.5" Maximum="3.0" Value="1.0" 
+                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                            ValueChanged="InertiaSlider_ValueChanged"/>
+                                    
+                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{DynamicResource LabelResponseTime}" Style="{StaticResource SettingLabel}"/>
+                                            <TextBlock Text="{DynamicResource DescResponseTime}" Style="{StaticResource SettingDescription}"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="ResponseTimeValueText" Text="40ms" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="ResponseTimeSlider" Minimum="10" Maximum="200" Value="40" 
+                                            TickFrequency="5" IsSnapToTickEnabled="True" 
+                                            ValueChanged="ResponseTimeSlider_ValueChanged"/>
+                                    
+                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{DynamicResource LabelAxisLock}" Style="{StaticResource SettingLabel}"/>
+                                            <TextBlock Text="{DynamicResource DescAxisLock}" Style="{StaticResource SettingDescription}"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="AxisLockValueText" Text="1.8" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="AxisLockSlider" Minimum="1.0" Maximum="5.0" Value="1.8" 
+                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                            ValueChanged="AxisLockSlider_ValueChanged"/>
+                                    
+                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{DynamicResource LabelSoftStart}" Style="{StaticResource SettingLabel}"/>
+                                            <TextBlock Text="{DynamicResource DescSoftStart}" Style="{StaticResource SettingDescription}"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="SoftStartValueText" Text="12px" Grid.Column="1" 
+                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                    </Grid>
+                                    <Slider x:Name="SoftStartSlider" Minimum="0" Maximum="50" Value="12" 
+                                            TickFrequency="1" IsSnapToTickEnabled="True" 
+                                            ValueChanged="SoftStartSlider_ValueChanged"/>
+                                </StackPanel>
                             </StackPanel>
                         </Border>
                         
