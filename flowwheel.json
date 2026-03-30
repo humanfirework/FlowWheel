@@ -1,19 +1,19 @@
 {
-    "version": "1.7.0",
-    "description": "Smooth, browser-style 'Middle-Click Auto-Scroll' for Windows with Inertia and Sync.",
-    "homepage": "https://github.com/humanfirework/FlowWheel",
-    "license": "MIT",
-    "url": "https://github.com/humanfirework/FlowWheel/releases/download/v1.7.0/FlowWheel-Windows-x64.zip",
-    "hash": "3175DE686006A428ABC00B764DEECDF32E6E3009BE6F2C4383944FD0C6856965",
-    "bin": "FlowWheel.exe",
-    "shortcuts": [
-        [
-            "FlowWheel.exe",
-            "FlowWheel"
-        ]
-    ],
-    "checkver": "github",
-    "autoupdate": {
-        "url": "https://github.com/humanfirework/FlowWheel/releases/download/v$version/FlowWheel-Windows-x64.zip"
-    }
+  "version": "1.7.2",
+  "description": "Smooth, browser-style 'Middle-Click Auto-Scroll' for Windows with Inertia and Sync.",
+  "homepage": "https://github.com/humanfirework/FlowWheel",
+  "license": "MIT",
+  "url": "https://github.com/humanfirework/FlowWheel/releases/download/v1.7.2/FlowWheel-Windows-x64.zip",
+  "hash": "DA02C62F6E5E94D0F9F5154C0B082590FDA1EA209E725324E470B3B8763E84A7",
+  "bin": "FlowWheel.exe",
+  "shortcuts": [
+    [
+      "FlowWheel.exe",
+      "FlowWheel"
+    ]
+  ],
+  "checkver": "github",
+  "autoupdate": {
+    "url": "https://github.com/humanfirework/FlowWheel/releases/download/v$version/FlowWheel-Windows-x64.zip"
+  }
 }
