@@ -1,0 +1,153 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="WindowTitle">FlowWheel Settings</s:String>
+    <s:String x:Key="AppName">FlowWheel</s:String>
+    
+    <!-- Navigation -->
+    <s:String x:Key="NavGeneral">General</s:String>
+    <s:String x:Key="NavBehavior">Behavior</s:String>
+    <s:String x:Key="NavFilter">App Filter</s:String>
+    <s:String x:Key="NavShortcuts">Shortcuts</s:String>
+    <s:String x:Key="NavAbout">About</s:String>
+    
+    <!-- Sections -->
+    <s:String x:Key="SectionLanguage">Language</s:String>
+    <s:String x:Key="SectionStatus">Status</s:String>
+    <s:String x:Key="SectionPerformance">Performance</s:String>
+    <s:String x:Key="SectionTrigger">Trigger Options</s:String>
+    <s:String x:Key="SectionTriggerMode">Trigger Mode</s:String>
+    <s:String x:Key="SectionTriggerKey">Trigger Key</s:String>
+    <s:String x:Key="SectionSensitivity">Sensitivity</s:String>
+    <s:String x:Key="SectionCustomIcon">Custom Icon</s:String>
+    <s:String x:Key="LabelCustomIcon">Custom Icon Path</s:String>
+    <s:String x:Key="DescCustomIcon">Select a PNG/JPG image as the scroll indicator</s:String>
+    <s:String x:Key="LabelIconSize">Icon Size</s:String>
+    <s:String x:Key="DescIconSize">Adjust the size of the scroll indicator (24-96 pixels)</s:String>
+    <s:String x:Key="BtnBrowse">Browse</s:String>
+    <s:String x:Key="BtnClear">Clear</s:String>
+    <s:String x:Key="SectionFilterMode">Filter Mode</s:String>
+    <s:String x:Key="SectionAppList">Application List</s:String>
+    <s:String x:Key="SectionHotkey">App Control</s:String>
+    <s:String x:Key="LabelAppStatus">App Status</s:String>
+    <s:String x:Key="DescAppStatus">Enable or disable auto-scroll functionality</s:String>
+    <s:String x:Key="SectionLinks">Links</s:String>
+    <s:String x:Key="SectionSupport">Support the Developer</s:String>
+    <s:String x:Key="DescSupport">Buy me a coffee ☕</s:String>
+    
+    <!-- Settings -->
+    <s:String x:Key="LabelLanguage">Language</s:String>
+    <s:String x:Key="LabelPerformanceMode">Performance Mode</s:String>
+    <s:String x:Key="DescPerformanceMode">Power Saver uses least resources, High Performance is smoothest</s:String>
+    <s:String x:Key="PerfPowerSaver">Power Saver (30Hz)</s:String>
+    <s:String x:Key="PerfBalanced">Balanced (60Hz)</s:String>
+    <s:String x:Key="PerfHighPerf">High Performance (120Hz)</s:String>
+    <s:String x:Key="CheckEnable">Enable Auto-Scroll</s:String>
+    <s:String x:Key="DescEnable">Turn on/off the auto-scroll functionality</s:String>
+    <s:String x:Key="CheckStartup">Start with Windows</s:String>
+    <s:String x:Key="DescStartup">Automatically launch FlowWheel on system startup</s:String>
+    <s:String x:Key="CheckSyncScroll">Multi-Screen Sync Scroll</s:String>
+    <s:String x:Key="DescSyncScroll">Scroll multiple windows simultaneously</s:String>
+    <s:String x:Key="CheckReadingMode">Enable Reading Mode</s:String>
+    <s:String x:Key="DescReadingMode">Double-click middle mouse to activate constant scroll</s:String>
+    <s:String x:Key="TipReadingModeSpeed">💡 Tip: Scroll the mouse wheel in reading mode to adjust speed in real-time</s:String>
+    <s:String x:Key="LabelReadingModeHotkey">Reading Mode Hotkey</s:String>
+    <s:String x:Key="DescReadingModeHotkey">Independent hotkey for reading mode (e.g., Ctrl+Alt+R)</s:String>
+    <s:String x:Key="SectionReadingModeHotkey">Reading Mode Hotkey</s:String>
+    <s:String x:Key="SectionDelayStart">Delay Start</s:String>
+    <s:String x:Key="LabelDelayStart">Enable Delay Start</s:String>
+    <s:String x:Key="DescDelayStart">Delay before triggering function on middle click, reduces conflict with middle-click actions</s:String>
+    <s:String x:Key="LabelDelayValue">Delay Time</s:String>
+    <s:String x:Key="DescDelayValueNote">Recommended 100-200ms. Higher values reduce accidental triggers but slow response</s:String>
+    <s:String x:Key="LabelTriggerKey">Trigger Key</s:String>
+    <s:String x:Key="DescTriggerKey">Enter custom key name (e.g., MiddleMouse, XButton1, F1, F2, etc.) or click "Listen" and press any key</s:String>
+    <s:String x:Key="BtnListen">Listen</s:String>
+    <s:String x:Key="BtnListenTip">Click, then press any key to set it as trigger</s:String>
+    <s:String x:Key="BtnPreset">Preset</s:String>
+    <s:String x:Key="BtnPresetTip">Select a preset key</s:String>
+    <s:String x:Key="ListeningPrompt">Press any key to set as trigger...</s:String>
+    <s:String x:Key="ListenSuccess">Trigger key set to: </s:String>
+    <s:String x:Key="KeyMiddleMouse">Middle Mouse Button</s:String>
+    <s:String x:Key="KeyXButton1">Mouse Side Button 1 (Back)</s:String>
+    <s:String x:Key="KeyXButton2">Mouse Side Button 2 (Forward)</s:String>
+    <s:String x:Key="RadioClickToggle">Click Toggle (Recommended)</s:String>
+    <s:String x:Key="RadioHoldDrag">Hold &amp; Drag</s:String>
+    
+    <s:String x:Key="LabelScrollSpeed">Scroll Speed</s:String>
+    <s:String x:Key="LabelDeadzone">Deadzone (Radius)</s:String>
+    <s:String x:Key="DescDeadzone">Area where movement is ignored</s:String>
+    
+    <!-- Independent Sensitivity -->
+    <s:String x:Key="LabelIndependentSensitivity">Independent Sensitivity</s:String>
+    <s:String x:Key="DescIndependentSensitivity">Set vertical and horizontal scroll sensitivity separately</s:String>
+    <s:String x:Key="LabelVerticalSpeed">Vertical Speed</s:String>
+    <s:String x:Key="LabelHorizontalSpeed">Horizontal Speed</s:String>
+    
+    <!-- Reading Mode -->
+    <s:String x:Key="SectionReadingMode">Reading Mode</s:String>
+    <s:String x:Key="LabelReadingSpeed">Initial Speed</s:String>
+    <s:String x:Key="LabelReadingMaxSpeed">Max Speed</s:String>
+    
+    <!-- Acceleration Curve -->
+    <s:String x:Key="SectionAccelerationCurve">Acceleration Curve</s:String>
+    <s:String x:Key="LabelCurveType">Curve Type</s:String>
+    <s:String x:Key="CurveLinear">Linear</s:String>
+    <s:String x:Key="CurveExponential">Exponential</s:String>
+    <s:String x:Key="CurveLogarithmic">Logarithmic</s:String>
+    <s:String x:Key="CurveSigmoid">S-Curve</s:String>
+    <s:String x:Key="CurveCustom">Custom</s:String>
+    <s:String x:Key="LabelExponent">Exponent Value</s:String>
+    <s:String x:Key="LabelLogBase">Logarithm Base</s:String>
+    <s:String x:Key="LabelSigmoidMidpoint">Midpoint Position</s:String>
+    <s:String x:Key="LabelSigmoidSteepness">Curve Steepness</s:String>
+    <s:String x:Key="DescCustomCurve">Right-click to add control points, drag to adjust curve shape</s:String>
+    <s:String x:Key="BtnResetCurve">Reset Curve</s:String>
+    
+    <!-- Advanced Parameters -->
+    <s:String x:Key="SectionAdvancedParams">Advanced Parameters</s:String>
+    <s:String x:Key="LabelFriction">Friction Coefficient</s:String>
+    <s:String x:Key="DescFriction">Controls how quickly inertial scrolling slows down. Higher values = faster stop</s:String>
+    <s:String x:Key="LabelInertia">Inertia Multiplier</s:String>
+    <s:String x:Key="DescInertia">Initial inertia velocity multiplier after release</s:String>
+    <s:String x:Key="LabelResponseTime">Response Time</s:String>
+    <s:String x:Key="DescResponseTime">Smooth transition time for scroll speed changes</s:String>
+    <s:String x:Key="LabelAxisLock">Axis Lock Ratio</s:String>
+    <s:String x:Key="DescAxisLock">Lock the other axis when movement in one direction exceeds this ratio</s:String>
+    <s:String x:Key="LabelSoftStart">Soft Start Range</s:String>
+    <s:String x:Key="DescSoftStart">Smooth transition zone at deadzone edge to avoid sudden start</s:String>
+    <s:String x:Key="LabelMaxScrollSpeed">Max Scroll Speed</s:String>
+    <s:String x:Key="DescMaxScrollSpeed">Upper speed limit for drag scrolling. Higher values allow faster scrolling</s:String>
+    <s:String x:Key="LabelBreakSpeedLimit">Break Speed Limit</s:String>
+    <s:String x:Key="DescBreakSpeedLimit">Remove speed cap when enabled, allowing ultra-fast scrolling</s:String>
+    <s:String x:Key="LabelBreakSpeedMax">Extreme Speed</s:String>
+    <s:String x:Key="DescBreakSpeedLimitNote">⚠️ Extremely high speeds may make scrolling hard to control. Adjust with caution</s:String>
+    <s:String x:Key="BtnResetAllDefaults">Reset All to Defaults</s:String>
+    <s:String x:Key="ConfirmResetTitle">Confirm Reset</s:String>
+    <s:String x:Key="ConfirmResetMessage">Are you sure you want to reset all advanced parameters to their default values? This action cannot be undone.</s:String>
+    <s:String x:Key="HotkeyConflictTitle">Hotkey Conflict</s:String>
+    <s:String x:Key="HotkeyConflictMessage">Reading mode hotkey conflicts with trigger key or global toggle hotkey. Please change one to avoid accidental triggers.</s:String>
+    <s:String x:Key="ReadingModeHotkeyTip">💡 You can change the reading mode hotkey in the Shortcuts settings</s:String>
+    <s:String x:Key="UpdateAvailableTitle">Update Available</s:String>
+    <s:String x:Key="UpdateContentLabel">What's new:</s:String>
+
+    <!-- Filtering -->
+    <s:String x:Key="RadioBlacklist">Blacklist (Block selected)</s:String>
+    <s:String x:Key="RadioWhitelist">Whitelist (Allow only selected)</s:String>
+
+    <s:String x:Key="BtnCloseToTray">Close to Tray</s:String>
+    
+    <!-- Dark Mode -->
+    <s:String x:Key="LabelDarkMode">Dark Mode</s:String>
+    <s:String x:Key="DescDarkMode">Switch to dark theme</s:String>
+    
+    <!-- Tray Menu -->
+    <s:String x:Key="TraySettings">Settings</s:String>
+    <s:String x:Key="TrayToggle">Toggle Auto Scroll</s:String>
+    <s:String x:Key="TrayExit">Exit</s:String>
+    <s:String x:Key="TrayRunning">FlowWheel (Running)</s:String>
+    <s:String x:Key="TrayPaused">FlowWheel (Paused)</s:String>
+
+    <s:String x:Key="BtnCheckUpdate">Check for Updates</s:String>
+    <s:String x:Key="BtnLicense">License</s:String>
+    <s:String x:Key="AppDescription">Smooth, browser-style middle-click auto-scroll for Windows with inertia and multi-screen sync.</s:String>
+</ResourceDictionary>

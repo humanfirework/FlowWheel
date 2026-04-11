@@ -1,0 +1,29 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Light Theme Colors -->
+    <Color x:Key="Color.Accent">#007ACC</Color>
+    <SolidColorBrush x:Key="Brush.Background" Color="#F5F5F7"/>
+    <SolidColorBrush x:Key="Brush.Card.Background" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Brush.Text.Primary" Color="#1A1A2E"/>
+    <SolidColorBrush x:Key="Brush.Text.Secondary" Color="#5C6570"/>
+    <SolidColorBrush x:Key="Brush.Border" Color="#E0E0E5"/>
+    <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
+    <SolidColorBrush x:Key="Brush.Sidebar.Background" Color="#FAFAFA"/>
+    <SolidColorBrush x:Key="Brush.Hover" Color="#E8E8ED"/>
+    <SolidColorBrush x:Key="Brush.Pressed" Color="#E0E0E5"/>
+    <SolidColorBrush x:Key="Brush.Control.Background" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Brush.Control.Border" Color="#D0D0D5"/>
+    <SolidColorBrush x:Key="Brush.Input.Background" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Brush.ListBox.Item.Hover" Color="#F0F0F5"/>
+    <SolidColorBrush x:Key="Brush.ListBox.Item.Selected" Color="#E5F0FA"/>
+    
+    <!-- Curve Control Colors -->
+    <SolidColorBrush x:Key="Brush.Curve.Background" Color="#FAFAFA"/>
+    <SolidColorBrush x:Key="Brush.Curve.Grid" Color="#B4B4B4"/>
+    <SolidColorBrush x:Key="Brush.Curve.Axis" Color="#646464"/>
+    <SolidColorBrush x:Key="Brush.Curve.Label" Color="#505050"/>
+    <SolidColorBrush x:Key="Brush.Curve.Diagonal" Color="#969696"/>
+    <SolidColorBrush x:Key="Brush.Curve.Line" Color="#0078D4"/>
+    <SolidColorBrush x:Key="Brush.Curve.Point" Color="#0078D4"/>
+    <SolidColorBrush x:Key="Brush.Curve.PointFill" Color="#FFFFFF"/>
+</ResourceDictionary>

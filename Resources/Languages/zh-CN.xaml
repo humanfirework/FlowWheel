@@ -1,0 +1,153 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="WindowTitle">FlowWheel 设置</s:String>
+    <s:String x:Key="AppName">FlowWheel</s:String>
+    
+    <!-- Navigation -->
+    <s:String x:Key="NavGeneral">常规</s:String>
+    <s:String x:Key="NavBehavior">行为</s:String>
+    <s:String x:Key="NavFilter">应用过滤</s:String>
+    <s:String x:Key="NavShortcuts">快捷键</s:String>
+    <s:String x:Key="NavAbout">关于</s:String>
+    
+    <!-- Sections -->
+    <s:String x:Key="SectionLanguage">语言</s:String>
+    <s:String x:Key="SectionStatus">状态</s:String>
+    <s:String x:Key="SectionPerformance">性能</s:String>
+    <s:String x:Key="SectionTrigger">触发选项</s:String>
+    <s:String x:Key="SectionTriggerMode">触发模式</s:String>
+    <s:String x:Key="SectionTriggerKey">触发按键</s:String>
+    <s:String x:Key="SectionSensitivity">灵敏度</s:String>
+    <s:String x:Key="SectionCustomIcon">自定义图标</s:String>
+    <s:String x:Key="LabelCustomIcon">自定义图标路径</s:String>
+    <s:String x:Key="DescCustomIcon">选择 PNG/JPG 图片作为滚动图标</s:String>
+    <s:String x:Key="LabelIconSize">图标大小</s:String>
+    <s:String x:Key="DescIconSize">调整滚动图标的大小 (24-96 像素)</s:String>
+    <s:String x:Key="BtnBrowse">浏览</s:String>
+    <s:String x:Key="BtnClear">清除</s:String>
+    <s:String x:Key="SectionFilterMode">过滤模式</s:String>
+    <s:String x:Key="SectionAppList">应用列表</s:String>
+    <s:String x:Key="SectionHotkey">应用控制</s:String>
+    <s:String x:Key="LabelAppStatus">应用状态</s:String>
+    <s:String x:Key="DescAppStatus">开启或关闭自动滚屏功能</s:String>
+    <s:String x:Key="SectionLinks">链接</s:String>
+    <s:String x:Key="SectionSupport">支持开发者</s:String>
+    <s:String x:Key="DescSupport">请我喝杯咖啡 ☕</s:String>
+    
+    <!-- Settings -->
+    <s:String x:Key="LabelLanguage">语言</s:String>
+    <s:String x:Key="LabelPerformanceMode">性能模式</s:String>
+    <s:String x:Key="DescPerformanceMode">省电模式后台占用最低，高性能模式最流畅</s:String>
+    <s:String x:Key="PerfPowerSaver">省电模式 (30Hz)</s:String>
+    <s:String x:Key="PerfBalanced">平衡模式 (60Hz)</s:String>
+    <s:String x:Key="PerfHighPerf">高性能模式 (120Hz)</s:String>
+    <s:String x:Key="CheckEnable">启用自动滚屏</s:String>
+    <s:String x:Key="DescEnable">开启或关闭自动滚屏功能</s:String>
+    <s:String x:Key="CheckStartup">开机自启动</s:String>
+    <s:String x:Key="DescStartup">系统启动时自动运行 FlowWheel</s:String>
+    <s:String x:Key="CheckSyncScroll">多屏/分屏 同步滚动</s:String>
+    <s:String x:Key="DescSyncScroll">同时滚动多个窗口</s:String>
+    <s:String x:Key="CheckReadingMode">启用阅读模式</s:String>
+    <s:String x:Key="DescReadingMode">双击鼠标中键激活持续滚动</s:String>
+    <s:String x:Key="TipReadingModeSpeed">💡 提示：在阅读模式下滚动鼠标滚轮可实时调整速度</s:String>
+    <s:String x:Key="LabelReadingModeHotkey">阅读模式快捷键</s:String>
+    <s:String x:Key="DescReadingModeHotkey">独立于滚屏触发键的阅读模式快捷键 (如: Ctrl+Alt+R)</s:String>
+    <s:String x:Key="SectionReadingModeHotkey">阅读模式快捷键</s:String>
+    <s:String x:Key="SectionDelayStart">延时启动</s:String>
+    <s:String x:Key="LabelDelayStart">启用延时启动</s:String>
+    <s:String x:Key="DescDelayStart">中键按下后延迟触发功能，减少与中键单击的冲突</s:String>
+    <s:String x:Key="LabelDelayValue">延迟时间</s:String>
+    <s:String x:Key="DescDelayValueNote">推荐 100-200ms，值越大越不易误触但响应越慢</s:String>
+    <s:String x:Key="LabelTriggerKey">触发按键</s:String>
+    <s:String x:Key="DescTriggerKey">输入自定义按键名称 (如: MiddleMouse, XButton1, F1, F2 等)，或点击"监听"按钮按下任意键</s:String>
+    <s:String x:Key="BtnListen">监听</s:String>
+    <s:String x:Key="BtnListenTip">点击后按下任意键将其设为触发键</s:String>
+    <s:String x:Key="BtnPreset">预设</s:String>
+    <s:String x:Key="BtnPresetTip">选择预设按键</s:String>
+    <s:String x:Key="ListeningPrompt">请按下要设置的按键...</s:String>
+    <s:String x:Key="ListenSuccess">已设置触发键为: </s:String>
+    <s:String x:Key="KeyMiddleMouse">鼠标中键</s:String>
+    <s:String x:Key="KeyXButton1">鼠标侧键 1 (后退)</s:String>
+    <s:String x:Key="KeyXButton2">鼠标侧键 2 (前进)</s:String>
+    <s:String x:Key="RadioClickToggle">点击切换 (推荐)</s:String>
+    <s:String x:Key="RadioHoldDrag">按住拖拽</s:String>
+    
+    <s:String x:Key="LabelScrollSpeed">滚动速度</s:String>
+    <s:String x:Key="LabelDeadzone">死区半径 (防误触)</s:String>
+    <s:String x:Key="DescDeadzone">在此范围内移动鼠标不会触发滚动</s:String>
+    
+    <!-- Independent Sensitivity -->
+    <s:String x:Key="LabelIndependentSensitivity">独立灵敏度</s:String>
+    <s:String x:Key="DescIndependentSensitivity">分别设置垂直和水平方向的滚动灵敏度</s:String>
+    <s:String x:Key="LabelVerticalSpeed">垂直速度</s:String>
+    <s:String x:Key="LabelHorizontalSpeed">水平速度</s:String>
+    
+    <!-- Reading Mode -->
+    <s:String x:Key="SectionReadingMode">阅读模式</s:String>
+    <s:String x:Key="LabelReadingSpeed">初始速度</s:String>
+    <s:String x:Key="LabelReadingMaxSpeed">最大速度</s:String>
+    
+    <!-- Acceleration Curve -->
+    <s:String x:Key="SectionAccelerationCurve">加速度曲线</s:String>
+    <s:String x:Key="LabelCurveType">曲线类型</s:String>
+    <s:String x:Key="CurveLinear">线性</s:String>
+    <s:String x:Key="CurveExponential">指数</s:String>
+    <s:String x:Key="CurveLogarithmic">对数</s:String>
+    <s:String x:Key="CurveSigmoid">S曲线</s:String>
+    <s:String x:Key="CurveCustom">自定义</s:String>
+    <s:String x:Key="LabelExponent">指数值</s:String>
+    <s:String x:Key="LabelLogBase">对数底数</s:String>
+    <s:String x:Key="LabelSigmoidMidpoint">中点位置</s:String>
+    <s:String x:Key="LabelSigmoidSteepness">曲线陡峭度</s:String>
+    <s:String x:Key="DescCustomCurve">右键点击添加控制点，拖拽调整曲线形状</s:String>
+    <s:String x:Key="BtnResetCurve">重置曲线</s:String>
+    
+    <!-- Advanced Parameters -->
+    <s:String x:Key="SectionAdvancedParams">高级参数</s:String>
+    <s:String x:Key="LabelFriction">摩擦系数</s:String>
+    <s:String x:Key="DescFriction">控制惯性滚动的衰减速度，值越大停止越快</s:String>
+    <s:String x:Key="LabelInertia">惯性大小</s:String>
+    <s:String x:Key="DescInertia">释放后的初始惯性速度乘数</s:String>
+    <s:String x:Key="LabelResponseTime">响应时间</s:String>
+    <s:String x:Key="DescResponseTime">滚动速度变化的平滑过渡时间</s:String>
+    <s:String x:Key="LabelAxisLock">轴锁定比例</s:String>
+    <s:String x:Key="DescAxisLock">当某一方向移动距离超过另一方向此比例时，锁定另一方向</s:String>
+    <s:String x:Key="LabelSoftStart">软启动范围</s:String>
+    <s:String x:Key="DescSoftStart">在死区边缘的平滑过渡区域，避免突然启动</s:String>
+    <s:String x:Key="LabelMaxScrollSpeed">最大滚动速度</s:String>
+    <s:String x:Key="DescMaxScrollSpeed">拖拽滚动时的速度上限，值越大最大速度越快</s:String>
+    <s:String x:Key="LabelBreakSpeedLimit">突破速度限制</s:String>
+    <s:String x:Key="DescBreakSpeedLimit">启用后取消速度上限，允许更高速滚动</s:String>
+    <s:String x:Key="LabelBreakSpeedMax">极限速度</s:String>
+    <s:String x:Key="DescBreakSpeedLimitNote">⚠️ 极高速度可能导致滚动难以控制，请谨慎调整</s:String>
+    <s:String x:Key="BtnResetAllDefaults">恢复所有默认值</s:String>
+    <s:String x:Key="ConfirmResetTitle">确认恢复默认值</s:String>
+    <s:String x:Key="ConfirmResetMessage">确定要将所有高级参数恢复为默认值吗？此操作不可撤销。</s:String>
+    <s:String x:Key="HotkeyConflictTitle">快捷键冲突</s:String>
+    <s:String x:Key="HotkeyConflictMessage">阅读模式快捷键与触发键或全局切换快捷键冲突，请修改其中一个以避免误触发。</s:String>
+    <s:String x:Key="ReadingModeHotkeyTip">💡 可以在快捷键设置中修改阅读模式启动快捷键</s:String>
+    <s:String x:Key="UpdateAvailableTitle">发现新版本</s:String>
+    <s:String x:Key="UpdateContentLabel">更新内容：</s:String>
+
+    <!-- Filtering -->
+    <s:String x:Key="RadioBlacklist">黑名单 (屏蔽以下)</s:String>
+    <s:String x:Key="RadioWhitelist">白名单 (仅允许以下)</s:String>
+
+    <s:String x:Key="BtnCloseToTray">最小化到托盘</s:String>
+    
+    <!-- Dark Mode -->
+    <s:String x:Key="LabelDarkMode">暗夜模式</s:String>
+    <s:String x:Key="DescDarkMode">切换到深色主题</s:String>
+    
+    <!-- Tray Menu -->
+    <s:String x:Key="TraySettings">设置</s:String>
+    <s:String x:Key="TrayToggle">开启/暂停 自动滚屏</s:String>
+    <s:String x:Key="TrayExit">退出</s:String>
+    <s:String x:Key="TrayRunning">FlowWheel (运行中)</s:String>
+    <s:String x:Key="TrayPaused">FlowWheel (已暂停)</s:String>
+
+    <s:String x:Key="BtnCheckUpdate">检查更新</s:String>
+    <s:String x:Key="BtnLicense">许可证</s:String>
+    <s:String x:Key="AppDescription">为 Windows 带来流畅的浏览器风格中键自动滚动，支持惯性和多屏同步。</s:String>
+</ResourceDictionary>

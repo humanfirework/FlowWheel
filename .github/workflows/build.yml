@@ -1,0 +1,87 @@
+name: Build FlowWheel
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags (v1.0, v20.15.10, etc.)
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+        # If .NET 10 is preview, we might need include-prerelease: true if using older setup-dotnet,
+        # but specifying version usually works. Since 10 is very new, we'll try standard way.
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Publish (Self-Contained)
+      run: |
+        dotnet publish FlowWheel.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
+        # Note: We copy Assets manually if SingleFile doesn't handle content files perfectly, 
+        # but CopyToOutputDirectory usually puts them next to the single exe.
+      
+    - name: Verify Assets
+      run: |
+        if (Test-Path "publish\Assets") { Write-Host "Assets folder exists." } else { Write-Host "Warning: Assets folder missing!" }
+
+    - name: Create Zip Archive
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        if (Test-Path "publish\Assets") { Remove-Item "publish\Assets" -Recurse -Force }
+        Compress-Archive -Path publish\* -DestinationPath FlowWheel-Windows-x64.zip
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: FlowWheel-Windows-x64.zip
+        name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update Scoop manifest hash
+      if: startsWith(github.ref, 'refs/tags/')
+      shell: pwsh
+      run: |
+        $hash = (Get-FileHash -Path "FlowWheel-Windows-x64.zip" -Algorithm SHA256).Hash.ToUpper()
+        $tag = "${{ github.ref_name }}"
+        $version = $tag.TrimStart("v")
+        Write-Host "SHA256: $hash"
+        Write-Host "Tag: $tag"
+        Write-Host "Version: $version"
+
+        $json = Get-Content -Path "flowwheel.json" -Raw | ConvertFrom-Json
+        $json.version = $version
+        $json.hash = $hash
+        $json.url = "https://github.com/humanfirework/FlowWheel/releases/download/$tag/FlowWheel-Windows-x64.zip"
+        $json | ConvertTo-Json -Depth 10 | Set-Content -Path "flowwheel.json" -Encoding UTF8
+
+        Write-Host "Updated flowwheel.json successfully"
+
+    - name: Commit updated manifest
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add flowwheel.json
+        git diff --cached --quiet || git commit -m "chore: update scoop manifest hash for ${{ github.ref_name }}"
+        git push origin HEAD:main
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: FlowWheel-Windows-x64
+        path: ./publish/
