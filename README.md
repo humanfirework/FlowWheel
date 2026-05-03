@@ -46,11 +46,6 @@
 - **启动延时、关闭即时**：中键按下后经过延时才激活 FlowWheel，但一旦激活后再次单击中键立即停止，无需额外等待
 - **快捷键冲突检测**：增强热键冲突检测，支持双向比较和鼠标键名匹配
 
-### v1.7.4 更新
-
-- **阅读模式独立快捷键**：支持设置独立的快捷键激活阅读模式，与滚屏触发键分离
-- **延时启动机制**：中键短按延迟触发，减少与中键单击功能的误触发冲突，修改为默认关闭
-- **UI 流畅动画**：面板展开/折叠带平滑过渡效果，修改了部分图标
 
 ---
 
@@ -406,11 +401,19 @@ FlowWheel 从设计之初就注重隐私：
 如果 FlowWheel 对你有帮助，欢迎请我喝杯咖啡！☕
 
 <div align="center">
- <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" alt="Alipay" width="180" style="max-width: 100%; height: auto;" />
- <br>
- <span>支付宝</span>
- <br><br>
- <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" alt="WeChat Pay" width="180" style="max-width: 100%; height: auto;" />
- <br>
- <span>微信支付</span>
+ <table>
+   <tr>
+     <td align="center">
+       <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" alt="Alipay" width="180" style="max-width: 100%; height: auto;" />
+       <br>
+       <span>支付宝</span>
+     </td>
+     <td align="center" width="40"></td>
+     <td align="center">
+       <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" alt="WeChat Pay" width="180" style="max-width: 100%; height: auto;" />
+       <br>
+       <span>微信支付</span>
+     </td>
+   </tr>
+ </table>
 </div>
