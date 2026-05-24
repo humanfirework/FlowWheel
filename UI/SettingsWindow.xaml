@@ -86,7 +86,7 @@
             </Ellipse>
         </Canvas>
         
-        <Border x:Name="SidebarBorder" Grid.Column="0" Background="{DynamicResource Brush.Sidebar.Background}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,1,0">
+        <Border x:Name="SidebarBorder" Grid.Column="0" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,1,0" Background="{DynamicResource Brush.Sidebar.Background}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -104,8 +104,10 @@
                         </Path>
                         <TextBlock Text="FlowWheel" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Brush.Text.Primary}"/>
                     </StackPanel>
-                    <TextBlock x:Name="VersionLabel" Text="v1.7.0" FontSize="11" 
-                               Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    <Border x:Name="VersionBadge" Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" Margin="0,6,0,0" Opacity="0.8">
+                                    <TextBlock x:Name="VersionLabel" Text="v1.7.5" FontSize="10" FontWeight="SemiBold"
+                                               Foreground="White"/>
+                                </Border>
                 </StackPanel>
                 
                 <StackPanel Grid.Row="1" Margin="8,4">
@@ -113,6 +115,8 @@
                                  Tag="{StaticResource IconSettings}" IsChecked="True" Style="{StaticResource NavButtonStyle}"/>
                     <RadioButton x:Name="NavBehavior" GroupName="Nav" Content="{DynamicResource NavBehavior}" 
                                  Tag="{StaticResource IconMouse}" Style="{StaticResource NavButtonStyle}"/>
+                    <RadioButton x:Name="NavAdvanced" GroupName="Nav" Content="{DynamicResource NavAdvanced}" 
+                                 Tag="{StaticResource IconSettings}" Style="{StaticResource NavButtonStyle}"/>
                     <RadioButton x:Name="NavFilter" GroupName="Nav" Content="{DynamicResource NavFilter}" 
                                  Tag="{StaticResource IconFilter}" Style="{StaticResource NavButtonStyle}"/>
                     <RadioButton x:Name="NavShortcuts" GroupName="Nav" Content="{DynamicResource NavShortcuts}" 
@@ -143,11 +147,16 @@
             </Grid.RowDefinitions>
             
             <Border x:Name="HeaderBorder" Grid.Row="0" Background="{DynamicResource Brush.Sidebar.Background}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,0,1" Padding="16,12">
-                <TextBlock x:Name="PageTitle" Text="{DynamicResource NavGeneral}" 
-                           FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource Brush.Text.Primary}"/>
-            </Border>
+                            <StackPanel>
+                                <TextBlock x:Name="PageTitle" Text="{DynamicResource NavGeneral}" 
+                                           FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource Brush.Text.Primary}"/>
+                                <Border Height="2" Width="40" Background="{DynamicResource Brush.Header.AccentLine}" 
+                                        CornerRadius="1" Margin="0,4,0,0" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Border>
             
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16"
+                              Style="{StaticResource SettingsScrollViewer}">
                 <Grid>
                     <StackPanel x:Name="PageGeneral" Visibility="Visible" RenderTransformOrigin="0.5,0.5">
                         <StackPanel.RenderTransform>
@@ -534,7 +543,14 @@
                                 </StackPanel>
                             </StackPanel>
                         </Border>
+                    </StackPanel>
+                    
+                    <StackPanel x:Name="PageAdvanced" Visibility="Collapsed" RenderTransformOrigin="0.5,0.5">
+                        <StackPanel.RenderTransform>
+                            <TranslateTransform X="0"/>
+                        </StackPanel.RenderTransform>
                         
+                        <!-- 高级设置说明和开关 -->
                         <Border Style="{StaticResource CardStyle}">
                             <StackPanel>
                                 <Grid Style="{StaticResource SettingRow}">
@@ -542,117 +558,142 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{DynamicResource SectionAdvancedParams}" Style="{StaticResource SectionTitle}"/>
-                                    <controls:ToggleSwitch x:Name="AdvancedSettingsToggle" Grid.Column="1" Width="44" Height="24" IsOnChanged="AdvancedSettingsToggle_IsOnChanged"/>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="高级设置" Style="{StaticResource SectionTitle}"/>
+                                        <TextBlock Text="启用后可以调整滚动的精细参数，适合高级用户" 
+                                                   Style="{StaticResource SettingDescription}"
+                                                   Foreground="{DynamicResource Brush.TextSecondary}"/>
+                                    </StackPanel>
+                                    <controls:ToggleSwitch x:Name="AdvancedSettingsToggle" Grid.Column="1" Width="44" Height="24" 
+                                                          IsOnChanged="AdvancedSettingsToggle_IsOnChanged"/>
                                 </Grid>
-                                
-                                <StackPanel x:Name="AdvancedParamsPanel" Visibility="Collapsed">
-                                    <Grid Style="{StaticResource SettingRow}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource LabelFriction}" Style="{StaticResource SettingLabel}"/>
-                                            <TextBlock Text="{DynamicResource DescFriction}" Style="{StaticResource SettingDescription}"/>
-                                        </StackPanel>
-                                        <TextBlock x:Name="FrictionValueText" Text="5.0" Grid.Column="1" 
-                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
-                                    </Grid>
-                                    <Slider x:Name="FrictionSlider" Minimum="1.0" Maximum="20.0" Value="5.0" 
-                                            TickFrequency="0.5" IsSnapToTickEnabled="True" 
-                                            ValueChanged="FrictionSlider_ValueChanged"/>
-                                    
-                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource LabelInertia}" Style="{StaticResource SettingLabel}"/>
-                                            <TextBlock Text="{DynamicResource DescInertia}" Style="{StaticResource SettingDescription}"/>
-                                        </StackPanel>
-                                        <TextBlock x:Name="InertiaValueText" Text="1.0x" Grid.Column="1" 
-                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
-                                    </Grid>
-                                    <Slider x:Name="InertiaSlider" Minimum="0.5" Maximum="3.0" Value="1.0" 
-                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
-                                            ValueChanged="InertiaSlider_ValueChanged"/>
-                                    
-                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource LabelResponseTime}" Style="{StaticResource SettingLabel}"/>
-                                            <TextBlock Text="{DynamicResource DescResponseTime}" Style="{StaticResource SettingDescription}"/>
-                                        </StackPanel>
-                                        <TextBlock x:Name="ResponseTimeValueText" Text="40ms" Grid.Column="1" 
-                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
-                                    </Grid>
-                                    <Slider x:Name="ResponseTimeSlider" Minimum="10" Maximum="200" Value="40" 
-                                            TickFrequency="5" IsSnapToTickEnabled="True" 
-                                            ValueChanged="ResponseTimeSlider_ValueChanged"/>
-                                    
-                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource LabelAxisLock}" Style="{StaticResource SettingLabel}"/>
-                                            <TextBlock Text="{DynamicResource DescAxisLock}" Style="{StaticResource SettingDescription}"/>
-                                        </StackPanel>
-                                        <TextBlock x:Name="AxisLockValueText" Text="1.8" Grid.Column="1" 
-                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
-                                    </Grid>
-                                    <Slider x:Name="AxisLockSlider" Minimum="1.0" Maximum="5.0" Value="1.8" 
-                                            TickFrequency="0.1" IsSnapToTickEnabled="True" 
-                                            ValueChanged="AxisLockSlider_ValueChanged"/>
-                                    
-                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource LabelSoftStart}" Style="{StaticResource SettingLabel}"/>
-                                            <TextBlock Text="{DynamicResource DescSoftStart}" Style="{StaticResource SettingDescription}"/>
-                                        </StackPanel>
-                                        <TextBlock x:Name="SoftStartValueText" Text="12px" Grid.Column="1" 
-                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
-                                    </Grid>
-                                    <Slider x:Name="SoftStartSlider" Minimum="0" Maximum="50" Value="12" 
-                                            TickFrequency="1" IsSnapToTickEnabled="True" 
-                                            ValueChanged="SoftStartSlider_ValueChanged"/>
-                                    
-                                    <Grid Style="{StaticResource SettingRow}" Margin="0,12,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource LabelMaxScrollSpeed}" Style="{StaticResource SettingLabel}"/>
-                                            <TextBlock Text="{DynamicResource DescMaxScrollSpeed}" Style="{StaticResource SettingDescription}"/>
-                                        </StackPanel>
-                                        <TextBlock x:Name="MaxScrollSpeedValueText" Text="1500 px/s" Grid.Column="1" 
-                                                   Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
-                                    </Grid>
-                                    <Slider x:Name="MaxScrollSpeedSlider" Minimum="500" Maximum="2000" Value="1500" 
-                                            TickFrequency="100" IsSnapToTickEnabled="True" 
-                                            ValueChanged="MaxScrollSpeedSlider_ValueChanged"/>
-                                    
-                                    <Button Content="{DynamicResource BtnResetAllDefaults}" 
-                                            Style="{StaticResource ModernButton}" Margin="0,16,0,0"
-                                            Click="ResetAllDefaults_Click"/>
-                                </StackPanel>
                             </StackPanel>
                         </Border>
                         
+                        <!-- 高级参数卡片（默认隐藏，开关开启后显示） -->
+                        <Border Style="{StaticResource CardStyle}" x:Name="AdvancedParamsCard">
+                            <StackPanel>
+                                <Grid Style="{StaticResource SettingRow}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelFriction}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescFriction}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="FrictionValueText" Text="5.0" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="FrictionSlider" Minimum="1.0" Maximum="20.0" Value="5.0" 
+                                        TickFrequency="0.5" IsSnapToTickEnabled="True" 
+                                        ValueChanged="FrictionSlider_ValueChanged"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelInertia}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescInertia}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="InertiaValueText" Text="1.0x" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="InertiaSlider" Minimum="0.5" Maximum="3.0" Value="1.0" 
+                                        TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                        ValueChanged="InertiaSlider_ValueChanged"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelResponseTime}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescResponseTime}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="ResponseTimeValueText" Text="40ms" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="ResponseTimeSlider" Minimum="10" Maximum="200" Value="40" 
+                                        TickFrequency="5" IsSnapToTickEnabled="True" 
+                                        ValueChanged="ResponseTimeSlider_ValueChanged"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelAxisLock}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescAxisLock}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="AxisLockValueText" Text="1.8" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="AxisLockSlider" Minimum="1.0" Maximum="5.0" Value="1.8" 
+                                        TickFrequency="0.1" IsSnapToTickEnabled="True" 
+                                        ValueChanged="AxisLockSlider_ValueChanged"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelSoftStart}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescSoftStart}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="SoftStartValueText" Text="12px" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="SoftStartSlider" Minimum="0" Maximum="50" Value="12" 
+                                        TickFrequency="1" IsSnapToTickEnabled="True" 
+                                        ValueChanged="SoftStartSlider_ValueChanged"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelMinStep}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescMinStep}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="MinStepValueText" Text="15 px" Grid.Column="1"
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="MinStepSlider" Minimum="1" Maximum="120" Value="15"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="MinStepSlider_ValueChanged"/>
+
+                                <Grid Style="{StaticResource SettingRow}" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelMaxScrollSpeed}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescMaxScrollSpeed}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="MaxScrollSpeedValueText" Text="1500 px/s" Grid.Column="1" 
+                                               Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
+                                </Grid>
+                                <Slider x:Name="MaxScrollSpeedSlider" Minimum="500" Maximum="2000" Value="1500" 
+                                        TickFrequency="100" IsSnapToTickEnabled="True" 
+                                        ValueChanged="MaxScrollSpeedSlider_ValueChanged"/>
+                                
+                                <Button Content="{DynamicResource BtnResetAllDefaults}" 
+                                        Style="{StaticResource ModernButton}" Margin="0,20,0,0"
+                                        Click="ResetAllDefaults_Click"/>
+                            </StackPanel>
+                        </Border>
+
                         <Border Style="{StaticResource CardStyle}">
                             <StackPanel>
-                                <TextBlock Text="{DynamicResource SectionCustomIcon}" Style="{StaticResource SectionTitle}"/>
+                                <TextBlock Text="自定义图标" Style="{StaticResource SectionTitle}"/>
                                 
                                 <Grid Style="{StaticResource SettingRow}">
                                     <Grid.ColumnDefinitions>
@@ -730,13 +771,13 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="BlacklistInput" Style="{StaticResource ModernTextBox}" 
-                                             Margin="0,0,6,0" ToolTip="Enter process name (e.g. notepad)"/>
+                                             Margin="0,0,6,0" ToolTip="{DynamicResource TipProcessName}"/>
                                     <Button Grid.Column="1" Content="..." 
                                             Style="{StaticResource ModernButton}" Padding="10,6" Margin="0,0,6,0"
-                                            Click="BrowseApp_Click" ToolTip="Browse"/>
+                                            Click="BrowseApp_Click" ToolTip="{DynamicResource BtnBrowse}"/>
                                     <Button Grid.Column="2" Content="+" 
                                             Style="{StaticResource ModernButton}" Padding="10,6"
-                                            Click="AddBlacklist_Click" ToolTip="Add"/>
+                                            Click="AddBlacklist_Click" ToolTip="{DynamicResource TipAdd}"/>
                                 </Grid>
                                 
                                 <ListBox x:Name="BlacklistList" Height="180" Style="{StaticResource ModernListBox}"
@@ -757,7 +798,7 @@
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
-                                <TextBlock Text="Tip: Drag &amp; drop .exe files here" Style="{StaticResource SettingDescription}"/>
+                                <TextBlock Text="{DynamicResource TipDragDropExe}" Style="{StaticResource SettingDescription}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -818,7 +859,7 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                     <Button Content="{DynamicResource KeyMiddleMouse}" Style="{StaticResource ModernButton}" Padding="8,4" Margin="0,0,4,0"
                                             FontSize="11" Click="TriggerKeyPreset_Select" Tag="MiddleMouse"/>
-                                    <Button Content="Alt+Middle" Style="{StaticResource ModernButton}" Padding="8,4" Margin="0,0,4,0"
+                                    <Button Content="{DynamicResource KeyAltMiddle}" Style="{StaticResource ModernButton}" Padding="8,4" Margin="0,0,4,0"
                                             FontSize="11" Click="TriggerKeyPreset_Select" Tag="Alt+MiddleMouse"/>
                                 </StackPanel>
                             </StackPanel>
@@ -862,15 +903,17 @@
                         <Border Style="{StaticResource CardStyle}">
                             <StackPanel HorizontalAlignment="Center">
                                 <Path Data="{StaticResource IconFlowWheel}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.5" Fill="{DynamicResource Brush.Accent}" Opacity="0.85"
-                                      Width="48" Height="48" Stretch="Uniform" Margin="0,0,0,12">
+                                      Width="56" Height="56" Stretch="Uniform" Margin="0,4,0,8">
                                     <Path.Effect>
-                                        <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.4" Color="{DynamicResource Color.Accent}"/>
+                                        <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.4" Color="{DynamicResource Color.Accent}"/>
                                     </Path.Effect>
                                 </Path>
-                                <TextBlock Text="FlowWheel" FontSize="22" FontWeight="Bold" 
+                                <TextBlock Text="FlowWheel" FontSize="24" FontWeight="Bold" 
                                            Foreground="{DynamicResource Brush.Text.Primary}" HorizontalAlignment="Center"/>
-                                <TextBlock x:Name="VersionText" Text="Version 1.6.0" FontSize="13" 
-                                           Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                <Border Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="10,3" Margin="0,6,0,0" Opacity="0.85">
+                                    <TextBlock x:Name="VersionText" Text="Version 1.7.5" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
                                 <TextBlock Text="{DynamicResource AppDescription}" FontSize="12" 
                                            Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" 
                                            Margin="0,8,0,20" TextWrapping="Wrap" TextAlignment="Center"/>
@@ -906,12 +949,16 @@
                                 <TextBlock Text="{DynamicResource DescSupport}" Style="{StaticResource SettingDescription}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <StackPanel Margin="0,0,20,0" HorizontalAlignment="Center">
-                                        <Image Source="pack://application:,,,/Assets/alipay_qr.jpg" Width="120" Height="120" Stretch="Uniform"/>
-                                        <TextBlock Text="支付宝" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                        <Border CornerRadius="8" ClipToBounds="True" Width="120" Height="120">
+                                            <Image Source="pack://application:,,,/Assets/alipay_qr.jpg" Stretch="UniformToFill"/>
+                                        </Border>
+                                        <TextBlock Text="{DynamicResource LabelAlipay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Center">
-                                        <Image Source="pack://application:,,,/Assets/weixin.jpg" Width="120" Height="120" Stretch="Uniform"/>
-                                        <TextBlock Text="微信支付" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                        <Border CornerRadius="8" ClipToBounds="True" Width="120" Height="120">
+                                            <Image Source="pack://application:,,,/Assets/weixin.jpg" Stretch="UniformToFill"/>
+                                        </Border>
+                                        <TextBlock Text="{DynamicResource LabelWeChatPay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

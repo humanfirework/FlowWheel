@@ -109,6 +109,7 @@ namespace FlowWheel.UI
             AxisLockSlider.Value = ConfigManager.Current.AxisLockRatio;
             SoftStartSlider.Value = ConfigManager.Current.SoftStartRange;
             MaxScrollSpeedSlider.Value = ConfigManager.Current.MaxScrollSpeed;
+            MinStepSlider.Value = ConfigManager.Current.MinStep;
             BreakSpeedLimitToggle.IsOn = ConfigManager.Current.BreakSpeedLimit;
             BreakSpeedMaxSlider.Value = ConfigManager.Current.BreakSpeedLimitMax;
             if (BreakSpeedLimitToggle.IsOn)
@@ -157,12 +158,12 @@ namespace FlowWheel.UI
             if (ConfigManager.Current.IsWhitelistMode)
             {
                 RadioWhitelist.IsChecked = true;
-                FilterModeHelpText.Text = "Only processes in this list will have auto-scroll enabled.";
+                FilterModeHelpText.Text = (string)FindResource("FilterWhitelistHelp");
             }
             else
             {
                 RadioBlacklist.IsChecked = true;
-                FilterModeHelpText.Text = "Processes in this list will be ignored (auto-scroll disabled).";
+                FilterModeHelpText.Text = (string)FindResource("FilterBlacklistHelp");
             }
             
             AppStatusToggle.IsOn = ConfigManager.Current.IsEnabled;
@@ -195,6 +196,7 @@ namespace FlowWheel.UI
         {
             NavGeneral.Checked += (s, e) => NavigateTo("General");
             NavBehavior.Checked += (s, e) => NavigateTo("Behavior");
+            NavAdvanced.Checked += (s, e) => NavigateTo("Advanced");
             NavFilter.Checked += (s, e) => NavigateTo("Filter");
             NavShortcuts.Checked += (s, e) => NavigateTo("Shortcuts");
             NavAbout.Checked += (s, e) => NavigateTo("About");
@@ -256,7 +258,7 @@ namespace FlowWheel.UI
             _isNavigating = true;
             
             // 确定导航方向
-            var pageOrder = new[] { "General", "Behavior", "Filter", "Shortcuts", "About" };
+            var pageOrder = new[] { "General", "Behavior", "Advanced", "Filter", "Shortcuts", "About" };
             int oldIndex = Array.IndexOf(pageOrder, _currentPage);
             int newIndex = Array.IndexOf(pageOrder, page);
             bool goingForward = newIndex > oldIndex;
@@ -343,7 +345,14 @@ namespace FlowWheel.UI
             newPage.BeginAnimation(OpacityProperty, newFadeIn);
             
             _currentPage = page;
-            PageTitle.Text = FindResource($"Nav{page}") as string ?? page;
+            try
+            {
+                PageTitle.Text = FindResource($"Nav{page}") as string ?? page;
+            }
+            catch
+            {
+                PageTitle.Text = page;
+            }
         }
         
         private StackPanel? GetPage(string page)
@@ -352,6 +361,7 @@ namespace FlowWheel.UI
             {
                 "General" => PageGeneral,
                 "Behavior" => PageBehavior,
+                "Advanced" => PageAdvanced,
                 "Filter" => PageFilter,
                 "Shortcuts" => PageShortcuts,
                 "About" => PageAbout,
@@ -775,12 +785,12 @@ namespace FlowWheel.UI
             if (RadioWhitelist.IsChecked == true)
             {
                 ConfigManager.Current.IsWhitelistMode = true;
-                FilterModeHelpText.Text = "Only processes in this list will have auto-scroll enabled.";
+                FilterModeHelpText.Text = (string)FindResource("FilterWhitelistHelp");
             }
             else
             {
                 ConfigManager.Current.IsWhitelistMode = false;
-                FilterModeHelpText.Text = "Processes in this list will be ignored (auto-scroll disabled).";
+                FilterModeHelpText.Text = (string)FindResource("FilterBlacklistHelp");
             }
             ConfigManager.Save();
         }
@@ -790,7 +800,7 @@ namespace FlowWheel.UI
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
                 Filter = "Executables (*.exe)|*.exe|All files (*.*)|*.*",
-                Title = "Select Application to Filter"
+                Title = (string)FindResource("DlgSelectApp")
             };
 
             if (dialog.ShowDialog() == true)
@@ -975,7 +985,7 @@ namespace FlowWheel.UI
         {
             if (_mouseHook == null && _keyboardHook == null)
             {
-                WpfMessageBox.Show("No input hooks available.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                WpfMessageBox.Show((string)FindResource("ErrNoHooks"), (string)FindResource("ErrTitle"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1018,7 +1028,7 @@ namespace FlowWheel.UI
         {
             if (_mouseHook == null && _keyboardHook == null)
             {
-                WpfMessageBox.Show("No input hooks available.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                WpfMessageBox.Show((string)FindResource("ErrNoHooks"), (string)FindResource("ErrTitle"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -1345,7 +1355,6 @@ namespace FlowWheel.UI
                     ConfigManager.Current.PerformanceMode = mode;
                     ConfigManager.Save();
                     
-                    // Update ScrollEngine TickRate based on performance mode
                     if (_engine != null)
                     {
                         _engine.TickRate = mode switch
@@ -1355,6 +1364,7 @@ namespace FlowWheel.UI
                             PerformanceMode.HighPerformance => 120,
                             _ => 60
                         };
+                        ConfigManager.Current.TickRate = _engine.TickRate;
                     }
                 }
             }
@@ -1392,6 +1402,23 @@ namespace FlowWheel.UI
             ConfigManager.DebouncedSave();
         }
 
+        private void AdvancedSettingsToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            bool showAdvanced = AdvancedSettingsToggle.IsOn;
+            ConfigManager.Current.ShowAdvancedSettings = showAdvanced;
+            UpdateAdvancedParamsVisibility();
+            ConfigManager.Save();
+        }
+
+        private void UpdateAdvancedParamsVisibility()
+        {
+            bool showAdvanced = AdvancedSettingsToggle.IsOn;
+            if (AdvancedParamsCard != null)
+            {
+                AdvancedParamsCard.Visibility = showAdvanced ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (_engine != null)
@@ -1419,20 +1446,6 @@ namespace FlowWheel.UI
             UnifiedSensitivityPanel.Visibility = useIndependent ? Visibility.Collapsed : Visibility.Visible;
             SpeedSlider.Visibility = useIndependent ? Visibility.Collapsed : Visibility.Visible;
             IndependentSensitivityPanel.Visibility = useIndependent ? Visibility.Visible : Visibility.Collapsed;
-        }
-        
-        private void AdvancedSettingsToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
-        {
-            bool showAdvanced = AdvancedSettingsToggle.IsOn;
-            ConfigManager.Current.ShowAdvancedSettings = showAdvanced;
-            UpdateAdvancedParamsVisibility();
-            ConfigManager.Save();
-        }
-        
-        private void UpdateAdvancedParamsVisibility()
-        {
-            bool showAdvanced = AdvancedSettingsToggle.IsOn;
-            AdvancedParamsPanel.Visibility = showAdvanced ? Visibility.Visible : Visibility.Collapsed;
         }
         
         private void VerticalSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -1621,6 +1634,15 @@ namespace FlowWheel.UI
             ConfigManager.DebouncedSave();
         }
 
+        private void MinStepSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            int value = (int)e.NewValue;
+            ConfigManager.Current.MinStep = value;
+            if (_engine != null) _engine.MinStep = value;
+            if (MinStepValueText != null) MinStepValueText.Text = $"{value} px";
+            ConfigManager.DebouncedSave();
+        }
+
         private void BreakSpeedLimitToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             ConfigManager.Current.BreakSpeedLimit = e.NewValue;
@@ -1671,8 +1693,10 @@ namespace FlowWheel.UI
             ConfigManager.Current.AxisLockRatio = d.AxisLockRatio;
             ConfigManager.Current.SoftStartRange = d.SoftStartRange;
             ConfigManager.Current.MaxScrollSpeed = d.MaxScrollSpeed;
+            ConfigManager.Current.MinStep = d.MinStep;
             ConfigManager.Current.BreakSpeedLimit = d.BreakSpeedLimit;
             ConfigManager.Current.BreakSpeedLimitMax = d.BreakSpeedLimitMax;
+            ConfigManager.Current.MiddleClickDelay = d.MiddleClickDelay;
             ConfigManager.Save();
 
             FrictionSlider.Value = d.Friction;
@@ -1681,8 +1705,19 @@ namespace FlowWheel.UI
             AxisLockSlider.Value = d.AxisLockRatio;
             SoftStartSlider.Value = d.SoftStartRange;
             MaxScrollSpeedSlider.Value = d.MaxScrollSpeed;
+            MinStepSlider.Value = d.MinStep;
             BreakSpeedLimitToggle.IsOn = d.BreakSpeedLimit;
             BreakSpeedMaxSlider.Value = d.BreakSpeedLimitMax;
+            DelayStartToggle.IsOn = d.MiddleClickDelay > 0;
+            if (DelayStartToggle.IsOn)
+            {
+                MiddleClickDelaySlider.Value = d.MiddleClickDelay;
+                DelaySliderPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DelaySliderPanel.Visibility = Visibility.Collapsed;
+            }
 
             if (_engine != null) _engine.ApplyConfig(ConfigManager.Current);
         }

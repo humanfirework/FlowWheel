@@ -76,17 +76,11 @@
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
                             <DoubleAnimation Storyboard.TargetName="activeIndicator" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" To="15" Duration="0:0:0.3">
-                                <DoubleAnimation.EasingFunction>
-                                    <BackEase EasingMode="EaseOut" Amplitude="0.5"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
                             <ThicknessAnimation Storyboard.TargetName="contentPresenter" Storyboard.TargetProperty="Margin" To="4,0,0,0" Duration="0:0:0.2"/>
                         </Storyboard>
                         <Storyboard x:Key="UncheckedStoryboard">
                             <DoubleAnimation Storyboard.TargetName="activeIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0" Duration="0:0:0.2"/>
                             <DoubleAnimation Storyboard.TargetName="activeIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
-                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" To="0" Duration="0:0:0.2"/>
                             <ThicknessAnimation Storyboard.TargetName="contentPresenter" Storyboard.TargetProperty="Margin" To="0,0,0,0" Duration="0:0:0.2"/>
                         </Storyboard>
                     </ControlTemplate.Resources>
@@ -109,15 +103,12 @@
                                 </Border>
                                 
                                 <DockPanel LastChildFill="True" Margin="8,0,0,0">
-                                    <Path x:Name="icon" Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" 
-                                          Fill="{TemplateBinding Foreground}" Width="18" Height="18" 
+                                    <Path x:Name="icon" Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Fill="{TemplateBinding Foreground}" Width="18" Height="18"
                                           Stretch="Uniform" Margin="0,0,10,0" Opacity="0.8"
                                           DockPanel.Dock="Left" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                                         <Path.RenderTransform>
-                                            <TransformGroup>
-                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                <RotateTransform Angle="0"/>
-                                            </TransformGroup>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
                                         </Path.RenderTransform>
                                     </Path>
                                     <ContentPresenter x:Name="contentPresenter" VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -179,51 +170,12 @@
         <Setter Property="Background" Value="{DynamicResource Brush.Card.Background}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="16"/>
-        <Setter Property="Margin" Value="0,0,0,12"/>
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <TranslateTransform Y="0"/>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Margin" Value="0,0,0,10"/>
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.08" Direction="270"/>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.06" Direction="270"/>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <EventTrigger RoutedEvent="MouseEnter">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" 
-                                         To="-3" Duration="0:0:0.2">
-                            <DoubleAnimation.EasingFunction>
-                                <QuadraticEase EasingMode="EaseOut"/>
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.ShadowDepth)" 
-                                         To="4" Duration="0:0:0.2"/>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" 
-                                         To="0.15" Duration="0:0:0.2"/>
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-            <EventTrigger RoutedEvent="MouseLeave">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" 
-                                         To="0" Duration="0:0:0.2">
-                            <DoubleAnimation.EasingFunction>
-                                <QuadraticEase EasingMode="EaseOut"/>
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.ShadowDepth)" 
-                                         To="1" Duration="0:0:0.2"/>
-                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" 
-                                         To="0.08" Duration="0:0:0.2"/>
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-        </Style.Triggers>
     </Style>
     
     <Style x:Key="SectionTitle" TargetType="TextBlock">
@@ -511,6 +463,65 @@
                             <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Brush.ListBox.Item.Selected}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Modern Slider -->
+    <Style TargetType="Slider">
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                          UseLayoutRounding="True" ClipToBounds="False">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Track x:Name="PART_Track" Grid.Row="1" Height="20" Margin="8,0"
+                               HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="Slider.DecreaseLarge" Height="4" VerticalAlignment="Center">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Background="{DynamicResource Brush.Accent}" CornerRadius="2" Height="4"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="Slider.IncreaseLarge" Height="4" VerticalAlignment="Center">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Background="{DynamicResource Brush.Control.Border}" CornerRadius="2" Height="4"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Width="12" Height="12">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Ellipse x:Name="ThumbEllipse" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" Width="12" Height="12" ClipToBounds="False">
+                                                <Ellipse.Effect>
+                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.2"/>
+                                                </Ellipse.Effect>
+                                            </Ellipse>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="ThumbEllipse" Property="Width" Value="14"/>
+                                                    <Setter TargetName="ThumbEllipse" Property="Height" Value="14"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1107,6 +1118,96 @@
                                   IsHitTestVisible="False"/>
                         </Canvas>
                     </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+<!-- ========== Custom ScrollBar Styles ========== -->
+    <Style x:Key="ScrollBarThumbStyle" TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border x:Name="ThumbBorder" 
+                            CornerRadius="3" 
+                            Background="{DynamicResource Brush.Border}"
+                            Opacity="0.5"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbBorder" Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbBorder" Property="Opacity" Value="1.0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ScrollBarRepeatButtonStyle" TargetType="RepeatButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="{TemplateBinding Background}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ModernScrollBar" TargetType="ScrollBar">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="6"/>
+        <Setter Property="Margin" Value="0,8,4,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Border CornerRadius="3" Background="Transparent">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageUpCommand" 
+                                              Style="{StaticResource ScrollBarRepeatButtonStyle}"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource ScrollBarThumbStyle}"/>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageDownCommand" 
+                                              Style="{StaticResource ScrollBarRepeatButtonStyle}"/>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SettingsScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ScrollContentPresenter Grid.Row="0" Grid.Column="0" 
+                                                Margin="{TemplateBinding Padding}"
+                                                Content="{TemplateBinding Content}"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                        <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1"
+                                   Value="{TemplateBinding VerticalOffset}"
+                                   Maximum="{TemplateBinding ScrollableHeight}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"
+                                   Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                   Style="{StaticResource ModernScrollBar}"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

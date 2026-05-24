@@ -320,6 +320,20 @@ namespace FlowWheel.Core
             set => SetField(ref _maxScrollSpeed, value); 
         }
         
+        private int _minStep = 15;
+        public int MinStep
+        {
+            get => _minStep;
+            set => SetField(ref _minStep, value);
+        }
+        
+        private int _tickRate = 60;
+        public int TickRate 
+        { 
+            get => _tickRate; 
+            set => SetField(ref _tickRate, value); 
+        }
+        
         private bool _breakSpeedLimit = false;
         public bool BreakSpeedLimit 
         { 

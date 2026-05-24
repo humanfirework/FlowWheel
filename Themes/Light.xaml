@@ -9,6 +9,9 @@
     <SolidColorBrush x:Key="Brush.Border" Color="#E0E0E8"/>
     <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
     <SolidColorBrush x:Key="Brush.Sidebar.Background" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Brush.Sidebar.GradientStart" Color="#F8F8FC"/>
+    <SolidColorBrush x:Key="Brush.Sidebar.GradientEnd" Color="#F0F0F5"/>
+    <SolidColorBrush x:Key="Brush.Header.AccentLine" Color="#007ACC"/>
     <SolidColorBrush x:Key="Brush.Hover" Color="#F0F0F5"/>
     <SolidColorBrush x:Key="Brush.Pressed" Color="#E8E8F0"/>
     <SolidColorBrush x:Key="Brush.Control.Background" Color="#F8F8FA"/>

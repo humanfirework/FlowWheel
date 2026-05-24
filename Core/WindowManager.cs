@@ -106,7 +106,7 @@ namespace FlowWheel.Core
                 if (_pidCache.TryGetValue(pid, out var entry))
                 {
                     if ((DateTime.Now - entry.timestamp).TotalSeconds < 5)
-                        return entry.name.TrimEnd('.', 'e', 'x', 'E', 'X');
+                        return entry.name;
                     _pidCache.Remove(pid);
                 }
             }

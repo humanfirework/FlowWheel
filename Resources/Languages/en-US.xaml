@@ -10,6 +10,7 @@
     <s:String x:Key="NavFilter">App Filter</s:String>
     <s:String x:Key="NavShortcuts">Shortcuts</s:String>
     <s:String x:Key="NavAbout">About</s:String>
+    <s:String x:Key="NavAdvanced">Advanced</s:String>
     
     <!-- Sections -->
     <s:String x:Key="SectionLanguage">Language</s:String>
@@ -117,6 +118,8 @@
     <s:String x:Key="DescSoftStart">Smooth transition zone at deadzone edge to avoid sudden start</s:String>
     <s:String x:Key="LabelMaxScrollSpeed">Max Scroll Speed</s:String>
     <s:String x:Key="DescMaxScrollSpeed">Upper speed limit for drag scrolling. Higher values allow faster scrolling</s:String>
+    <s:String x:Key="LabelMinStep">Min Scroll Step</s:String>
+    <s:String x:Key="DescMinStep">Minimum pixels accumulated before each wheel event. Increase to reduce stuttering in Office/WPS</s:String>
     <s:String x:Key="LabelBreakSpeedLimit">Break Speed Limit</s:String>
     <s:String x:Key="DescBreakSpeedLimit">Remove speed cap when enabled, allowing ultra-fast scrolling</s:String>
     <s:String x:Key="LabelBreakSpeedMax">Extreme Speed</s:String>
@@ -133,6 +136,17 @@
     <!-- Filtering -->
     <s:String x:Key="RadioBlacklist">Blacklist (Block selected)</s:String>
     <s:String x:Key="RadioWhitelist">Whitelist (Allow only selected)</s:String>
+    <s:String x:Key="FilterBlacklistHelp">Processes in this list will be ignored (auto-scroll disabled).</s:String>
+    <s:String x:Key="FilterWhitelistHelp">Only processes in this list will have auto-scroll enabled.</s:String>
+    <s:String x:Key="LabelAlipay">Alipay</s:String>
+    <s:String x:Key="LabelWeChatPay">WeChat Pay</s:String>
+    <s:String x:Key="TipDragDropExe">Tip: Drag &amp; drop .exe files here</s:String>
+    <s:String x:Key="KeyAltMiddle">Alt + Middle Mouse</s:String>
+    <s:String x:Key="DlgSelectApp">Select Application to Filter</s:String>
+    <s:String x:Key="ErrNoHooks">No input hooks available.</s:String>
+    <s:String x:Key="ErrTitle">Error</s:String>
+    <s:String x:Key="TipProcessName">Enter process name (e.g. notepad)</s:String>
+    <s:String x:Key="TipAdd">Add</s:String>
 
     <s:String x:Key="BtnCloseToTray">Close to Tray</s:String>
     

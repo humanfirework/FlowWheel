@@ -10,6 +10,7 @@
     <s:String x:Key="NavFilter">应用过滤</s:String>
     <s:String x:Key="NavShortcuts">快捷键</s:String>
     <s:String x:Key="NavAbout">关于</s:String>
+    <s:String x:Key="NavAdvanced">高级设置</s:String>
     
     <!-- Sections -->
     <s:String x:Key="SectionLanguage">语言</s:String>
@@ -117,6 +118,8 @@
     <s:String x:Key="DescSoftStart">在死区边缘的平滑过渡区域，避免突然启动</s:String>
     <s:String x:Key="LabelMaxScrollSpeed">最大滚动速度</s:String>
     <s:String x:Key="DescMaxScrollSpeed">拖拽滚动时的速度上限，值越大最大速度越快</s:String>
+    <s:String x:Key="LabelMinStep">最小滚动步长</s:String>
+    <s:String x:Key="DescMinStep">每次滚轮事件累积的最小像素量，增大可减少Office/WPS的卡顿现象</s:String>
     <s:String x:Key="LabelBreakSpeedLimit">突破速度限制</s:String>
     <s:String x:Key="DescBreakSpeedLimit">启用后取消速度上限，允许更高速滚动</s:String>
     <s:String x:Key="LabelBreakSpeedMax">极限速度</s:String>
@@ -133,6 +136,17 @@
     <!-- Filtering -->
     <s:String x:Key="RadioBlacklist">黑名单 (屏蔽以下)</s:String>
     <s:String x:Key="RadioWhitelist">白名单 (仅允许以下)</s:String>
+    <s:String x:Key="FilterBlacklistHelp">列表中的进程将被忽略（禁用自动滚屏）。</s:String>
+    <s:String x:Key="FilterWhitelistHelp">仅列表中的进程可使用自动滚屏功能。</s:String>
+    <s:String x:Key="LabelAlipay">支付宝</s:String>
+    <s:String x:Key="LabelWeChatPay">微信支付</s:String>
+    <s:String x:Key="TipDragDropExe">提示：可将 .exe 文件拖放到此处</s:String>
+    <s:String x:Key="KeyAltMiddle">Alt + 鼠标中键</s:String>
+    <s:String x:Key="DlgSelectApp">选择要过滤的应用程序</s:String>
+    <s:String x:Key="ErrNoHooks">输入钩子不可用。</s:String>
+    <s:String x:Key="ErrTitle">错误</s:String>
+    <s:String x:Key="TipProcessName">输入进程名称 (如 notepad)</s:String>
+    <s:String x:Key="TipAdd">添加</s:String>
 
     <s:String x:Key="BtnCloseToTray">最小化到托盘</s:String>
     

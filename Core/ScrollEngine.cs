@@ -23,9 +23,15 @@ namespace FlowWheel.Core
         private int _runId = 0;
         private double _filteredSpeedV = 0;
         private double _filteredSpeedH = 0;
-        
+        // Time-based flush: force-send accumulated delta after this many ticks even if below MinStep
+        private int _ticksSinceLastScrollV = 0;
+        private int _ticksSinceLastScrollH = 0;
+        private const int MaxAccumulateTicks = 3;
+
         // Pre-allocated input buffer to avoid per-frame GC allocation
         private readonly NativeMethods.INPUT[] _inputBuffer = new NativeMethods.INPUT[1];
+        // Cache Marshal.SizeOf to avoid repeated reflection calls per scroll event
+        private static readonly int InputStructSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(NativeMethods.INPUT));
         
         private double _currentSpeed = 0;
         private double _currentHSpeed = 0;
@@ -58,7 +64,7 @@ namespace FlowWheel.Core
         public bool UseIndependentDeadzone { get; set; } = false;
         
         public int TickRate { get; set; } = 60;
-        public int MinStep { get; set; } = 1;
+        public int MinStep { get; set; } = 15;
         
         // 高级参数
         public double Friction { get; set; } = 5.0;
@@ -107,6 +113,8 @@ namespace FlowWheel.Core
             CurveType = config.AccelerationCurve;
             ReadingModeSpeed = config.ReadingModeSpeed;
             ReadingModeMaxSpeed = config.ReadingModeMaxSpeed;
+            MinStep = config.MinStep;
+            TickRate = config.TickRate;
         }
         
         private float GetVerticalSensitivity()
@@ -142,6 +150,8 @@ namespace FlowWheel.Core
                 _accumulatedHDelta = 0;
                 _filteredSpeedV = _currentSpeed;
                 _filteredSpeedH = 0;
+                _ticksSinceLastScrollV = 0;
+                _ticksSinceLastScrollH = 0;
                 _runId++;
                 runId = _runId;
                 
@@ -190,6 +200,8 @@ namespace FlowWheel.Core
                 _accumulatedHDelta = 0;
                 _filteredSpeedV = 0;
                 _filteredSpeedH = 0;
+                _ticksSinceLastScrollV = 0;
+                _ticksSinceLastScrollH = 0;
                 _runId++;
                 runId = _runId;
 
@@ -247,6 +259,8 @@ namespace FlowWheel.Core
                 _accumulatedHDelta = 0;
                 _filteredSpeedV = 0;
                 _filteredSpeedH = 0;
+                _ticksSinceLastScrollV = 0;
+                _ticksSinceLastScrollH = 0;
             }
             
             if (wasRunning)
@@ -440,12 +454,17 @@ namespace FlowWheel.Core
                 if (Math.Abs(targetSpeedV) > 0.1)
                 {
                     _accumulatedDelta += targetSpeedV * dt;
+                    _ticksSinceLastScrollV++;
 
                     int steps = 0;
-                    if (Math.Abs(_accumulatedDelta) >= MinStep)
+                    bool reachedThreshold = Math.Abs(_accumulatedDelta) >= MinStep;
+                    bool timedOut = _ticksSinceLastScrollV >= MaxAccumulateTicks && Math.Abs(_accumulatedDelta) >= 1;
+
+                    if (reachedThreshold || timedOut)
                     {
                         steps = (int)_accumulatedDelta;
                         _accumulatedDelta -= steps;
+                        _ticksSinceLastScrollV = 0;
                     }
 
                     if (steps != 0)
@@ -456,16 +475,23 @@ namespace FlowWheel.Core
                 else
                 {
                     _accumulatedDelta = 0;
+                    _ticksSinceLastScrollV = 0;
                 }
 
                 if (Math.Abs(targetSpeedH) > 0.1)
                 {
                     _accumulatedHDelta += targetSpeedH * dt;
+                    _ticksSinceLastScrollH++;
+
                     int hSteps = 0;
-                    if (Math.Abs(_accumulatedHDelta) >= MinStep)
+                    bool reachedThreshold = Math.Abs(_accumulatedHDelta) >= MinStep;
+                    bool timedOut = _ticksSinceLastScrollH >= MaxAccumulateTicks && Math.Abs(_accumulatedHDelta) >= 1;
+
+                    if (reachedThreshold || timedOut)
                     {
                         hSteps = (int)_accumulatedHDelta;
                         _accumulatedHDelta -= hSteps;
+                        _ticksSinceLastScrollH = 0;
                     }
 
                     if (hSteps != 0)
@@ -476,6 +502,7 @@ namespace FlowWheel.Core
                 else
                 {
                     _accumulatedHDelta = 0;
+                    _ticksSinceLastScrollH = 0;
                 }
 
                 nextTick += intervalTicks;
@@ -505,7 +532,7 @@ namespace FlowWheel.Core
                 dwExtraInfo = MouseHook.INJECTED_SIGNATURE
             };
 
-            NativeMethods.SendInput(1, _inputBuffer, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
+            NativeMethods.SendInput(1, _inputBuffer, InputStructSize);
 
             if (IsSyncEnabled)
             {
