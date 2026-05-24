@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/flowwheel.jpg" width="120" alt="FlowWheel Logo" />
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/flowwheel.png" width="120" alt="FlowWheel Logo" />
 </div>
 
 <div align="center">
