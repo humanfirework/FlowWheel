@@ -210,9 +210,21 @@ FlowWheel is designed with privacy in mind from the ground up:
 If FlowWheel has been helpful, feel free to buy me a coffee
 
 <div align="center">
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="150" alt="Alipay" />
-  &nbsp;&nbsp;
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="150" alt="WeChat Pay" />
+  <table>
+    <tr>
+      <td align="center">
+        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="150" alt="Alipay" />
+        <br/>
+        <strong>Alipay</strong>
+      </td>
+      <td width="40"></td>
+      <td align="center">
+        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="150" alt="WeChat Pay" />
+        <br/>
+        <strong>WeChat Pay</strong>
+      </td>
+    </tr>
+  </table>
 </div>
 
 ## License

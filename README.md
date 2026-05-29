@@ -152,12 +152,24 @@ FlowWheel 从设计之初就注重隐私：
 
 ## 支持
 
-如果对你有帮助，欢迎请我喝杯咖啡
+如果对你有帮助，欢迎请我喝杯咖啡，感谢支持！🥳
 
 <div align="center">
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="150" alt="Alipay" />
-  &nbsp;&nbsp;
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="150" alt="WeChat Pay" />
+  <table>
+    <tr>
+      <td align="center">
+        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="150" alt="Alipay" />
+        <br/>
+        <strong>支付宝</strong>
+      </td>
+      <td width="40"></td>
+      <td align="center">
+        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="150" alt="WeChat Pay" />
+        <br/>
+        <strong>微信支付</strong>
+      </td>
+    </tr>
+  </table>
 </div>
 
 ## 开源许可
