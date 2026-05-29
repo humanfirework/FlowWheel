@@ -412,8 +412,8 @@
                                         <TextBlock x:Name="BreakSpeedMaxValueText" Text="2000 px/s" Grid.Column="1" 
                                                    Style="{StaticResource SettingLabel}" Foreground="#FF4444"/>
                                     </Grid>
-                                    <Slider x:Name="BreakSpeedMaxSlider" Minimum="1500" Maximum="5000" Value="2000" 
-                                            TickFrequency="100" IsSnapToTickEnabled="True" 
+                                    <Slider x:Name="BreakSpeedMaxSlider" Minimum="2000" Maximum="15000" Value="5000" 
+                                            TickFrequency="500" IsSnapToTickEnabled="True" 
                                             ValueChanged="BreakSpeedMaxSlider_ValueChanged"/>
                                     <TextBlock Text="{DynamicResource DescBreakSpeedLimitNote}" Style="{StaticResource SettingDescription}"/>
                                 </StackPanel>
@@ -681,7 +681,7 @@
                                     <TextBlock x:Name="MaxScrollSpeedValueText" Text="1500 px/s" Grid.Column="1" 
                                                Style="{StaticResource SettingLabel}" Foreground="{DynamicResource Brush.Accent}"/>
                                 </Grid>
-                                <Slider x:Name="MaxScrollSpeedSlider" Minimum="500" Maximum="2000" Value="1500" 
+                                <Slider x:Name="MaxScrollSpeedSlider" Minimum="500" Maximum="3000" Value="1500" 
                                         TickFrequency="100" IsSnapToTickEnabled="True" 
                                         ValueChanged="MaxScrollSpeedSlider_ValueChanged"/>
                                 

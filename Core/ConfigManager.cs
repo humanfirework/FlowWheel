@@ -341,7 +341,7 @@ namespace FlowWheel.Core
             set => SetField(ref _breakSpeedLimit, value); 
         }
         
-        private double _breakSpeedLimitMax = 2000.0;
+        private double _breakSpeedLimitMax = 5000.0;
         public double BreakSpeedLimitMax 
         { 
             get => _breakSpeedLimitMax; 

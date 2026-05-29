@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -23,9 +24,9 @@ namespace FlowWheel.UI
         private bool _isSpinning = false;
         private int _currentIconSize = 48;
         
-        // Use DispatcherTimer instead of CompositionTarget.Rendering for better CPU efficiency
-        private readonly DispatcherTimer _animationTimer;
-        private DateTime _lastAnimationTime;
+        // Use CompositionTarget.Rendering for smoother animation at 60fps
+        private Stopwatch _animationStopwatch = new Stopwatch();
+        private bool _compositionRenderingSubscribed = false;
 
         // Controllable breathing storyboard (created in code, not XAML EventTrigger)
         private Storyboard? _breathingStoryboard;
@@ -35,13 +36,11 @@ namespace FlowWheel.UI
         {
             InitializeComponent();
             
-            // Use 30fps animation timer instead of per-frame rendering (saves significant CPU)
-            _animationTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(33) // ~30fps
-            };
-            _animationTimer.Tick += OnAnimationTick;
-            _lastAnimationTime = DateTime.Now;
+            // Enable hardware acceleration for smoother rendering
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+            RenderOptions.SetClearTypeHint(this, ClearTypeHint.Enabled);
+            this.UseLayoutRounding = false;
             
             // Create controllable breathing storyboard in code
             var breathingEase = new SineEase { EasingMode = EasingMode.EaseInOut };
@@ -224,17 +223,22 @@ namespace FlowWheel.UI
             NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, exStyle | NativeMethods.WS_EX_TRANSPARENT | NativeMethods.WS_EX_TOOLWINDOW);
         }
 
-        private void OnAnimationTick(object? sender, EventArgs e)
+        private void OnCompositionRendering(object? sender, EventArgs e)
         {
             if (!_isSpinning || SpinningWheel == null) 
             {
-                _animationTimer.Stop();
+                UnsubscribeRendering();
                 return;
             }
             
-            var now = DateTime.Now;
-            var dt = (now - _lastAnimationTime).TotalSeconds;
-            _lastAnimationTime = now;
+            if (!_animationStopwatch.IsRunning)
+            {
+                _animationStopwatch.Start();
+                return;
+            }
+            
+            var dt = _animationStopwatch.Elapsed.TotalSeconds;
+            _animationStopwatch.Restart();
             
             if (dt <= 0 || dt > 0.1) return; // Skip if too much time passed
             
@@ -242,6 +246,26 @@ namespace FlowWheel.UI
             if (SpinningWheel.RenderTransform is RotateTransform rt)
             {
                 rt.Angle = _currentRotation;
+            }
+        }
+        
+        private void SubscribeRendering()
+        {
+            if (!_compositionRenderingSubscribed)
+            {
+                _compositionRenderingSubscribed = true;
+                CompositionTarget.Rendering += OnCompositionRendering;
+                _animationStopwatch.Restart();
+            }
+        }
+        
+        private void UnsubscribeRendering()
+        {
+            if (_compositionRenderingSubscribed)
+            {
+                _compositionRenderingSubscribed = false;
+                CompositionTarget.Rendering -= OnCompositionRendering;
+                _animationStopwatch.Stop();
             }
         }
 
@@ -279,8 +303,7 @@ namespace FlowWheel.UI
             {
                 _rotationSpeed = 30;
                 _isSpinning = true;
-                _lastAnimationTime = DateTime.Now;
-                _animationTimer.Start();
+                SubscribeRendering();
             }
 
             SetBreathingActive(true);
@@ -419,7 +442,7 @@ namespace FlowWheel.UI
         public void HideAnchor()
         {
             _isSpinning = false;
-            _animationTimer.Stop();
+            UnsubscribeRendering();
             SetBreathingActive(false);
 
             var fadeOut = new DoubleAnimation(Anchor.Opacity, 0, TimeSpan.FromMilliseconds(150))

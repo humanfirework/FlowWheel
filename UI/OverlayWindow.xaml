@@ -7,32 +7,36 @@
         Background="{x:Null}"
         Topmost="True" 
         ShowInTaskbar="False"
-        IsHitTestVisible="False">
+        IsHitTestVisible="False"
+        RenderOptions.BitmapScalingMode="Fant"
+        RenderOptions.EdgeMode="Aliased"
+        RenderOptions.ClearTypeHint="Enabled"
+        UseLayoutRounding="False">
     
     <Grid>
         <Canvas x:Name="MainCanvas">
-            <Grid x:Name="Anchor" Visibility="Collapsed">
+            <Grid x:Name="Anchor" Visibility="Collapsed" RenderOptions.CachingHint="Cache">
                 <!-- Custom Image -->
-                <Image x:Name="CustomAnchorImage" Stretch="Uniform" Visibility="Collapsed"/>
+                <Image x:Name="CustomAnchorImage" Stretch="Uniform" Visibility="Collapsed" RenderOptions.BitmapScalingMode="HighQuality"/>
                 
                 <!-- Default Wheel Icon - Modernized -->
                 <Canvas x:Name="WheelIndicatorCanvas">
                     <Grid x:Name="WheelIndicator">
-                        <!-- Outer Glow Ring (soft halo) -->
+                        <!-- Outer Glow Ring (soft halo) - lighter version for performance -->
                         <Ellipse x:Name="OuterGlow" 
                                  StrokeThickness="0"
                                  HorizontalAlignment="Center" VerticalAlignment="Center"
-                                 Opacity="0.2">
+                                 Opacity="0.15">
                             <Ellipse.Fill>
                                 <RadialGradientBrush>
                                     <GradientStop Color="{DynamicResource Color.Accent}" Offset="0"/>
-                                    <GradientStop Color="#33000000" Offset="0.4"/>
+                                    <GradientStop Color="#22000000" Offset="0.5"/>
                                     <GradientStop Color="Transparent" Offset="1"/>
                                 </RadialGradientBrush>
                             </Ellipse.Fill>
                         </Ellipse>
                         
-                        <!-- Outer Ring - Gradient stroke with glow -->
+                        <!-- Outer Ring - Gradient stroke with simpler glow -->
                         <Ellipse x:Name="OuterRing" 
                                  StrokeThickness="2"
                                  HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -48,9 +52,6 @@
                                     <GradientStop Color="#E616161E" Offset="1"/>
                                 </RadialGradientBrush>
                             </Ellipse.Fill>
-                            <Ellipse.Effect>
-                                <DropShadowEffect Color="{DynamicResource Color.Accent}" BlurRadius="12" ShadowDepth="0" Opacity="0.35"/>
-                            </Ellipse.Effect>
                         </Ellipse>
                         
                         <!-- Inner Ring -->
@@ -58,16 +59,12 @@
                                  Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.5" Opacity="0.5"
                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         
-                        <!-- Center Dot with glow -->
+                        <!-- Center Dot with simpler glow -->
                         <Ellipse x:Name="CenterDot" Fill="{DynamicResource Brush.Accent}"
-                                 HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Ellipse.Effect>
-                                <DropShadowEffect Color="{DynamicResource Color.Accent}" BlurRadius="6" ShadowDepth="0" Opacity="0.8"/>
-                            </Ellipse.Effect>
-                        </Ellipse>
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         
                         <!-- Spinning Wheel Lines -->
-                        <Grid x:Name="SpinningWheel">
+                        <Grid x:Name="SpinningWheel" RenderOptions.CachingHint="Cache">
                             <Grid.RenderTransform>
                                 <RotateTransform x:Name="WheelRotate" Angle="0"/>
                             </Grid.RenderTransform>
@@ -87,34 +84,27 @@
                                  HorizontalAlignment="Center" VerticalAlignment="Center"
                                  Width="44" Height="44"/>
                         
-                        <!-- Reading Mode Icon -->
+                        <!-- Reading Mode Icon - simpler version -->
                         <Path x:Name="ReadingIcon" Data="M10,5 L20,15 L10,25 Z" 
                               Fill="#00DD44" Stretch="Uniform"
-                              Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Path.Effect>
-                                <DropShadowEffect Color="#00DD44" BlurRadius="6" ShadowDepth="0" Opacity="0.6"/>
-                            </Path.Effect>
-                        </Path>
+                              Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     
-                    <!-- Reading Speed Display -->
+                    <!-- Reading Speed Display - no shadow -->
                     <TextBlock x:Name="ReadingSpeedText" 
                                Text="30 px/s" 
                                Foreground="#00DD44" 
                                FontSize="11" FontWeight="SemiBold"
                                Visibility="Collapsed"
-                               Canvas.Left="0" Canvas.Top="0">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="#00DD44" BlurRadius="4" ShadowDepth="0" Opacity="0.5"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
+                               Canvas.Left="0" Canvas.Top="0"/>
                     
                     <!-- Break Speed Limit Indicator -->
                     <Border x:Name="BreakSpeedIndicator" 
                             CornerRadius="6" Padding="5,3"
                             Visibility="Collapsed"
                             Canvas.Left="0" Canvas.Top="0"
-                            RenderTransformOrigin="0.5,0.5">
+                            RenderTransformOrigin="0.5,0.5"
+                            RenderOptions.CachingHint="Cache">
                         <Border.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#DDCC4444" Offset="0"/>
@@ -127,31 +117,15 @@
                         <TextBlock Text="⚡ UNLIMITED" Foreground="White" FontSize="9" FontWeight="Bold"/>
                     </Border>
                     
-                    <!-- Direction Arrows - Filled triangles for modern look -->
+                    <!-- Direction Arrows - Filled triangles for modern look, no shadow -->
                     <Path x:Name="ArrowUp" Data="M0,10 L6,0 L12,10 Z" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="0.5"
-                          Width="12" Height="11" Visibility="Collapsed" Opacity="0.9">
-                        <Path.Effect>
-                            <DropShadowEffect Color="{DynamicResource Color.Accent}" BlurRadius="4" ShadowDepth="0" Opacity="0.7"/>
-                        </Path.Effect>
-                    </Path>
+                          Width="12" Height="11" Visibility="Collapsed" Opacity="0.9"/>
                     <Path x:Name="ArrowDown" Data="M0,0 L6,10 L12,0 Z" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="0.5"
-                          Width="12" Height="11" Visibility="Collapsed" Opacity="0.9">
-                        <Path.Effect>
-                            <DropShadowEffect Color="{DynamicResource Color.Accent}" BlurRadius="4" ShadowDepth="0" Opacity="0.7"/>
-                        </Path.Effect>
-                    </Path>
+                          Width="12" Height="11" Visibility="Collapsed" Opacity="0.9"/>
                     <Path x:Name="ArrowLeft" Data="M10,0 L0,6 L10,12 Z" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="0.5"
-                          Width="11" Height="12" Visibility="Collapsed" Opacity="0.9">
-                        <Path.Effect>
-                            <DropShadowEffect Color="{DynamicResource Color.Accent}" BlurRadius="4" ShadowDepth="0" Opacity="0.7"/>
-                        </Path.Effect>
-                    </Path>
+                          Width="11" Height="12" Visibility="Collapsed" Opacity="0.9"/>
                     <Path x:Name="ArrowRight" Data="M0,0 L10,6 L0,12 Z" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="0.5"
-                          Width="11" Height="12" Visibility="Collapsed" Opacity="0.9">
-                        <Path.Effect>
-                            <DropShadowEffect Color="{DynamicResource Color.Accent}" BlurRadius="4" ShadowDepth="0" Opacity="0.7"/>
-                        </Path.Effect>
-                    </Path>
+                          Width="11" Height="12" Visibility="Collapsed" Opacity="0.9"/>
                 </Canvas>
             </Grid>
         </Canvas>

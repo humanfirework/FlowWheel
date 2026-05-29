@@ -35,7 +35,7 @@ namespace FlowWheel.Core
         
         private double _currentSpeed = 0;
         private double _currentHSpeed = 0;
-        private const double MaxDistance = 500.0; // 归一化输入的最大距离阈值
+        private const double MaxDistance = 300.0; // 归一化输入的最大距离阈值，更小距离即可达到最高速
         private NativeMethods.POINT _origin;
         private NativeMethods.POINT _current;
         private NativeMethods.POINT _lastPos;
@@ -63,18 +63,18 @@ namespace FlowWheel.Core
         public int DeadzoneHorizontal { get; set; } = 20;
         public bool UseIndependentDeadzone { get; set; } = false;
         
-        public int TickRate { get; set; } = 60;
-        public int MinStep { get; set; } = 15;
+        public int TickRate { get; set; } = 120;
+        public int MinStep { get; set; } = 8;
         
         // 高级参数
-        public double Friction { get; set; } = 5.0;
-        public double InertiaMultiplier { get; set; } = 1.0;
-        public double ResponseTime { get; set; } = 0.04;
+        public double Friction { get; set; } = 3.5;
+        public double InertiaMultiplier { get; set; } = 1.2;
+        public double ResponseTime { get; set; } = 0.015;
         public double AxisLockRatio { get; set; } = 1.8;
-        public int SoftStartRange { get; set; } = 12;
+        public int SoftStartRange { get; set; } = 6; // 更小的软启动范围，更快进入高速
         public double MaxScrollSpeed { get; set; } = 1500.0;
         public bool BreakSpeedLimit { get; set; } = false;
-        public double BreakSpeedLimitMax { get; set; } = 2000.0;
+        public double BreakSpeedLimitMax { get; set; } = 5000.0;
         
         // 加速度曲线
         public AccelerationCurveType CurveType { get; set; } = AccelerationCurveType.Linear;
@@ -305,6 +305,10 @@ namespace FlowWheel.Core
             int hDeadzone = GetHorizontalDeadzone();
             float vSensitivity = GetVerticalSensitivity();
             float hSensitivity = GetHorizontalSensitivity();
+            double maxSpeed = GetEffectiveMaxSpeed();
+            
+            // 突破速度限制时，提供额外加速倍率
+            double speedBoostMultiplier = BreakSpeedLimit ? 1.5 : 1.0;
             
             // Vertical
             int dy = _current.y - _origin.y;
@@ -321,7 +325,7 @@ namespace FlowWheel.Core
                 
                 double curveOutput = ApplyAccelerationCurve(normalizedInput);
                 
-                double rawSpeed = curveOutput * GetEffectiveMaxSpeed() * vSensitivity;
+                double rawSpeed = curveOutput * maxSpeed * vSensitivity * speedBoostMultiplier;
                 
                 if (SoftStartRange > 0 && effective < SoftStartRange)
                 {
@@ -355,7 +359,7 @@ namespace FlowWheel.Core
                 
                 double curveOutput = ApplyAccelerationCurve(normalizedInput);
                 
-                double rawHSpeed = curveOutput * GetEffectiveMaxSpeed() * hSensitivity;
+                double rawHSpeed = curveOutput * maxSpeed * hSensitivity * speedBoostMultiplier;
                 
                 if (SoftStartRange > 0 && effective < SoftStartRange)
                 {
