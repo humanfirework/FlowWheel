@@ -23,6 +23,7 @@ namespace FlowWheel.UI
         private double _rotationSpeed = 0;
         private bool _isSpinning = false;
         private int _currentIconSize = 48;
+        private int _showVersion = 0;
         
         // Use CompositionTarget.Rendering for smoother animation at 60fps
         private Stopwatch _animationStopwatch = new Stopwatch();
@@ -271,8 +272,12 @@ namespace FlowWheel.UI
 
         public void ShowAnchor(double x, double y)
         {
+            _showVersion++;
             ApplyIconSize(ConfigManager.Current.IconSize);
             LoadCustomIcon();
+
+            // Cancel any pending fade-out animation to prevent it from hiding the anchor
+            Anchor.BeginAnimation(OpacityProperty, null);
 
             Canvas.SetLeft(Anchor, x - Anchor.Width / 2);
             Canvas.SetTop(Anchor, y - Anchor.Height / 2);
@@ -445,12 +450,16 @@ namespace FlowWheel.UI
             UnsubscribeRendering();
             SetBreathingActive(false);
 
+            int hideVersion = _showVersion;
+
             var fadeOut = new DoubleAnimation(Anchor.Opacity, 0, TimeSpan.FromMilliseconds(150))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
             };
             fadeOut.Completed += (s, e) =>
             {
+                // If a newer ShowAnchor was called after this HideAnchor, skip hiding
+                if (_showVersion != hideVersion) return;
                 Anchor.Visibility = Visibility.Collapsed;
                 this.Hide();
             };

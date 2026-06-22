@@ -154,25 +154,19 @@ FlowWheel 从设计之初就注重隐私：
 
 如果对你有帮助，欢迎请我喝杯咖啡，感谢支持！🥳
 
-<div align="center">
+<div align="center" class="qr-container">
   <table>
     <tr>
       <td align="center">
-        <details>
-          <summary><img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="120" style="filter:blur(6px);border-radius:8px;" alt="Alipay QR" /></summary>
-          <br/>
-          <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="200" style="border-radius:8px;" alt="Alipay" />
-          <br/><strong>支付宝</strong>
-        </details>
+        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="150" alt="Alipay" />
+        <br/>
+        <strong>支付宝</strong>
       </td>
       <td width="40"></td>
       <td align="center">
-        <details>
-          <summary><img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="120" style="filter:blur(6px);border-radius:8px;" alt="WeChat QR" /></summary>
-          <br/>
-          <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="200" style="border-radius:8px;" alt="WeChat Pay" />
-          <br/><strong>微信支付</strong>
-        </details>
+        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="150" alt="WeChat Pay" />
+        <br/>
+        <strong>微信支付</strong>
       </td>
     </tr>
   </table>

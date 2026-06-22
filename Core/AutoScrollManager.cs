@@ -453,7 +453,10 @@ namespace FlowWheel.Core
             {
                 if (_isActive)
                 {
-                    StopAutoScroll();
+                    // During inertia or any active state, stop immediately and restart
+                    _engine.Stop();
+                    _isActive = false;
+                    CancelPendingMiddleClick();
                 }
 
                 var (isBlocked, _) = _windowManager.CheckProcessState(point);
@@ -477,7 +480,19 @@ namespace FlowWheel.Core
                     }
                     else
                     {
-                        StopAutoScroll();
+                        // During inertia, stop and immediately restart so user doesn't have to wait
+                        _engine.Stop();
+                        _isActive = false;
+                        CancelPendingMiddleClick();
+
+                        var (isBlocked2, _) = _windowManager.CheckProcessState(point);
+                        if (!isBlocked2)
+                        {
+                            _engine.Sensitivity = ConfigManager.Current.Sensitivity;
+                            _engine.Deadzone = ConfigManager.Current.Deadzone;
+                            StartAutoScroll(point);
+                        }
+                        return;
                     }
                 }
                 else
@@ -656,6 +671,8 @@ namespace FlowWheel.Core
 
         private void OnEngineStopped(object? sender, EventArgs e)
         {
+            // Only handle if still active — if _isActive is already false,
+            // the user has already re-started and we must not hide the new anchor.
             if (_isActive)
             {
                 _isActive = false;
