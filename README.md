@@ -152,33 +152,27 @@ FlowWheel 从设计之初就注重隐私：
 
 ## 支持
 
-<style>
-.qr-container img {
-  filter: blur(8px);
-  transition: all 0.4s ease;
-  cursor: pointer;
-}
-.qr-container img:hover {
-  filter: blur(0);
-  transform: scale(1.15);
-}
-</style>
-
 如果对你有帮助，欢迎请我喝杯咖啡，感谢支持！🥳
 
-<div align="center" class="qr-container">
+<div align="center">
   <table>
     <tr>
       <td align="center">
-        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="150" alt="Alipay" />
-        <br/>
-        <strong>支付宝</strong>
+        <details>
+          <summary><img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="120" style="filter:blur(6px);border-radius:8px;" alt="Alipay QR" /></summary>
+          <br/>
+          <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/alipay_qr.jpg" width="200" style="border-radius:8px;" alt="Alipay" />
+          <br/><strong>支付宝</strong>
+        </details>
       </td>
       <td width="40"></td>
       <td align="center">
-        <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="150" alt="WeChat Pay" />
-        <br/>
-        <strong>微信支付</strong>
+        <details>
+          <summary><img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="120" style="filter:blur(6px);border-radius:8px;" alt="WeChat QR" /></summary>
+          <br/>
+          <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets/weixin.jpg" width="200" style="border-radius:8px;" alt="WeChat Pay" />
+          <br/><strong>微信支付</strong>
+        </details>
       </td>
     </tr>
   </table>
