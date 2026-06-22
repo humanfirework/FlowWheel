@@ -390,30 +390,30 @@ namespace FlowWheel.Core
                 }
             }
         }
-        
+
         private double ApplyAccelerationCurve(double normalizedInput)
         {
             if (_config == null)
             {
                 return normalizedInput;
             }
-            
+
             return AccelerationCurve.ApplyCurve(normalizedInput, CurveType, _config);
         }
 
-        private async Task Loop(int runId)
+        private void Loop(int runId)
         {
             long lastTick = Stopwatch.GetTimestamp();
-            long intervalTicks = (long)(Stopwatch.Frequency / (double)TickRate);
-            if (intervalTicks < 1) intervalTicks = 1;
-            long nextTick = lastTick;
+            double intervalSeconds = 1.0 / Math.Max(1, TickRate);
+            double nextTickSeconds = lastTick / (double)Stopwatch.Frequency;
 
             while (true)
             {
                 if (!_isRunning || runId != Volatile.Read(ref _runId)) break;
 
                 long currentTick = Stopwatch.GetTimestamp();
-                double dt = (currentTick - lastTick) / (double)Stopwatch.Frequency;
+                double currentSeconds = currentTick / (double)Stopwatch.Frequency;
+                double dt = currentSeconds - (lastTick / (double)Stopwatch.Frequency);
                 lastTick = currentTick;
 
                 double targetSpeedV = _currentSpeed;
@@ -509,16 +509,15 @@ namespace FlowWheel.Core
                     _ticksSinceLastScrollH = 0;
                 }
 
-                nextTick += intervalTicks;
-                long now = Stopwatch.GetTimestamp();
-                long remaining = nextTick - now;
-                if (remaining > 0)
+                nextTickSeconds += intervalSeconds;
+                double waitSeconds = nextTickSeconds - currentSeconds;
+                if (waitSeconds > 0.002)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(remaining / (double)Stopwatch.Frequency)).ConfigureAwait(false);
+                    Thread.Sleep((int)((waitSeconds - 0.001) * 1000));
                 }
-                else if (-remaining > intervalTicks * 5)
+                else if (waitSeconds < -intervalSeconds * 5)
                 {
-                    nextTick = now;
+                    nextTickSeconds = currentSeconds;
                 }
             }
         }
@@ -545,3 +544,4 @@ namespace FlowWheel.Core
         }
     }
 }
+

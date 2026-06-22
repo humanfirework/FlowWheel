@@ -35,34 +35,34 @@
                     <ControlTemplate.Resources>
                         <!-- Hover animation -->
                         <Storyboard x:Key="HoverStoryboard">
-                            <DoubleAnimation Storyboard.TargetName="hoverGlow" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2">
+                            <DoubleAnimation Storyboard.TargetName="hoverGlow" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15">
                                 <DoubleAnimation.EasingFunction>
                                     <QuadraticEase EasingMode="EaseOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
-                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.1" Duration="0:0:0.2">
+                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.1" Duration="0:0:0.15">
                                 <DoubleAnimation.EasingFunction>
                                     <QuadraticEase EasingMode="EaseOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
-                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.1" Duration="0:0:0.2">
+                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.1" Duration="0:0:0.15">
                                 <DoubleAnimation.EasingFunction>
                                     <QuadraticEase EasingMode="EaseOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
                         </Storyboard>
                         <Storyboard x:Key="LeaveStoryboard">
-                            <DoubleAnimation Storyboard.TargetName="hoverGlow" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2">
+                            <DoubleAnimation Storyboard.TargetName="hoverGlow" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15">
                                 <DoubleAnimation.EasingFunction>
                                     <QuadraticEase EasingMode="EaseOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
-                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.2">
+                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.15">
                                 <DoubleAnimation.EasingFunction>
                                     <QuadraticEase EasingMode="EaseOut"/>
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
-                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2">
+                            <DoubleAnimation Storyboard.TargetName="icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.15">
                                 <DoubleAnimation.EasingFunction>
                                     <QuadraticEase EasingMode="EaseOut"/>
                                 </DoubleAnimation.EasingFunction>
@@ -70,7 +70,7 @@
                         </Storyboard>
                         <!-- Checked animation -->
                         <Storyboard x:Key="CheckedStoryboard">
-                            <DoubleAnimation Storyboard.TargetName="activeIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.25">
+                            <DoubleAnimation Storyboard.TargetName="activeIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2">
                                 <DoubleAnimation.EasingFunction>
                                     <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
                                 </DoubleAnimation.EasingFunction>
@@ -482,7 +482,8 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Track x:Name="PART_Track" Grid.Row="1" Height="20" Margin="8,0"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                               HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                               SnapsToDevicePixels="True">
                             <Track.DecreaseRepeatButton>
                                 <RepeatButton Command="Slider.DecreaseLarge" Height="4" VerticalAlignment="Center">
                                     <RepeatButton.Template>
@@ -502,7 +503,7 @@
                                 </RepeatButton>
                             </Track.IncreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb Width="12" Height="12">
+                                <Thumb Width="12" Height="12" RenderOptions.BitmapScalingMode="HighQuality">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
                                             <Ellipse x:Name="ThumbEllipse" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" Width="12" Height="12" ClipToBounds="False">
@@ -1069,8 +1070,8 @@
 
     <!-- CurveEditor Control -->
     <Style TargetType="{x:Type controls:CurveEditor}">
-        <Setter Property="Width" Value="280"/>
-        <Setter Property="Height" Value="180"/>
+        <Setter Property="Width" Value="360"/>
+        <Setter Property="Height" Value="220"/>
         <Setter Property="Background" Value="{DynamicResource Brush.Curve.Background}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Brush.Control.Border}"/>
         <Setter Property="BorderThickness" Value="1"/>
@@ -1086,9 +1087,9 @@
                             ClipToBounds="True">
                         <Canvas x:Name="PART_Canvas" ClipToBounds="True"
                                 IsHitTestVisible="True">
-                            <Path x:Name="PART_CurvePath" Stroke="{DynamicResource Brush.Curve.Line}" StrokeThickness="2.5"
-                                  IsHitTestVisible="False"/>
-                         </Canvas>
+                            <Path x:Name="PART_CurvePath" Stroke="{DynamicResource Brush.Curve.Line}" StrokeThickness="3"
+                                  IsHitTestVisible="False" StrokeLineJoin="Round"/>
+                        </Canvas>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -1097,8 +1098,8 @@
 
     <!-- CurvePreview Control -->
     <Style TargetType="{x:Type controls:CurvePreview}">
-        <Setter Property="Width" Value="280"/>
-        <Setter Property="Height" Value="180"/>
+        <Setter Property="Width" Value="360"/>
+        <Setter Property="Height" Value="220"/>
         <Setter Property="Background" Value="{DynamicResource Brush.Curve.Background}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Brush.Control.Border}"/>
         <Setter Property="BorderThickness" Value="1"/>
@@ -1114,8 +1115,8 @@
                             ClipToBounds="True">
                         <Canvas x:Name="PART_Canvas" ClipToBounds="True"
                                 IsHitTestVisible="False">
-                            <Path x:Name="PART_CurvePath" Stroke="{DynamicResource Brush.Curve.Line}" StrokeThickness="2.5"
-                                  IsHitTestVisible="False"/>
+                            <Path x:Name="PART_CurvePath" Stroke="{DynamicResource Brush.Curve.Line}" StrokeThickness="3"
+                                  IsHitTestVisible="False" StrokeLineJoin="Round"/>
                         </Canvas>
                     </Border>
                 </ControlTemplate>
@@ -1184,6 +1185,7 @@
     </Style>
 
     <Style x:Key="SettingsScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">
@@ -1200,7 +1202,9 @@
                                                 Margin="{TemplateBinding Padding}"
                                                 Content="{TemplateBinding Content}"
                                                 ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                                                CanContentScroll="{TemplateBinding CanContentScroll}"
+                                                VirtualizingPanel.IsVirtualizing="True"
+                                                VirtualizingPanel.VirtualizationMode="Recycling"/>
                         <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1"
                                    Value="{TemplateBinding VerticalOffset}"
                                    Maximum="{TemplateBinding ScrollableHeight}"

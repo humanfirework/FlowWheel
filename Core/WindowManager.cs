@@ -67,7 +67,22 @@ namespace FlowWheel.Core
             IntPtr hWnd = NativeMethods.WindowFromPoint(pt);
             if (hWnd == IntPtr.Zero) return (false, null);
 
+            // Use root window to avoid child-window mismatches (e.g. browser tabs, IME windows)
+            IntPtr rootHwnd = NativeMethods.GetAncestor(hWnd, NativeMethods.GA_ROOT);
+            if (rootHwnd != IntPtr.Zero)
+                hWnd = rootHwnd;
+
+            // Filter out invisible windows (e.g. cloaked UWP windows, background shells)
+            if (!NativeMethods.IsWindowVisible(hWnd))
+                return (false, null);
+
+            // Ignore tool windows / no-activate utility windows (e.g. on-screen keyboards)
+            IntPtr exStyle = (IntPtr)NativeMethods.GetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE);
+            if (((uint)exStyle.ToInt64() & NativeMethods.WS_EX_TOOLWINDOW) == NativeMethods.WS_EX_TOOLWINDOW)
+                return (false, null);
+
             NativeMethods.GetWindowThreadProcessId(hWnd, out uint pid);
+            if (pid == 0) return (false, null);
 
             string? processName = GetProcessName(pid);
             
@@ -76,12 +91,13 @@ namespace FlowWheel.Core
             var profile = GetProfile(processName);
             bool exists = profile != null;
 
+            // FlowWheel itself should never be treated as a target window; ignore self in both modes
+            if (processName.Equals("flowwheel", StringComparison.OrdinalIgnoreCase))
+                return (true, null);
+
             if (ConfigManager.Current.IsWhitelistMode)
             {
                 // Whitelist Mode: Block everything NOT in the list
-                // EXCEPT FlowWheel itself, which should always be ignored/handled
-                if (processName.Equals("flowwheel", StringComparison.OrdinalIgnoreCase)) return (true, null); // Block self
-                
                 // If in list -> Allowed (Not Blocked)
                 // If not in list -> Blocked
                 return (!exists, profile);
@@ -105,7 +121,8 @@ namespace FlowWheel.Core
             {
                 if (_pidCache.TryGetValue(pid, out var entry))
                 {
-                    if ((DateTime.Now - entry.timestamp).TotalSeconds < 5)
+                    // Reduce cache TTL to avoid stale PID reuse issues
+                    if ((DateTime.Now - entry.timestamp).TotalSeconds < 2)
                         return entry.name;
                     _pidCache.Remove(pid);
                 }
@@ -115,8 +132,9 @@ namespace FlowWheel.Core
             IntPtr hProcess = IntPtr.Zero;
             try
             {
+                // Use PROCESS_QUERY_LIMITED_INFORMATION: safer, works for elevated/system processes
                 hProcess = NativeMethods.OpenProcess(
-                    NativeMethods.PROCESS_QUERY_INFORMATION | NativeMethods.PROCESS_VM_READ,
+                    NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION,
                     false, pid);
                 if (hProcess != IntPtr.Zero)
                 {

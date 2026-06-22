@@ -32,7 +32,9 @@ namespace FlowWheel.Core
             
             if (msg != NativeMethods.WM_MOUSEMOVE && 
                 msg != NativeMethods.WM_LBUTTONDOWN &&
+                msg != NativeMethods.WM_LBUTTONUP &&
                 msg != NativeMethods.WM_RBUTTONDOWN &&
+                msg != NativeMethods.WM_RBUTTONUP &&
                 msg != NativeMethods.WM_MBUTTONDOWN &&
                 msg != NativeMethods.WM_MBUTTONUP &&
                 msg != NativeMethods.WM_XBUTTONDOWN &&

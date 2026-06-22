@@ -7,6 +7,8 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using FlowWheel.Core;
 
+using WpfColor = System.Windows.Media.Color;
+
 namespace FlowWheel.UI.Controls
 {
     public class CurveEditor : CurveControlBase
@@ -15,7 +17,10 @@ namespace FlowWheel.UI.Controls
         private readonly List<int> _ellipseToCurveIndex = new List<int>();
         private Ellipse? _draggingEllipse = null;
         private int _draggingCurveIndex = -1;
+        private Path? _areaPath;
+        private Path? _glowPath;
         private const double PointHitRadius = 18;
+        private long _lastUpdateTick = 0;
 
         public static readonly DependencyProperty CurvePointsProperty =
             DependencyProperty.Register(nameof(CurvePoints), typeof(List<CustomCurvePoint>), typeof(CurveEditor),
@@ -121,6 +126,17 @@ namespace FlowWheel.UI.Controls
         {
             ClearCanvasElements();
 
+            if (_areaPath != null)
+            {
+                _canvas?.Children.Remove(_areaPath);
+                _areaPath = null;
+            }
+            if (_glowPath != null)
+            {
+                _canvas?.Children.Remove(_glowPath);
+                _glowPath = null;
+            }
+
             foreach (var ep in _controlEllipses)
             {
                 ep.MouseLeftButtonDown -= OnEllipseMouseLeftButtonDown;
@@ -144,21 +160,27 @@ namespace FlowWheel.UI.Controls
 
         private void DrawPresetCurve()
         {
-            if (_curvePath == null) return;
+            if (_curvePath == null || _canvas == null) return;
             var config = Config ?? new AppConfig();
+            var accent = GetAccentColor();
+
+            BuildDecorations(
+                t => global::FlowWheel.Core.AccelerationCurve.ApplyCurve(t, CurveType, config),
+                accent);
 
             _curvePath.Data = BuildCurveGeometry(t => global::FlowWheel.Core.AccelerationCurve.ApplyCurve(t, CurveType, config));
-            _curvePath.Stroke = new SolidColorBrush(GetAccentColor());
-            _curvePath.StrokeThickness = 2;
+            _curvePath.Stroke = new SolidColorBrush(accent);
+            _curvePath.StrokeThickness = 3;
             _curvePath.Fill = null;
+            _curvePath.StrokeLineJoin = PenLineJoin.Round;
         }
 
         private void DrawCustomCurve()
         {
-            if (_curvePath == null || _canvas == null || CurvePoints == null) return;
+            if (_curvePath == null || _canvas == null) return;
 
             var points = CurvePoints;
-            if (points.Count < 2)
+            if (points == null || points.Count < 2)
             {
                 points = new List<CustomCurvePoint>
                 {
@@ -169,11 +191,15 @@ namespace FlowWheel.UI.Controls
             }
 
             var sorted = global::FlowWheel.Core.AccelerationCurve.GetOrCacheSortedPoints(points);
+            var accent = GetAccentColor();
+
+            BuildDecorations(t => global::FlowWheel.Core.AccelerationCurve.ApplyCurveWithPoints(t, sorted), accent);
 
             _curvePath.Data = BuildCurveGeometry(t => global::FlowWheel.Core.AccelerationCurve.ApplyCurveWithPoints(t, sorted));
-            _curvePath.Stroke = new SolidColorBrush(GetAccentColor());
-            _curvePath.StrokeThickness = 2;
+            _curvePath.Stroke = new SolidColorBrush(accent);
+            _curvePath.StrokeThickness = 3;
             _curvePath.Fill = null;
+            _curvePath.StrokeLineJoin = PenLineJoin.Round;
 
             // Control points
             for (int si = 0; si < sorted.Count; si++)
@@ -182,7 +208,7 @@ namespace FlowWheel.UI.Controls
                 var (ex, ey) = ToCanvas(sorted[si].X, sorted[si].Y);
 
                 bool isEndpoint = (si == 0 || si == sorted.Count - 1);
-                double r = isEndpoint ? 8 : 6;
+                double r = isEndpoint ? 7 : 5;
                 var accentColor = GetAccentColor();
                 var fillColor = isEndpoint ? accentColor : GetPointFillColor();
 
@@ -192,7 +218,7 @@ namespace FlowWheel.UI.Controls
                     Height = r * 2,
                     Fill = new SolidColorBrush(fillColor),
                     Stroke = new SolidColorBrush(accentColor),
-                    StrokeThickness = 2,
+                    StrokeThickness = isEndpoint ? 2 : 1.5,
                     Cursor = System.Windows.Input.Cursors.Hand,
                     ToolTip = $"({sorted[si].X:F2}, {sorted[si].Y:F2})"
                 };
@@ -210,9 +236,43 @@ namespace FlowWheel.UI.Controls
             }
         }
 
-        #endregion
+        private void BuildDecorations(Func<double, double> evaluateY, WpfColor accent)
+        {
+            if (_canvas == null) return;
 
-        #region Mouse interaction — ellipse drag
+            if (_areaPath == null)
+            {
+                _areaPath = new Path
+                {
+                    Fill = GetCurveAreaBrush(accent),
+                    Stroke = null,
+                    IsHitTestVisible = false,
+                    Opacity = 0.75
+                };
+                _canvas.Children.Insert(0, _areaPath);
+            }
+            else
+            {
+                _areaPath.Fill = GetCurveAreaBrush(accent);
+            }
+            _areaPath.Data = BuildAreaGeometry(evaluateY, 80);
+
+            if (_glowPath == null)
+            {
+                _glowPath = new Path
+                {
+                    Stroke = GetCurveGlowBrush(accent),
+                    StrokeThickness = 4,
+                    StrokeLineJoin = PenLineJoin.Round,
+                    Fill = null,
+                    IsHitTestVisible = false,
+                    Opacity = 0.25,
+                    Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 3 }
+                };
+                _canvas.Children.Insert(1, _glowPath);
+            }
+            _glowPath.Data = BuildCurveGeometry(evaluateY, 80);
+        }
 
         private void OnEllipseMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -269,6 +329,7 @@ namespace FlowWheel.UI.Controls
                 _draggingEllipse.ReleaseMouseCapture();
                 _draggingEllipse = null;
                 _draggingCurveIndex = -1;
+                Redraw(); // refresh area fill and glow after drag
                 CurveChanged?.Invoke(this, EventArgs.Empty);
                 e.Handled = true;
             }
@@ -347,6 +408,7 @@ namespace FlowWheel.UI.Controls
                 _draggingEllipse.ReleaseMouseCapture();
                 _draggingEllipse = null;
                 _draggingCurveIndex = -1;
+                Redraw(); // refresh area fill and glow after drag
                 CurveChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -407,8 +469,17 @@ namespace FlowWheel.UI.Controls
         {
             if (_curvePath == null || CurvePoints == null || CurvePoints.Count < 2) return;
 
+            // Throttle to ~60fps (16ms per frame)
+            long currentTick = Environment.TickCount64;
+            if (currentTick - _lastUpdateTick < 16) return;
+            _lastUpdateTick = currentTick;
+
             var sorted = global::FlowWheel.Core.AccelerationCurve.GetOrCacheSortedPoints(CurvePoints);
-            _curvePath.Data = BuildCurveGeometry(t => global::FlowWheel.Core.AccelerationCurve.ApplyCurveWithPoints(t, sorted));
+            var geometry = BuildCurveGeometry(t => global::FlowWheel.Core.AccelerationCurve.ApplyCurveWithPoints(t, sorted), 80);
+            _curvePath.Data = geometry;
+            if (_glowPath != null) _glowPath.Data = geometry;
+            // Area fill is intentionally not updated during drag to reduce CPU load;
+            // it will be redrawn when the drag completes (OnEllipseMouseLeftButtonUp / OnCanvasLeftButtonUp).
         }
 
         #endregion

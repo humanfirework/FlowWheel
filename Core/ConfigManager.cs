@@ -205,6 +205,13 @@ namespace FlowWheel.Core
             set => SetField(ref _startupEnabled, value); 
         }
         
+        private bool _hideTrayIcon = false;
+        public bool HideTrayIcon 
+        { 
+            get => _hideTrayIcon; 
+            set => SetField(ref _hideTrayIcon, value); 
+        }
+        
         private PerformanceMode _performanceMode = PerformanceMode.Balanced;
         public PerformanceMode PerformanceMode 
         { 
@@ -434,15 +441,21 @@ namespace FlowWheel.Core
         {
             lock (_debounceLock)
             {
-                _debounceTimer?.Dispose();
-                _debounceTimer = new System.Threading.Timer(_ =>
+                if (_debounceTimer == null)
                 {
-                    try
+                    _debounceTimer = new System.Threading.Timer(_ =>
                     {
-                        System.Windows.Application.Current?.Dispatcher.InvokeAsync(() => Save());
-                    }
-                    catch { }
-                }, null, DebounceIntervalMs, System.Threading.Timeout.Infinite);
+                        try
+                        {
+                            System.Windows.Application.Current?.Dispatcher.InvokeAsync(() => Save());
+                        }
+                        catch { }
+                    }, null, DebounceIntervalMs, System.Threading.Timeout.Infinite);
+                }
+                else
+                {
+                    _debounceTimer.Change(DebounceIntervalMs, System.Threading.Timeout.Infinite);
+                }
             }
         }
     }

@@ -32,6 +32,9 @@
     <s:String x:Key="SectionHotkey">应用控制</s:String>
     <s:String x:Key="LabelAppStatus">应用状态</s:String>
     <s:String x:Key="DescAppStatus">开启或关闭自动滚屏功能</s:String>
+    <s:String x:Key="SectionToggleHotkey">启动/停止切换</s:String>
+    <s:String x:Key="LabelToggleHotkey">切换快捷键</s:String>
+    <s:String x:Key="DescToggleHotkey">一键启动或停止 FlowWheel 自动滚屏功能</s:String>
     <s:String x:Key="SectionLinks">链接</s:String>
     <s:String x:Key="SectionSupport">支持开发者</s:String>
     <s:String x:Key="DescSupport">请我喝杯咖啡 ☕</s:String>
@@ -47,6 +50,10 @@
     <s:String x:Key="DescEnable">开启或关闭自动滚屏功能</s:String>
     <s:String x:Key="CheckStartup">开机自启动</s:String>
     <s:String x:Key="DescStartup">系统启动时自动运行 FlowWheel</s:String>
+    <s:String x:Key="LabelHideTrayIcon">隐藏托盘图标</s:String>
+    <s:String x:Key="DescHideTrayIcon">隐藏后 FlowWheel 仍在后台运行，可再次运行程序打开设置</s:String>
+    <s:String x:Key="TrayStatusVisible">托盘图标已显示</s:String>
+    <s:String x:Key="TrayStatusHidden">托盘图标已隐藏</s:String>
     <s:String x:Key="CheckSyncScroll">多屏/分屏 同步滚动</s:String>
     <s:String x:Key="DescSyncScroll">同时滚动多个窗口</s:String>
     <s:String x:Key="CheckReadingMode">启用阅读模式</s:String>
@@ -58,6 +65,8 @@
     <s:String x:Key="SectionDelayStart">延时启动</s:String>
     <s:String x:Key="LabelDelayStart">启用延时启动</s:String>
     <s:String x:Key="DescDelayStart">中键按下后延迟触发功能，减少与中键单击的冲突</s:String>
+    <s:String x:Key="DelayStatusOff">延时启动已关闭</s:String>
+    <s:String x:Key="DelayStatusOn">延时启动已开启</s:String>
     <s:String x:Key="LabelDelayValue">延迟时间</s:String>
     <s:String x:Key="DescDelayValueNote">推荐 100-200ms，值越大越不易误触但响应越慢</s:String>
     <s:String x:Key="LabelTriggerKey">触发按键</s:String>
@@ -128,7 +137,7 @@
     <s:String x:Key="ConfirmResetTitle">确认恢复默认值</s:String>
     <s:String x:Key="ConfirmResetMessage">确定要将所有高级参数恢复为默认值吗？此操作不可撤销。</s:String>
     <s:String x:Key="HotkeyConflictTitle">快捷键冲突</s:String>
-    <s:String x:Key="HotkeyConflictMessage">阅读模式快捷键与触发键或全局切换快捷键冲突，请修改其中一个以避免误触发。</s:String>
+    <s:String x:Key="HotkeyConflictMessage">快捷键之间存在冲突（阅读模式、触发键、全局切换、启动或停止），请修改其中一个以避免误触发。</s:String>
     <s:String x:Key="ReadingModeHotkeyTip">💡 可以在快捷键设置中修改阅读模式启动快捷键</s:String>
     <s:String x:Key="UpdateAvailableTitle">发现新版本</s:String>
     <s:String x:Key="UpdateContentLabel">更新内容：</s:String>

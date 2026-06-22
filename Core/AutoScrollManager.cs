@@ -18,8 +18,6 @@ namespace FlowWheel.Core
         private OverlayWindow? _overlay;
         private long _lastUiUpdateTick = 0;
         private const long UiUpdateInterval = 50 * 10000;
-        private long _lastMiddleClickTime = 0;
-        private long _readingModeStopTime = 0;
 
         private bool _isActive = false;
         private bool _isEnabled = true;
@@ -163,10 +161,32 @@ namespace FlowWheel.Core
 
         private void OnKeyboardEvent(object? sender, KeyboardEventArgs e)
         {
-            if (!_isEnabled) return;
-
             bool isKeyDown = (e.Message == NativeMethods.WM_KEYDOWN || e.Message == NativeMethods.WM_SYSKEYDOWN);
             bool isKeyUp = (e.Message == NativeMethods.WM_KEYUP || e.Message == NativeMethods.WM_SYSKEYUP);
+
+            if (isKeyDown)
+            {
+                // 单快捷键切换模式：按下切换启动/停止
+                if (IsToggleHotkeyMatch(e.VkCode))
+                {
+                    if (_isEnabled)
+                    {
+                        StopAutoScroll();
+                        _isEnabled = false;
+                        ConfigManager.Current.IsEnabled = false;
+                    }
+                    else
+                    {
+                        _isEnabled = true;
+                        ConfigManager.Current.IsEnabled = true;
+                    }
+                    ConfigManager.Save();
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            if (!_isEnabled) return;
 
             if (isKeyDown)
             {
@@ -243,26 +263,16 @@ namespace FlowWheel.Core
                     return;
                 }
             }
-
-            if (isKeyDown)
-            {
-                if (IsHotkeyMatch(e.VkCode))
-                {
-                    ToggleAutoScroll();
-                    e.Handled = true;
-                    return;
-                }
-            }
-        }
-
-        private bool IsHotkeyMatch(int vkCode)
-        {
-            return _toggleHotkeyMatcher.IsMatch(vkCode, ConfigManager.Current.ToggleHotkey);
         }
 
         private bool IsReadingModeHotkeyMatch(int vkCode)
         {
             return _readingHotkeyMatcher.IsMatch(vkCode, ConfigManager.Current.ReadingModeHotkey);
+        }
+
+        private bool IsToggleHotkeyMatch(int vkCode)
+        {
+            return _toggleHotkeyMatcher.IsMatch(vkCode, ConfigManager.Current.ToggleHotkey);
         }
 
         private void ToggleAutoScroll()
@@ -329,42 +339,11 @@ namespace FlowWheel.Core
 
             if (isTriggerDown)
             {
-                if (!_triggerNeedsCtrl && !_triggerNeedsShift && !_triggerNeedsAlt
-                    && ConfigManager.Current.IsReadingModeEnabled
-                    && _triggerBaseKey == "MiddleMouse")
-                {
-                    long now = DateTime.Now.Ticks;
-                    long diffMs = (now - _lastMiddleClickTime) / 10000;
-                    _lastMiddleClickTime = now;
-
-                    if (diffMs < NativeMethods.GetDoubleClickTime())
-                    {
-                        long timeSinceReadingStop = (now - _readingModeStopTime) / 10000;
-                        if (timeSinceReadingStop < NativeMethods.GetDoubleClickTime())
-                        {
-                            e.Handled = true;
-                            return;
-                        }
-
-                        CancelPendingMiddleClick();
-
-                        var (isBlocked, _) = _windowManager.CheckProcessState(e.Point);
-                        if (!isBlocked)
-                        {
-                            if (_engine.CurrentState == ScrollState.ReadingMode)
-                                StopAutoScroll();
-                            else
-                                StartReadingMode(e.Point);
-                        }
-
-                        e.Handled = true;
-                        return;
-                    }
-                }
+                // 移除双击中键触发阅读模式的逻辑
+                // 阅读模式现在仅通过 ReadingModeHotkey (Ctrl+Alt+R) 触发
 
                 if (_engine.CurrentState == ScrollState.ReadingMode)
                 {
-                    _readingModeStopTime = DateTime.Now.Ticks;
                     StopAutoScroll();
                     e.Handled = true;
                     return;
@@ -408,7 +387,7 @@ namespace FlowWheel.Core
                             _middleClickPending = false;
                             _middleClickDelayTimer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
                             _delayActivated = false;
-                            return;
+                            return;  // 延时未触发，DOWN 已传递，UP 也不吞噬
                         }
                         if (_delayActivated)
                         {
@@ -419,9 +398,17 @@ namespace FlowWheel.Core
                                 _engine.ReleaseDrag();
                                 Application.Current.Dispatcher.InvokeAsync(() => _overlay?.HideAnchor());
                             }
-                            e.Handled = true;
+                            e.Handled = true;  // 延时触发时 DOWN 被吞噬，UP 也吞噬
                             return;
                         }
+                    }
+
+                    // Toggle 模式下，DOWN 被吞噬（e.Handled=true），UP 也应吞噬以保持配对
+                    // 避免应用收到不配对的 UP 事件导致异常行为
+                    if (mode == "Toggle")
+                    {
+                        e.Handled = true;
+                        return;
                     }
                 }
 
@@ -444,7 +431,8 @@ namespace FlowWheel.Core
                     (e.Message == NativeMethods.WM_XBUTTONDOWN && !isTriggerDown))
                 {
                     StopAutoScroll();
-                    e.Handled = true;
+                    // 不设置 e.Handled = true，让点击事件传递给目标窗口
+                    // 这样目标窗口能正常获得焦点和响应
                     return;
                 }
 

@@ -105,7 +105,7 @@
                         <TextBlock Text="FlowWheel" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Brush.Text.Primary}"/>
                     </StackPanel>
                     <Border x:Name="VersionBadge" Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" Margin="0,6,0,0" Opacity="0.8">
-                                    <TextBlock x:Name="VersionLabel" Text="v1.7.7" FontSize="10" FontWeight="SemiBold"
+                                    <TextBlock x:Name="VersionLabel" Text="v1.7.8" FontSize="10" FontWeight="SemiBold"
                                                Foreground="White"/>
                                 </Border>
                 </StackPanel>
@@ -228,6 +228,23 @@
                                     </StackPanel>
                                     <controls:ToggleSwitch x:Name="StartupToggle" Grid.Column="1" Width="44" Height="24"/>
                                 </Grid>
+                                
+                                <Grid Style="{StaticResource SettingRow}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelHideTrayIcon}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescHideTrayIcon}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                    <controls:ToggleSwitch x:Name="HideTrayIconToggle" Grid.Column="1" Width="44" Height="24"/>
+                                </Grid>
+                                <TextBlock x:Name="TrayStatusText" 
+                                           Text="{DynamicResource TrayStatusVisible}" 
+                                           Style="{StaticResource SettingDescription}" 
+                                           Margin="0,4,0,0" 
+                                           Foreground="{DynamicResource Brush.Accent}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -300,6 +317,11 @@
                                     <controls:ToggleSwitch x:Name="DelayStartToggle" Grid.Column="1" Width="44" Height="24"
                                                           IsOnChanged="DelayStartToggle_IsOnChanged"/>
                                 </Grid>
+                                <TextBlock x:Name="DelayStatusText" 
+                                           Text="{DynamicResource DelayStatusOff}" 
+                                           Style="{StaticResource SettingDescription}" 
+                                           Margin="0,4,0,0" 
+                                           Foreground="{DynamicResource Brush.Text.Secondary}"/>
                                 
                                 <StackPanel x:Name="DelaySliderPanel">
                                     <Grid Style="{StaticResource SettingRow}" Margin="0,8,0,0">
@@ -827,6 +849,36 @@
                         
                         <Border Style="{StaticResource CardStyle}">
                             <StackPanel>
+                                <TextBlock Text="{DynamicResource SectionToggleHotkey}" Style="{StaticResource SectionTitle}"/>
+                                
+                                <Grid Style="{StaticResource SettingRow}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource LabelToggleHotkey}" Style="{StaticResource SettingLabel}"/>
+                                        <TextBlock Text="{DynamicResource DescToggleHotkey}" Style="{StaticResource SettingDescription}"/>
+                                    </StackPanel>
+                                </Grid>
+                                
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="ToggleHotkeyInput" Style="{StaticResource ModernTextBox}"
+                                             TextChanged="ToggleHotkeyInput_TextChanged"
+                                             ToolTip="{DynamicResource DescToggleHotkey}"/>
+                                    <Button x:Name="BtnToggleHotkeyListen" Grid.Column="1" Content="{DynamicResource BtnListen}" 
+                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="6,0,0,0"
+                                            Click="BtnToggleHotkeyListen_Click" ToolTip="{DynamicResource BtnListenTip}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
                                 <TextBlock Text="{DynamicResource SectionTriggerKey}" Style="{StaticResource SectionTitle}"/>
                                 <Grid Style="{StaticResource SettingRow}">
                                     <Grid.ColumnDefinitions>
@@ -911,7 +963,7 @@
                                 <TextBlock Text="FlowWheel" FontSize="24" FontWeight="Bold" 
                                            Foreground="{DynamicResource Brush.Text.Primary}" HorizontalAlignment="Center"/>
                                 <Border Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="10,3" Margin="0,6,0,0" Opacity="0.85">
-                                    <TextBlock x:Name="VersionText" Text="Version 1.7.7" FontSize="11" FontWeight="SemiBold"
+                                    <TextBlock x:Name="VersionText" Text="Version 1.7.8" FontSize="11" FontWeight="SemiBold"
                                                Foreground="White" HorizontalAlignment="Center"/>
                                 </Border>
                                 <TextBlock Text="{DynamicResource AppDescription}" FontSize="12" 
@@ -949,13 +1001,27 @@
                                 <TextBlock Text="{DynamicResource DescSupport}" Style="{StaticResource SettingDescription}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <StackPanel Margin="0,0,20,0" HorizontalAlignment="Center">
-                                        <Border CornerRadius="8" ClipToBounds="True" Width="120" Height="120">
+                                        <Border x:Name="AlipayQrBorder" CornerRadius="8" ClipToBounds="True" Width="120" Height="120"
+                                                MouseEnter="QrBorder_MouseEnter" MouseLeave="QrBorder_MouseLeave">
+                                            <Border.Effect>
+                                                <BlurEffect x:Name="AlipayBlur" Radius="15"/>
+                                            </Border.Effect>
+                                            <Border.RenderTransform>
+                                                <ScaleTransform x:Name="AlipayScale" ScaleX="1" ScaleY="1" CenterX="60" CenterY="60"/>
+                                            </Border.RenderTransform>
                                             <Image Source="pack://application:,,,/Assets/alipay_qr.jpg" Stretch="UniformToFill"/>
                                         </Border>
                                         <TextBlock Text="{DynamicResource LabelAlipay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Center">
-                                        <Border CornerRadius="8" ClipToBounds="True" Width="120" Height="120">
+                                        <Border x:Name="WeChatQrBorder" CornerRadius="8" ClipToBounds="True" Width="120" Height="120"
+                                                MouseEnter="QrBorder_MouseEnter" MouseLeave="QrBorder_MouseLeave">
+                                            <Border.Effect>
+                                                <BlurEffect x:Name="WeChatBlur" Radius="15"/>
+                                            </Border.Effect>
+                                            <Border.RenderTransform>
+                                                <ScaleTransform x:Name="WeChatScale" ScaleX="1" ScaleY="1" CenterX="60" CenterY="60"/>
+                                            </Border.RenderTransform>
                                             <Image Source="pack://application:,,,/Assets/weixin.jpg" Stretch="UniformToFill"/>
                                         </Border>
                                         <TextBlock Text="{DynamicResource LabelWeChatPay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>

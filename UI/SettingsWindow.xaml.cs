@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using FlowWheel.Core;
 using FlowWheel.UI.Controls;
@@ -28,6 +29,7 @@ namespace FlowWheel.UI
         private bool _isNavigating = false;
         private bool _isListening = false;
         private bool _isReadingModeListening = false;
+        private bool _isToggleHotkeyListening = false;
         private DispatcherTimer? _starTimer;
         private List<System.Windows.Shapes.Path>? _starPaths;
         private (double baseOpacity, double phase, double speed)[] _starStates = Array.Empty<(double, double, double)>();
@@ -132,12 +134,16 @@ namespace FlowWheel.UI
             
             EnableToggle.IsOn = ConfigManager.Current.IsEnabled;
             StartupToggle.IsOn = ConfigManager.Current.StartupEnabled;
+            HideTrayIconToggle.IsOn = ConfigManager.Current.HideTrayIcon;
+            UpdateTrayStatusText();
             SyncToggle.IsOn = ConfigManager.Current.IsSyncScrollEnabled;
             ReadingModeToggle.IsOn = ConfigManager.Current.IsReadingModeEnabled;
             
             ReadingModeHotkeyInput.Text = ConfigManager.Current.ReadingModeHotkey;
+            ToggleHotkeyInput.Text = ConfigManager.Current.ToggleHotkey;
             
             DelayStartToggle.IsOn = ConfigManager.Current.MiddleClickDelay > 0;
+            UpdateDelayStatusText();
             if (DelayStartToggle.IsOn)
             {
                 MiddleClickDelaySlider.Value = ConfigManager.Current.MiddleClickDelay;
@@ -221,6 +227,13 @@ namespace FlowWheel.UI
                 ConfigManager.Save();
             };
 
+            HideTrayIconToggle.IsOnChanged += (s, e) =>
+            {
+                ConfigManager.Current.HideTrayIcon = HideTrayIconToggle.IsOn;
+                UpdateTrayStatusText();
+                ConfigManager.Save();
+            };
+
             SyncToggle.IsOnChanged += (s, e) => 
             {
                 ConfigManager.Current.IsSyncScrollEnabled = SyncToggle.IsOn;
@@ -249,6 +262,20 @@ namespace FlowWheel.UI
 
             RadioBlacklist.Checked += RadioFilterMode_Changed;
             RadioWhitelist.Checked += RadioFilterMode_Changed;
+
+            ConfigManager.Current.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(AppConfig.IsEnabled))
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        bool enabled = ConfigManager.Current.IsEnabled;
+                        if (EnableToggle.IsOn != enabled) EnableToggle.IsOn = enabled;
+                        if (AppStatusToggle.IsOn != enabled) AppStatusToggle.IsOn = enabled;
+                        if (_manager != null) _manager.IsEnabled = enabled;
+                    });
+                }
+            };
         }
 
         private void NavigateTo(string page)
@@ -289,7 +316,7 @@ namespace FlowWheel.UI
             newPage.Visibility = Visibility.Visible;
             
             // 创建动画
-            var duration = TimeSpan.FromMilliseconds(250);
+            var duration = TimeSpan.FromMilliseconds(200);
             var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
             
             // 旧页面滑出动画
@@ -551,7 +578,7 @@ namespace FlowWheel.UI
                 );
             }
 
-            _starTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            _starTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
             DateTime startTime = DateTime.Now;
             _starTimer.Tick += (s, e) =>
             {
@@ -883,27 +910,59 @@ namespace FlowWheel.UI
             }
         }
 
+        private void ToggleHotkeyInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ToggleHotkeyInput == null) return;
+
+            string key = ToggleHotkeyInput.Text.Trim();
+            if (!string.IsNullOrEmpty(key))
+            {
+                ConfigManager.Current.ToggleHotkey = key;
+                ConfigManager.Save();
+                CheckHotkeyConflicts();
+            }
+        }
+
+        private void UpdateTrayStatusText()
+        {
+            if (TrayStatusText == null) return;
+            if (HideTrayIconToggle.IsOn)
+            {
+                TrayStatusText.Text = (string)FindResource("TrayStatusHidden");
+                TrayStatusText.Foreground = (Brush)FindResource("Brush.Text.Secondary");
+            }
+            else
+            {
+                TrayStatusText.Text = (string)FindResource("TrayStatusVisible");
+                TrayStatusText.Foreground = (Brush)FindResource("Brush.Accent");
+            }
+        }
+
         private void CheckHotkeyConflicts()
         {
             string readingKey = ConfigManager.Current.ReadingModeHotkey?.Trim() ?? "";
             string triggerKey = ConfigManager.Current.TriggerKey?.Trim() ?? "";
             string toggleKey = ConfigManager.Current.ToggleHotkey?.Trim() ?? "";
 
-            if (string.IsNullOrEmpty(readingKey) && string.IsNullOrEmpty(triggerKey)) return;
+            var keys = new[] { readingKey, triggerKey, toggleKey };
+            if (keys.All(string.IsNullOrEmpty)) return;
 
             bool conflict = false;
+            string[] keyNames = { readingKey, triggerKey, toggleKey };
 
-            if (!string.IsNullOrEmpty(triggerKey) && !string.IsNullOrEmpty(readingKey)
-                && HotkeyMatcher.AreKeysEqual(triggerKey, readingKey))
-                conflict = true;
-
-            if (!string.IsNullOrEmpty(toggleKey) && !string.IsNullOrEmpty(readingKey)
-                && HotkeyMatcher.AreKeysEqual(toggleKey, readingKey))
-                conflict = true;
-
-            if (!string.IsNullOrEmpty(toggleKey) && !string.IsNullOrEmpty(triggerKey)
-                && HotkeyMatcher.AreKeysEqual(toggleKey, triggerKey))
-                conflict = true;
+            for (int i = 0; i < keyNames.Length; i++)
+            {
+                for (int j = i + 1; j < keyNames.Length; j++)
+                {
+                    if (!string.IsNullOrEmpty(keyNames[i]) && !string.IsNullOrEmpty(keyNames[j])
+                        && HotkeyMatcher.AreKeysEqual(keyNames[i], keyNames[j]))
+                    {
+                        conflict = true;
+                        break;
+                    }
+                }
+                if (conflict) break;
+            }
 
             if (conflict)
             {
@@ -916,6 +975,7 @@ namespace FlowWheel.UI
 
         private void DelayStartToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
+            UpdateDelayStatusText();
             if (e.NewValue)
             {
                 int delay = (int)MiddleClickDelaySlider.Value;
@@ -931,6 +991,21 @@ namespace FlowWheel.UI
                 DelaySliderPanel.Visibility = Visibility.Collapsed;
             }
             ConfigManager.Save();
+        }
+
+        private void UpdateDelayStatusText()
+        {
+            if (DelayStatusText == null) return;
+            if (DelayStartToggle.IsOn)
+            {
+                DelayStatusText.Text = (string)FindResource("DelayStatusOn");
+                DelayStatusText.Foreground = (Brush)FindResource("Brush.Accent");
+            }
+            else
+            {
+                DelayStatusText.Text = (string)FindResource("DelayStatusOff");
+                DelayStatusText.Foreground = (Brush)FindResource("Brush.Text.Secondary");
+            }
         }
 
         private void MiddleClickDelaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -1063,6 +1138,113 @@ namespace FlowWheel.UI
             {
                 _keyboardHook.KeyboardEvent -= OnKeyboardEventForReadingModeListening;
             }
+        }
+
+        private void BtnToggleHotkeyListen_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isToggleHotkeyListening)
+            {
+                StopToggleHotkeyListening();
+                return;
+            }
+            StartToggleHotkeyListening();
+        }
+
+        private void StartToggleHotkeyListening()
+        {
+            if (_mouseHook == null && _keyboardHook == null)
+            {
+                WpfMessageBox.Show((string)FindResource("ErrNoHooks"), (string)FindResource("ErrTitle"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            _isToggleHotkeyListening = true;
+            BtnToggleHotkeyListen.Content = FindResource("ListeningPrompt") ?? "Cancel";
+            ToggleHotkeyInput.Text = "";
+            ToggleHotkeyInput.IsEnabled = false;
+
+            if (_mouseHook != null)
+                _mouseHook.MouseEvent += OnMouseEventForToggleHotkeyListening;
+
+            if (_keyboardHook != null)
+                _keyboardHook.KeyboardEvent += OnKeyboardEventForToggleHotkeyListening;
+        }
+
+        private void StopToggleHotkeyListening()
+        {
+            _isToggleHotkeyListening = false;
+            BtnToggleHotkeyListen.Content = FindResource("BtnListen") ?? "Listen";
+            ToggleHotkeyInput.IsEnabled = true;
+
+            if (_mouseHook != null)
+                _mouseHook.MouseEvent -= OnMouseEventForToggleHotkeyListening;
+
+            if (_keyboardHook != null)
+                _keyboardHook.KeyboardEvent -= OnKeyboardEventForToggleHotkeyListening;
+        }
+
+        private void OnKeyboardEventForToggleHotkeyListening(object? sender, KeyboardEventArgs e)
+        {
+            if (e.Message != NativeMethods.WM_KEYDOWN && e.Message != NativeMethods.WM_SYSKEYDOWN)
+                return;
+
+            if (IsModifierKey(e.VkCode)) return;
+
+            string? keyName = GetKeyName(e.VkCode);
+            if (!string.IsNullOrEmpty(keyName))
+            {
+                string fullKeyName = BuildCombinedKeyName(keyName);
+                Dispatcher.Invoke(() =>
+                {
+                    ToggleHotkeyInput.Text = fullKeyName;
+                    ConfigManager.Current.ToggleHotkey = fullKeyName;
+                    ConfigManager.Save();
+                    StopToggleHotkeyListening();
+                });
+            }
+        }
+
+        private void OnMouseEventForToggleHotkeyListening(object? sender, Core.MouseEventArgs e)
+        {
+            string? keyName = GetMouseKeyName(e);
+            if (!string.IsNullOrEmpty(keyName))
+            {
+                string fullKeyName = BuildCombinedKeyName(keyName);
+                Dispatcher.Invoke(() =>
+                {
+                    ToggleHotkeyInput.Text = fullKeyName;
+                    ConfigManager.Current.ToggleHotkey = fullKeyName;
+                    ConfigManager.Save();
+                    StopToggleHotkeyListening();
+                });
+            }
+        }
+
+        private bool IsModifierKey(int vkCode)
+        {
+            return vkCode == NativeMethods.VK_CONTROL || vkCode == NativeMethods.VK_SHIFT ||
+                   vkCode == NativeMethods.VK_MENU || vkCode == NativeMethods.VK_LCONTROL ||
+                   vkCode == NativeMethods.VK_RCONTROL || vkCode == NativeMethods.VK_LSHIFT ||
+                   vkCode == NativeMethods.VK_RSHIFT || vkCode == NativeMethods.VK_LMENU ||
+                   vkCode == NativeMethods.VK_RMENU;
+        }
+
+        private string? GetMouseKeyName(Core.MouseEventArgs e)
+        {
+            switch (e.Message)
+            {
+                case NativeMethods.WM_LBUTTONDOWN:
+                case NativeMethods.WM_RBUTTONDOWN:
+                    return null;
+                case NativeMethods.WM_MBUTTONDOWN:
+                    return "MiddleMouse";
+                case NativeMethods.WM_XBUTTONDOWN:
+                    int xButton = e.MouseData;
+                    if (xButton == 1) return "XButton1";
+                    if (xButton == 2) return "XButton2";
+                    break;
+            }
+            return null;
         }
 
         private void OnKeyboardEventForListening(object? sender, KeyboardEventArgs e)
@@ -1807,6 +1989,58 @@ namespace FlowWheel.UI
                 FileName = "https://github.com/humanfirework/FlowWheel/blob/main/LICENSE",
                 UseShellExecute = true
             });
+        }
+
+        private void QrBorder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                var blur = border.Effect as BlurEffect;
+                var scale = border.RenderTransform as ScaleTransform;
+                if (blur != null)
+                {
+                    var blurAnim = new DoubleAnimation(15, 0, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    blur.BeginAnimation(BlurEffect.RadiusProperty, blurAnim);
+                }
+                if (scale != null)
+                {
+                    var scaleAnim = new DoubleAnimation(1, 1.08, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    scale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+                    scale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+                }
+            }
+        }
+
+        private void QrBorder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                var blur = border.Effect as BlurEffect;
+                var scale = border.RenderTransform as ScaleTransform;
+                if (blur != null)
+                {
+                    var blurAnim = new DoubleAnimation(0, 15, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    blur.BeginAnimation(BlurEffect.RadiusProperty, blurAnim);
+                }
+                if (scale != null)
+                {
+                    var scaleAnim = new DoubleAnimation(1.08, 1, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    scale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+                    scale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+                }
+            }
         }
 
         private static string Truncate(string s, int max)

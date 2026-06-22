@@ -79,9 +79,11 @@ namespace FlowWheel
 
                 _notifyIcon = new NotifyIcon();
                 LoadTrayIcon();
-                _notifyIcon.Visible = true;
+                _notifyIcon.Visible = !ConfigManager.Current.HideTrayIcon;
                 _notifyIcon.Text = "FlowWheel";
                 _notifyIcon.DoubleClick += (s, args) => ShowSettings();
+
+                ConfigManager.Current.PropertyChanged += OnConfigPropertyChanged;
 
                 UpdateTrayMenu();
                 LanguageManager.LanguageChanged += (s, args) => UpdateTrayMenu();
@@ -136,6 +138,15 @@ namespace FlowWheel
             // Update Text
             bool isEnabled = _autoScrollManager?.IsEnabled ?? true;
             _notifyIcon.Text = isEnabled ? GetString("TrayRunning") : GetString("TrayPaused");
+        }
+
+        private void OnConfigPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ConfigManager.Current.HideTrayIcon))
+            {
+                if (_notifyIcon != null)
+                    _notifyIcon.Visible = !ConfigManager.Current.HideTrayIcon;
+            }
         }
 
         private string GetString(string key)

@@ -14,7 +14,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg)](https://github.com/humanfirework/FlowWheel/actions)
-[![Version](https://img.shields.io/badge/version-v1.7.7-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
+[![Version](https://img.shields.io/badge/version-v1.7.8-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
 
 **中文** | [English](./README.en.md)
 
@@ -152,9 +152,21 @@ FlowWheel 从设计之初就注重隐私：
 
 ## 支持
 
+<style>
+.qr-container img {
+  filter: blur(8px);
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+.qr-container img:hover {
+  filter: blur(0);
+  transform: scale(1.15);
+}
+</style>
+
 如果对你有帮助，欢迎请我喝杯咖啡，感谢支持！🥳
 
-<div align="center">
+<div align="center" class="qr-container">
   <table>
     <tr>
       <td align="center">

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using FlowWheel.Core;
 
 namespace FlowWheel.UI.Controls
@@ -23,6 +24,7 @@ namespace FlowWheel.UI.Controls
         protected bool _isLoaded = false;
         protected bool _themeChangeHandlerAdded = false;
         protected readonly List<UIElement> _canvasElements = new List<UIElement>();
+        private DispatcherTimer? _resizeDebounceTimer;
 
         protected const double AxisMarginLeft = 28;
         protected const double AxisMarginBottom = 22;
@@ -71,7 +73,16 @@ namespace FlowWheel.UI.Controls
 
         protected virtual void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_isLoaded) Redraw();
+            if (!_isLoaded) return;
+
+            // Debounce resize events to prevent multiple redraws during window resize
+            _resizeDebounceTimer?.Stop();
+            _resizeDebounceTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Render, (s, args) =>
+            {
+                Redraw();
+                _resizeDebounceTimer?.Stop();
+            }, Dispatcher);
+            _resizeDebounceTimer.Start();
         }
 
         #region Coordinate helpers
@@ -132,60 +143,61 @@ namespace FlowWheel.UI.Controls
             var labelBrush = GetLabelBrush();
             var diagBrush = GetDiagonalBrush();
 
-            for (int i = 0; i <= 10; i++)
+            // Draw 5 major divisions (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+            for (int i = 0; i <= 5; i++)
             {
-                double x = AxisMarginLeft + i * pw / 10;
+                double x = AxisMarginLeft + i * pw / 5;
                 var vline = new Line
                 {
                     X1 = x, Y1 = AxisMarginTop,
                     X2 = x, Y2 = AxisMarginTop + ph,
-                    Stroke = gridBrush, StrokeThickness = 1
+                    Stroke = gridBrush,
+                    StrokeThickness = 0.6,
+                    Opacity = i == 0 || i == 5 ? 0.7 : 0.4
                 };
                 AddCanvasElement(vline);
 
-                if (i % 2 == 0)
+                var tb = new TextBlock
                 {
-                    var tb = new TextBlock
-                    {
-                        Text = (i / 10.0).ToString("0.0"),
-                        FontSize = 8,
-                        Foreground = labelBrush
-                    };
-                    Canvas.SetLeft(tb, x - 8);
-                    Canvas.SetTop(tb, AxisMarginTop + ph + 3);
-                    AddCanvasElement(tb);
-                }
+                    Text = (i / 5.0).ToString("0.0"),
+                    FontSize = 9,
+                    Foreground = labelBrush,
+                    Opacity = 0.7
+                };
+                Canvas.SetLeft(tb, x - 6);
+                Canvas.SetTop(tb, AxisMarginTop + ph + 4);
+                AddCanvasElement(tb);
             }
 
-            for (int i = 0; i <= 10; i++)
+            for (int i = 0; i <= 5; i++)
             {
-                double y = AxisMarginTop + i * ph / 10;
+                double y = AxisMarginTop + i * ph / 5;
                 var hline = new Line
                 {
                     X1 = AxisMarginLeft, Y1 = y,
                     X2 = AxisMarginLeft + pw, Y2 = y,
-                    Stroke = gridBrush, StrokeThickness = 1
+                    Stroke = gridBrush,
+                    StrokeThickness = 0.6,
+                    Opacity = i == 0 || i == 5 ? 0.7 : 0.4
                 };
                 AddCanvasElement(hline);
 
-                if (i % 2 == 0)
+                var tb = new TextBlock
                 {
-                    var tb = new TextBlock
-                    {
-                        Text = (1.0 - i / 10.0).ToString("0.0"),
-                        FontSize = 8,
-                        Foreground = labelBrush
-                    };
-                    Canvas.SetLeft(tb, 2);
-                    Canvas.SetTop(tb, y - 6);
-                    AddCanvasElement(tb);
-                }
+                    Text = (1.0 - i / 5.0).ToString("0.0"),
+                    FontSize = 9,
+                    Foreground = labelBrush,
+                    Opacity = 0.7
+                };
+                Canvas.SetLeft(tb, 3);
+                Canvas.SetTop(tb, y - 6);
+                AddCanvasElement(tb);
             }
 
-            AddLine(AxisMarginLeft, AxisMarginTop + ph, AxisMarginLeft + pw, AxisMarginTop + ph, axisBrush, 2);
-            AddLine(AxisMarginLeft, AxisMarginTop, AxisMarginLeft, AxisMarginTop + ph, axisBrush, 2);
+            AddLine(AxisMarginLeft, AxisMarginTop + ph, AxisMarginLeft + pw, AxisMarginTop + ph, axisBrush, 1.5);
+            AddLine(AxisMarginLeft, AxisMarginTop, AxisMarginLeft, AxisMarginTop + ph, axisBrush, 1.5);
             AddLine(AxisMarginLeft, AxisMarginTop + ph, AxisMarginLeft + pw, AxisMarginTop, diagBrush, 1,
-                new DoubleCollection { 4, 2 });
+                new DoubleCollection { 5, 3 });
         }
 
         protected void AddLine(double x1, double y1, double x2, double y2,
@@ -217,6 +229,32 @@ namespace FlowWheel.UI.Controls
                 var (cx, cy) = ToCanvas(t, y);
                 figure.Segments.Add(new LineSegment(new WpfPoint(cx, cy), true));
             }
+
+            geometry.Figures.Add(figure);
+            return geometry;
+        }
+
+        protected PathGeometry BuildAreaGeometry(Func<double, double> evaluateY, int segments = 120)
+        {
+            var geometry = new PathGeometry();
+            var (pw, ph) = GetPlotSize();
+            double bottomY = AxisMarginTop + ph;
+            var (startX, startY) = ToCanvas(0, evaluateY(0));
+
+            var figure = new PathFigure { StartPoint = new WpfPoint(startX, bottomY) };
+            figure.Segments.Add(new LineSegment(new WpfPoint(startX, startY), true));
+
+            for (int i = 1; i <= segments; i++)
+            {
+                double t = (double)i / segments;
+                double y = evaluateY(t);
+                var (cx, cy) = ToCanvas(t, y);
+                figure.Segments.Add(new LineSegment(new WpfPoint(cx, cy), true));
+            }
+
+            double endX = AxisMarginLeft + pw;
+            figure.Segments.Add(new LineSegment(new WpfPoint(endX, bottomY), true));
+            figure.IsClosed = true;
 
             geometry.Figures.Add(figure);
             return geometry;
@@ -272,6 +310,27 @@ namespace FlowWheel.UI.Controls
             if (TryFindResource("Brush.Curve.PointFill") is SolidColorBrush brush)
                 return brush.Color;
             return Colors.White;
+        }
+
+        protected System.Windows.Media.LinearGradientBrush GetCurveAreaBrush(WpfColor accent)
+        {
+            return new System.Windows.Media.LinearGradientBrush
+            {
+                StartPoint = new System.Windows.Point(0.5, 0),
+                EndPoint = new System.Windows.Point(0.5, 1),
+                GradientStops = new System.Windows.Media.GradientStopCollection
+                {
+                    new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromArgb(60, accent.R, accent.G, accent.B), 0),
+                    new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromArgb(10, accent.R, accent.G, accent.B), 0.65),
+                    new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromArgb(0, accent.R, accent.G, accent.B), 1)
+                }
+            };
+        }
+
+        protected System.Windows.Media.Brush GetCurveGlowBrush(WpfColor accent)
+        {
+            return new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromArgb(80, accent.R, accent.G, accent.B));
         }
 
         #endregion

@@ -32,6 +32,9 @@
     <s:String x:Key="SectionHotkey">App Control</s:String>
     <s:String x:Key="LabelAppStatus">App Status</s:String>
     <s:String x:Key="DescAppStatus">Enable or disable auto-scroll functionality</s:String>
+    <s:String x:Key="SectionToggleHotkey">Start/Stop Toggle</s:String>
+    <s:String x:Key="LabelToggleHotkey">Toggle Hotkey</s:String>
+    <s:String x:Key="DescToggleHotkey">One-key toggle FlowWheel auto-scroll on/off</s:String>
     <s:String x:Key="SectionLinks">Links</s:String>
     <s:String x:Key="SectionSupport">Support the Developer</s:String>
     <s:String x:Key="DescSupport">Buy me a coffee ☕</s:String>
@@ -47,6 +50,10 @@
     <s:String x:Key="DescEnable">Turn on/off the auto-scroll functionality</s:String>
     <s:String x:Key="CheckStartup">Start with Windows</s:String>
     <s:String x:Key="DescStartup">Automatically launch FlowWheel on system startup</s:String>
+    <s:String x:Key="LabelHideTrayIcon">Hide Tray Icon</s:String>
+    <s:String x:Key="DescHideTrayIcon">FlowWheel keeps running in the background; run the program again to open settings</s:String>
+    <s:String x:Key="TrayStatusVisible">Tray icon is visible</s:String>
+    <s:String x:Key="TrayStatusHidden">Tray icon is hidden</s:String>
     <s:String x:Key="CheckSyncScroll">Multi-Screen Sync Scroll</s:String>
     <s:String x:Key="DescSyncScroll">Scroll multiple windows simultaneously</s:String>
     <s:String x:Key="CheckReadingMode">Enable Reading Mode</s:String>
@@ -58,6 +65,8 @@
     <s:String x:Key="SectionDelayStart">Delay Start</s:String>
     <s:String x:Key="LabelDelayStart">Enable Delay Start</s:String>
     <s:String x:Key="DescDelayStart">Delay before triggering function on middle click, reduces conflict with middle-click actions</s:String>
+    <s:String x:Key="DelayStatusOff">Delay start is off</s:String>
+    <s:String x:Key="DelayStatusOn">Delay start is on</s:String>
     <s:String x:Key="LabelDelayValue">Delay Time</s:String>
     <s:String x:Key="DescDelayValueNote">Recommended 100-200ms. Higher values reduce accidental triggers but slow response</s:String>
     <s:String x:Key="LabelTriggerKey">Trigger Key</s:String>
@@ -128,7 +137,7 @@
     <s:String x:Key="ConfirmResetTitle">Confirm Reset</s:String>
     <s:String x:Key="ConfirmResetMessage">Are you sure you want to reset all advanced parameters to their default values? This action cannot be undone.</s:String>
     <s:String x:Key="HotkeyConflictTitle">Hotkey Conflict</s:String>
-    <s:String x:Key="HotkeyConflictMessage">Reading mode hotkey conflicts with trigger key or global toggle hotkey. Please change one to avoid accidental triggers.</s:String>
+    <s:String x:Key="HotkeyConflictMessage">Hotkeys conflict with each other (reading mode, trigger key, global toggle, start or stop). Please change one to avoid accidental triggers.</s:String>
     <s:String x:Key="ReadingModeHotkeyTip">💡 You can change the reading mode hotkey in the Shortcuts settings</s:String>
     <s:String x:Key="UpdateAvailableTitle">Update Available</s:String>
     <s:String x:Key="UpdateContentLabel">What's new:</s:String>

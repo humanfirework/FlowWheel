@@ -130,20 +130,48 @@ namespace FlowWheel.UI.Controls
             ClearCanvasElements();
             DrawGrid();
             DrawCurve();
-
-            // Add axis labels
             DrawAxisLabels(pw, ph);
         }
 
         private void DrawCurve()
         {
-            if (_curvePath == null) return;
+            if (_curvePath == null || _canvas == null) return;
 
             var config = CreateTempConfig();
-            _curvePath.Data = BuildCurveGeometry(t => ComputeCurve(t, config), 100);
+            var accent = GetAccentColor();
+
+            // Area fill under curve (inserted at bottom so curve line stays on top)
+            var areaPath = new Path
+            {
+                Data = BuildAreaGeometry(t => ComputeCurve(t, config), 80),
+                Fill = GetCurveAreaBrush(accent),
+                Stroke = null,
+                IsHitTestVisible = false,
+                Opacity = 0.75
+            };
+            _canvas.Children.Insert(0, areaPath);
+            _canvasElements.Add(areaPath);
+
+            // Subtle glow path behind main curve
+            var glowPath = new Path
+            {
+                Data = BuildCurveGeometry(t => ComputeCurve(t, config), 80),
+                Stroke = GetCurveGlowBrush(accent),
+                StrokeThickness = 4,
+                StrokeLineJoin = PenLineJoin.Round,
+                Fill = null,
+                IsHitTestVisible = false,
+                Opacity = 0.25,
+                Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 3 }
+            };
+            _canvas.Children.Insert(1, glowPath);
+            _canvasElements.Add(glowPath);
+
+            _curvePath.Data = BuildCurveGeometry(t => ComputeCurve(t, config), 80);
             _curvePath.Stroke = GetCurveBrush();
-            _curvePath.StrokeThickness = 2.5;
+            _curvePath.StrokeThickness = 3;
             _curvePath.Fill = null;
+            _curvePath.StrokeLineJoin = PenLineJoin.Round;
         }
 
         private double ComputeCurve(double t, AppConfig config)
@@ -170,7 +198,8 @@ namespace FlowWheel.UI.Controls
             {
                 Text = "Input",
                 FontSize = 9,
-                Foreground = labelBrush
+                Foreground = labelBrush,
+                Opacity = 0.7
             };
             Canvas.SetLeft(xLabel, AxisMarginLeft + pw / 2 - 12);
             Canvas.SetTop(xLabel, AxisMarginTop + ph + 4);
@@ -180,7 +209,8 @@ namespace FlowWheel.UI.Controls
             {
                 Text = "Output",
                 FontSize = 9,
-                Foreground = labelBrush
+                Foreground = labelBrush,
+                Opacity = 0.7
             };
             Canvas.SetLeft(yLabel, 3);
             Canvas.SetTop(yLabel, AxisMarginTop - 2);

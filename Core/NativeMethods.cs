@@ -53,11 +53,17 @@ namespace FlowWheel.Core
         public const int GWL_EXSTYLE = -20;
         public const int WS_EX_TRANSPARENT = 0x00000020;
         public const int WS_EX_TOOLWINDOW = 0x00000080;
+        public const uint WS_EX_NOACTIVATE = 0x08000000;
+
+        // Ancestor flags
+        public const uint GA_ROOT = 2;
+        public const uint GW_OWNER = 4;
 
         // Input constants
         public const int INPUT_MOUSE = 0;
         public const int PROCESS_QUERY_INFORMATION = 0x0400;
         public const int PROCESS_VM_READ = 0x0010;
+        public const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -182,6 +188,11 @@ namespace FlowWheel.Core
         [DllImport("user32.dll")]
         public static extern short GetKeyState(int nVirtKey);
 
+        public static bool IsKeyDown(int vkCode)
+        {
+            return (GetKeyState(vkCode) & 0x8000) != 0;
+        }
+
         [DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
@@ -206,13 +217,19 @@ namespace FlowWheel.Core
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-        public const int MONITOR_DEFAULTTONEAREST = 0x00000002;
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool IsWindowVisible(IntPtr hWnd);
 
-        // Helper methods for modifier key state checking
-        public static bool IsKeyDown(int vkCode)
-        {
-            return (GetKeyState(vkCode) & 0x8000) != 0;
-        }
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetAncestor(IntPtr hWnd, uint gaFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetForegroundWindow();
+
+        public const int MONITOR_DEFAULTTONEAREST = 0x00000002;
 
         public static bool IsCtrlPressed() => IsKeyDown(VK_CONTROL) || IsKeyDown(VK_LCONTROL) || IsKeyDown(VK_RCONTROL);
         public static bool IsShiftPressed() => IsKeyDown(VK_SHIFT) || IsKeyDown(VK_LSHIFT) || IsKeyDown(VK_RSHIFT);
