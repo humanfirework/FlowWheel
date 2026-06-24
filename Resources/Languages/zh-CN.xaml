@@ -141,6 +141,8 @@
     <s:String x:Key="ReadingModeHotkeyTip">💡 可以在快捷键设置中修改阅读模式启动快捷键</s:String>
     <s:String x:Key="UpdateAvailableTitle">发现新版本</s:String>
     <s:String x:Key="UpdateContentLabel">更新内容：</s:String>
+    <s:String x:Key="BtnUpdateNow">立即更新</s:String>
+    <s:String x:Key="BtnUpdateLater">稍后</s:String>
 
     <!-- Filtering -->
     <s:String x:Key="RadioBlacklist">黑名单 (屏蔽以下)</s:String>

@@ -356,6 +356,17 @@ namespace FlowWheel.Core
                     return;
                 }
 
+                // If delay has been activated but _isActive hasn't been set yet (race condition),
+                // suppress this DOWN to prevent it from reaching the app
+                lock (_delayLock)
+                {
+                    if (_delayActivated)
+                    {
+                        e.Handled = true;
+                        return;
+                    }
+                }
+
                 int delay = ConfigManager.Current.MiddleClickDelay;
                 if (delay > 0 && _triggerBaseKey == "MiddleMouse" && !_triggerNeedsCtrl && !_triggerNeedsShift && !_triggerNeedsAlt)
                 {
@@ -392,13 +403,23 @@ namespace FlowWheel.Core
                         if (_delayActivated)
                         {
                             _delayActivated = false;
-                            if (mode == "Hold" && _isDragging)
+                            if (mode == "Hold")
                             {
-                                _isDragging = false;
-                                _engine.ReleaseDrag();
-                                Application.Current.Dispatcher.InvokeAsync(() => _overlay?.HideAnchor());
+                                if (_isDragging)
+                                {
+                                    _isDragging = false;
+                                    _engine.ReleaseDrag();
+                                    Application.Current.Dispatcher.InvokeAsync(() => _overlay?.HideAnchor());
+                                }
+                                else
+                                {
+                                    // UP received before drag started (race condition):
+                                    // The drag will start on UI thread later, but UP already arrived.
+                                    // Flag it so the drag is released immediately after starting.
+                                    _pendingRelease = true;
+                                }
                             }
-                            e.Handled = true;  // 延时触发时 DOWN 被吞噬，UP 也吞噬
+                            e.Handled = true;  // 延时触发时 DOWN 已传递但已发送合成UP终止原行为，物理UP需吞噬以防止干扰
                             return;
                         }
                     }
@@ -520,9 +541,11 @@ namespace FlowWheel.Core
                 }
                 _delayActivated = false;
             }
+            _pendingRelease = false;
         }
 
         private bool _delayActivated = false;
+        private volatile bool _pendingRelease = false;
 
         private void OnMiddleClickDelayElapsed(object? state)
         {
@@ -534,10 +557,10 @@ namespace FlowWheel.Core
             }
 
             string mode = ConfigManager.Current.TriggerMode;
-            if (mode == "Hold")
-            {
-                SendSyntheticMiddleUp(_pendingClickPoint);
-            }
+            // Send synthetic UP for both Hold and Toggle modes
+            // to terminate the original app's auto-scroll/pan behavior
+            // that was triggered by the real MBUTTONDOWN that passed through during delay
+            SendSyntheticMiddleUp(_pendingClickPoint);
 
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
@@ -569,6 +592,7 @@ namespace FlowWheel.Core
 
         private void StartReadingMode(NativeMethods.POINT origin)
         {
+            CancelPendingMiddleClick();
             _isActive = true;
             _currentOrigin = origin;
 
@@ -628,6 +652,16 @@ namespace FlowWheel.Core
             });
 
             _engine.Start(origin);
+
+            // If UP was received before drag started (Hold mode delay race condition),
+            // release the drag immediately after it starts
+            if (_pendingRelease)
+            {
+                _pendingRelease = false;
+                _isDragging = false;
+                _engine.ReleaseDrag();
+                Application.Current.Dispatcher.InvokeAsync(() => _overlay?.HideAnchor());
+            }
         }
 
         private void UpdateVisuals(NativeMethods.POINT current)

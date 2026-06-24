@@ -141,6 +141,8 @@
     <s:String x:Key="ReadingModeHotkeyTip">💡 You can change the reading mode hotkey in the Shortcuts settings</s:String>
     <s:String x:Key="UpdateAvailableTitle">Update Available</s:String>
     <s:String x:Key="UpdateContentLabel">What's new:</s:String>
+    <s:String x:Key="BtnUpdateNow">Update now</s:String>
+    <s:String x:Key="BtnUpdateLater">Later</s:String>
 
     <!-- Filtering -->
     <s:String x:Key="RadioBlacklist">Blacklist (Block selected)</s:String>

@@ -760,19 +760,8 @@ namespace FlowWheel.UI
 
                 if (r.HasUpdate)
                 {
-                    string notesSection = "";
-                    if (!string.IsNullOrWhiteSpace(r.ReleaseNotes))
-                    {
-                        notesSection = $"\n\n{(string)FindResource("UpdateContentLabel")}\n{Truncate(r.ReleaseNotes, 800)}";
-                    }
-
-                    var result = WpfMessageBox.Show(
-                        $"{(string)FindResource("UpdateAvailableTitle")} {r.LatestTag}!\nCurrent: v{r.CurrentVersion.Major}.{r.CurrentVersion.Minor}.{r.CurrentVersion.Build}\n\nDownload now?{notesSection}",
-                        (string)FindResource("UpdateAvailableTitle"),
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Information);
-
-                    if (result == MessageBoxResult.Yes)
+                    var updateDialog = new UpdateWindow(r) { Owner = this };
+                    if (updateDialog.ShowDialog() == true && updateDialog.ShouldDownload)
                     {
                         var url = !string.IsNullOrWhiteSpace(r.AssetDownloadUrl) ? r.AssetDownloadUrl : r.ReleasePageUrl;
                         if (!string.IsNullOrWhiteSpace(url))
@@ -1933,19 +1922,8 @@ namespace FlowWheel.UI
 
                 if (r.HasUpdate)
                 {
-                    string notesSection = "";
-                    if (!string.IsNullOrWhiteSpace(r.ReleaseNotes))
-                    {
-                        notesSection = $"\n\n{(string)FindResource("UpdateContentLabel")}\n{Truncate(r.ReleaseNotes, 1200)}";
-                    }
-
-                    var result = WpfMessageBox.Show(
-                        $"{(string)FindResource("UpdateAvailableTitle")} {r.LatestTag}!\nCurrent: v{r.CurrentVersion.Major}.{r.CurrentVersion.Minor}.{r.CurrentVersion.Build}\n\nDownload now?{notesSection}",
-                        (string)FindResource("UpdateAvailableTitle"),
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Information);
-
-                    if (result == MessageBoxResult.Yes)
+                    var updateDialog = new UpdateWindow(r) { Owner = this };
+                    if (updateDialog.ShowDialog() == true && updateDialog.ShouldDownload)
                     {
                         var url = !string.IsNullOrWhiteSpace(r.AssetDownloadUrl) ? r.AssetDownloadUrl : r.ReleasePageUrl;
                         if (!string.IsNullOrWhiteSpace(url))
