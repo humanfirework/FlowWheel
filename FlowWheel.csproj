@@ -12,6 +12,9 @@
     <Version>1.7.9</Version>
     <AssemblyVersion>1.7.9.0</AssemblyVersion>
     <FileVersion>1.7.9.0</FileVersion>
+
+    <!-- Don't copy XML doc files from NuGet packages to output -->
+    <AllowedReferenceRelatedFileExtensions>.pdb</AllowedReferenceRelatedFileExtensions>
     
     <!-- Performance & Size Optimization (Release only) -->
     <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
