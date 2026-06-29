@@ -32,14 +32,11 @@ namespace FlowWheel
                 _singleInstanceMutex.Dispose();
                 _singleInstanceMutex = null;
 
-                if (!TryActivateExistingInstance())
-                {
-                    System.Windows.MessageBox.Show(
-                        "FlowWheel is already running.",
-                        "FlowWheel",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
+                System.Windows.MessageBox.Show(
+                    "FlowWheel is already running.",
+                    "FlowWheel",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
 
                 Shutdown();
                 return;
@@ -183,54 +180,6 @@ namespace FlowWheel
             {
                 return key;
             }
-        }
-
-        private bool TryActivateExistingInstance()
-        {
-            try
-            {
-                var current = System.Diagnostics.Process.GetCurrentProcess();
-                var processes = System.Diagnostics.Process.GetProcessesByName(current.ProcessName);
-
-                foreach (var process in processes)
-                {
-                    if (process.Id == current.Id) continue;
-
-                    IntPtr hWnd = process.MainWindowHandle;
-                    if (hWnd == IntPtr.Zero)
-                    {
-                        hWnd = FindTopLevelWindowForProcess(process.Id);
-                    }
-
-                    if (hWnd != IntPtr.Zero)
-                    {
-                        NativeMethods.ShowWindow(hWnd, NativeMethods.SW_RESTORE);
-                        NativeMethods.SetForegroundWindow(hWnd);
-                        return true;
-                    }
-                }
-            }
-            catch { }
-            return false;
-        }
-
-        private static IntPtr FindTopLevelWindowForProcess(int processId)
-        {
-            IntPtr found = IntPtr.Zero;
-            NativeMethods.EnumWindows((hWnd, lParam) =>
-            {
-                if (NativeMethods.GetWindow(hWnd, NativeMethods.GW_OWNER) != IntPtr.Zero)
-                    return true;
-
-                NativeMethods.GetWindowThreadProcessId(hWnd, out uint windowProcessId);
-                if (windowProcessId == processId)
-                {
-                    found = hWnd;
-                    return false;
-                }
-                return true;
-            }, IntPtr.Zero);
-            return found;
         }
 
         private void ShowSettings()

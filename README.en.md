@@ -2,12 +2,6 @@
   <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/flowwheel.png" width="120" alt="FlowWheel Logo" />
 </div>
 
-<div align="center">
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/1.gif" width="25%" alt="Demo 1" />
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/2.gif" width="25%" alt="Demo 2" />
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/3.gif" width="25%" alt="Demo 3" />
-</div>
-
 <h1 align="center">FlowWheel</h1>
 
 <div align="center">
@@ -41,6 +35,10 @@ Imagine the convenience of reading long articles, browsing code files, or review
 - **Inertia physics**: Release the mouse while moving and let content "throw" and glide
 - **Anti-accidental deadzone**: Prevents accidental scrolling from slight hand tremors
 
+<div align="center">
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/1.gif" width="60%" alt="Drag-to-scroll Demo" />
+</div>
+
 ### Advanced Modes
 
 - **Reading Mode (Auto-scroll)**: **Double-click** middle mouse or use the dedicated hotkey to activate hands-free continuous scrolling
@@ -64,6 +62,10 @@ Imagine the convenience of reading long articles, browsing code files, or review
 - **Break speed limit**: Remove speed cap, supporting ultra-high scrolling speeds
 - **Delay start**: Middle click triggers after a short delay, preventing misoperation
 - **Per-app settings**: Configure different scrolling behavior for different apps
+
+<div align="center">
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/2.gif" width="60%" alt="Customization Demo" />
+</div>
 
 ### Smart Features
 
@@ -100,6 +102,10 @@ Or download `FlowWheel.exe` directly from [Releases](https://github.com/humanfir
 1. Launch FlowWheel (runs in tray)
 2. **Hold middle mouse** and drag anywhere to scroll
 3. **Double-click middle mouse** for Reading Mode, adjust speed with scroll wheel
+
+<div align="center">
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/3.gif" width="60%" alt="Quick Start Demo" />
+</div>
 
 ## Trigger Modes
 
