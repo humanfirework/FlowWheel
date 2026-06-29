@@ -18,11 +18,35 @@ namespace FlowWheel
         private WindowManager? _windowManager;
         private AutoScrollManager? _autoScrollManager;
         private SettingsWindow? _settingsWindow;
-        
+
+        private static System.Threading.Mutex? _singleInstanceMutex;
+        private const string SingleInstanceMutexName = "FlowWheel_SingleInstance_Mutex_v1";
+
         protected override async void OnStartup(StartupEventArgs e)
         {
+            bool createdNew;
+            _singleInstanceMutex = new System.Threading.Mutex(true, SingleInstanceMutexName, out createdNew);
+
+            if (!createdNew)
+            {
+                _singleInstanceMutex.Dispose();
+                _singleInstanceMutex = null;
+
+                if (!TryActivateExistingInstance())
+                {
+                    System.Windows.MessageBox.Show(
+                        "FlowWheel is already running.",
+                        "FlowWheel",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+
+                Shutdown();
+                return;
+            }
+
             base.OnStartup(e);
-            
+
             var splash = new SplashWindow();
             splash.Show();
 
@@ -161,6 +185,54 @@ namespace FlowWheel
             }
         }
 
+        private bool TryActivateExistingInstance()
+        {
+            try
+            {
+                var current = System.Diagnostics.Process.GetCurrentProcess();
+                var processes = System.Diagnostics.Process.GetProcessesByName(current.ProcessName);
+
+                foreach (var process in processes)
+                {
+                    if (process.Id == current.Id) continue;
+
+                    IntPtr hWnd = process.MainWindowHandle;
+                    if (hWnd == IntPtr.Zero)
+                    {
+                        hWnd = FindTopLevelWindowForProcess(process.Id);
+                    }
+
+                    if (hWnd != IntPtr.Zero)
+                    {
+                        NativeMethods.ShowWindow(hWnd, NativeMethods.SW_RESTORE);
+                        NativeMethods.SetForegroundWindow(hWnd);
+                        return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        private static IntPtr FindTopLevelWindowForProcess(int processId)
+        {
+            IntPtr found = IntPtr.Zero;
+            NativeMethods.EnumWindows((hWnd, lParam) =>
+            {
+                if (NativeMethods.GetWindow(hWnd, NativeMethods.GW_OWNER) != IntPtr.Zero)
+                    return true;
+
+                NativeMethods.GetWindowThreadProcessId(hWnd, out uint windowProcessId);
+                if (windowProcessId == processId)
+                {
+                    found = hWnd;
+                    return false;
+                }
+                return true;
+            }, IntPtr.Zero);
+            return found;
+        }
+
         private void ShowSettings()
         {
             if (_scrollEngine == null || _autoScrollManager == null || _windowManager == null) return;
@@ -234,6 +306,15 @@ namespace FlowWheel
                 _mouseHook?.Dispose();
                 _keyboardHook?.Dispose();
             }
+
+            try
+            {
+                _singleInstanceMutex?.ReleaseMutex();
+                _singleInstanceMutex?.Dispose();
+            }
+            catch { }
+            _singleInstanceMutex = null;
+
             base.OnExit(e);
         }
     }

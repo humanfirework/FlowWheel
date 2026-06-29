@@ -368,7 +368,7 @@ namespace FlowWheel.Core
                 }
 
                 int delay = ConfigManager.Current.MiddleClickDelay;
-                if (delay > 0 && _triggerBaseKey == "MiddleMouse" && !_triggerNeedsCtrl && !_triggerNeedsShift && !_triggerNeedsAlt)
+                if (ConfigManager.Current.DelayStartEnabled && delay > 0 && _triggerBaseKey == "MiddleMouse" && !_triggerNeedsCtrl && !_triggerNeedsShift && !_triggerNeedsAlt)
                 {
                     lock (_delayLock)
                     {

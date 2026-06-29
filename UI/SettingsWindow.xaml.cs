@@ -30,6 +30,10 @@ namespace FlowWheel.UI
         private bool _isListening = false;
         private bool _isReadingModeListening = false;
         private bool _isToggleHotkeyListening = false;
+        private string _previousTriggerKey = "";
+        private string _previousReadingModeHotkey = "";
+        private string _previousToggleHotkey = "";
+        private bool _isUpdatingHotkeyInput = false;
         private DispatcherTimer? _starTimer;
         private List<System.Windows.Shapes.Path>? _starPaths;
         private (double baseOpacity, double phase, double speed)[] _starStates = Array.Empty<(double, double, double)>();
@@ -139,14 +143,17 @@ namespace FlowWheel.UI
             SyncToggle.IsOn = ConfigManager.Current.IsSyncScrollEnabled;
             ReadingModeToggle.IsOn = ConfigManager.Current.IsReadingModeEnabled;
             
+            _isUpdatingHotkeyInput = true;
             ReadingModeHotkeyInput.Text = ConfigManager.Current.ReadingModeHotkey;
             ToggleHotkeyInput.Text = ConfigManager.Current.ToggleHotkey;
+            TriggerKeyInput.Text = ConfigManager.Current.TriggerKey;
+            _isUpdatingHotkeyInput = false;
             
-            DelayStartToggle.IsOn = ConfigManager.Current.MiddleClickDelay > 0;
+            DelayStartToggle.IsOn = ConfigManager.Current.DelayStartEnabled;
             UpdateDelayStatusText();
+            MiddleClickDelaySlider.Value = ConfigManager.Current.MiddleClickDelay;
             if (DelayStartToggle.IsOn)
             {
-                MiddleClickDelaySlider.Value = ConfigManager.Current.MiddleClickDelay;
                 DelaySliderPanel.Visibility = Visibility.Visible;
             }
             else
@@ -158,8 +165,6 @@ namespace FlowWheel.UI
                 RadioHoldDrag.IsChecked = true;
             else
                 RadioClickToggle.IsChecked = true;
-
-            TriggerKeyInput.Text = ConfigManager.Current.TriggerKey;
 
             if (ConfigManager.Current.IsWhitelistMode)
             {
@@ -875,41 +880,32 @@ namespace FlowWheel.UI
 
         private void TriggerKeyInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (TriggerKeyInput == null) return;
+            if (TriggerKeyInput == null || _isUpdatingHotkeyInput) return;
             
             string key = TriggerKeyInput.Text.Trim();
-            if (!string.IsNullOrEmpty(key))
-            {
-                ConfigManager.Current.TriggerKey = key;
-                ConfigManager.Save();
-                CheckHotkeyConflicts();
-            }
+            ConfigManager.Current.TriggerKey = key;
+            ConfigManager.Save();
+            CheckHotkeyConflicts();
         }
 
         private void ReadingModeHotkeyInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ReadingModeHotkeyInput == null) return;
+            if (ReadingModeHotkeyInput == null || _isUpdatingHotkeyInput) return;
 
             string key = ReadingModeHotkeyInput.Text.Trim();
-            if (!string.IsNullOrEmpty(key))
-            {
-                ConfigManager.Current.ReadingModeHotkey = key;
-                ConfigManager.Save();
-                CheckHotkeyConflicts();
-            }
+            ConfigManager.Current.ReadingModeHotkey = key;
+            ConfigManager.Save();
+            CheckHotkeyConflicts();
         }
 
         private void ToggleHotkeyInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ToggleHotkeyInput == null) return;
+            if (ToggleHotkeyInput == null || _isUpdatingHotkeyInput) return;
 
             string key = ToggleHotkeyInput.Text.Trim();
-            if (!string.IsNullOrEmpty(key))
-            {
-                ConfigManager.Current.ToggleHotkey = key;
-                ConfigManager.Save();
-                CheckHotkeyConflicts();
-            }
+            ConfigManager.Current.ToggleHotkey = key;
+            ConfigManager.Save();
+            CheckHotkeyConflicts();
         }
 
         private void UpdateTrayStatusText()
@@ -965,10 +961,11 @@ namespace FlowWheel.UI
         private void DelayStartToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             UpdateDelayStatusText();
+            ConfigManager.Current.DelayStartEnabled = e.NewValue;
             if (e.NewValue)
             {
-                int delay = (int)MiddleClickDelaySlider.Value;
-                ConfigManager.Current.MiddleClickDelay = delay > 0 ? delay : 150;
+                if (ConfigManager.Current.MiddleClickDelay <= 0)
+                    ConfigManager.Current.MiddleClickDelay = (int)MiddleClickDelaySlider.Value;
                 if (MiddleClickDelayValueText != null) MiddleClickDelayValueText.Text = $"{ConfigManager.Current.MiddleClickDelay}ms";
                 DelaySliderPanel.Visibility = Visibility.Visible;
                 var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200)) { EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut } };
@@ -976,7 +973,6 @@ namespace FlowWheel.UI
             }
             else
             {
-                ConfigManager.Current.MiddleClickDelay = 0;
                 DelaySliderPanel.Visibility = Visibility.Collapsed;
             }
             ConfigManager.Save();
@@ -1012,14 +1008,18 @@ namespace FlowWheel.UI
             int currentIndex = Array.IndexOf(presets, ConfigManager.Current.TriggerKey);
             int nextIndex = (currentIndex + 1) % presets.Length;
             
+            _isUpdatingHotkeyInput = true;
             TriggerKeyInput.Text = presets[nextIndex];
+            _isUpdatingHotkeyInput = false;
         }
 
         private void TriggerKeyPreset_Select(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is string key)
             {
+                _isUpdatingHotkeyInput = true;
                 TriggerKeyInput.Text = key;
+                _isUpdatingHotkeyInput = false;
             }
         }
 
@@ -1027,6 +1027,9 @@ namespace FlowWheel.UI
         {
             if (_isListening)
             {
+                _isUpdatingHotkeyInput = true;
+                TriggerKeyInput.Text = _previousTriggerKey;
+                _isUpdatingHotkeyInput = false;
                 StopListening();
                 return;
             }
@@ -1038,6 +1041,9 @@ namespace FlowWheel.UI
         {
             if (_isReadingModeListening)
             {
+                _isUpdatingHotkeyInput = true;
+                ReadingModeHotkeyInput.Text = _previousReadingModeHotkey;
+                _isUpdatingHotkeyInput = false;
                 StopReadingModeListening();
                 return;
             }
@@ -1054,8 +1060,11 @@ namespace FlowWheel.UI
             }
 
             _isListening = true;
+            _previousTriggerKey = TriggerKeyInput.Text;
             BtnListen.Content = FindResource("ListeningPrompt") ?? "Cancel";
+            _isUpdatingHotkeyInput = true;
             TriggerKeyInput.Text = "";
+            _isUpdatingHotkeyInput = false;
             TriggerKeyInput.IsEnabled = false;
 
             // Subscribe to mouse events
@@ -1097,8 +1106,11 @@ namespace FlowWheel.UI
             }
 
             _isReadingModeListening = true;
+            _previousReadingModeHotkey = ReadingModeHotkeyInput.Text;
             BtnReadingModeListen.Content = FindResource("ListeningPrompt") ?? "Cancel";
+            _isUpdatingHotkeyInput = true;
             ReadingModeHotkeyInput.Text = "";
+            _isUpdatingHotkeyInput = false;
             ReadingModeHotkeyInput.IsEnabled = false;
 
             if (_mouseHook != null)
@@ -1133,6 +1145,9 @@ namespace FlowWheel.UI
         {
             if (_isToggleHotkeyListening)
             {
+                _isUpdatingHotkeyInput = true;
+                ToggleHotkeyInput.Text = _previousToggleHotkey;
+                _isUpdatingHotkeyInput = false;
                 StopToggleHotkeyListening();
                 return;
             }
@@ -1148,8 +1163,11 @@ namespace FlowWheel.UI
             }
 
             _isToggleHotkeyListening = true;
+            _previousToggleHotkey = ToggleHotkeyInput.Text;
             BtnToggleHotkeyListen.Content = FindResource("ListeningPrompt") ?? "Cancel";
+            _isUpdatingHotkeyInput = true;
             ToggleHotkeyInput.Text = "";
+            _isUpdatingHotkeyInput = false;
             ToggleHotkeyInput.IsEnabled = false;
 
             if (_mouseHook != null)
@@ -1179,15 +1197,33 @@ namespace FlowWheel.UI
 
             if (IsModifierKey(e.VkCode)) return;
 
+            if (e.VkCode == NativeMethods.VK_ESCAPE)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    _isUpdatingHotkeyInput = true;
+                    ToggleHotkeyInput.Text = "";
+                    _isUpdatingHotkeyInput = false;
+                    ConfigManager.Current.ToggleHotkey = "";
+                    ConfigManager.Save();
+                    CheckHotkeyConflicts();
+                    StopToggleHotkeyListening();
+                });
+                return;
+            }
+
             string? keyName = GetKeyName(e.VkCode);
             if (!string.IsNullOrEmpty(keyName))
             {
                 string fullKeyName = BuildCombinedKeyName(keyName);
                 Dispatcher.Invoke(() =>
                 {
+                    _isUpdatingHotkeyInput = true;
                     ToggleHotkeyInput.Text = fullKeyName;
+                    _isUpdatingHotkeyInput = false;
                     ConfigManager.Current.ToggleHotkey = fullKeyName;
                     ConfigManager.Save();
+                    CheckHotkeyConflicts();
                     StopToggleHotkeyListening();
                 });
             }
@@ -1201,9 +1237,12 @@ namespace FlowWheel.UI
                 string fullKeyName = BuildCombinedKeyName(keyName);
                 Dispatcher.Invoke(() =>
                 {
+                    _isUpdatingHotkeyInput = true;
                     ToggleHotkeyInput.Text = fullKeyName;
+                    _isUpdatingHotkeyInput = false;
                     ConfigManager.Current.ToggleHotkey = fullKeyName;
                     ConfigManager.Save();
+                    CheckHotkeyConflicts();
                     StopToggleHotkeyListening();
                 });
             }
@@ -1249,6 +1288,21 @@ namespace FlowWheel.UI
                 e.VkCode == NativeMethods.VK_RSHIFT || e.VkCode == NativeMethods.VK_LMENU ||
                 e.VkCode == NativeMethods.VK_RMENU)
                 return;
+
+            if (e.VkCode == NativeMethods.VK_ESCAPE)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    _isUpdatingHotkeyInput = true;
+                    TriggerKeyInput.Text = "";
+                    _isUpdatingHotkeyInput = false;
+                    ConfigManager.Current.TriggerKey = "";
+                    ConfigManager.Save();
+                    CheckHotkeyConflicts();
+                    StopListening();
+                });
+                return;
+            }
             
             string? keyName = GetKeyName(e.VkCode);
             
@@ -1260,9 +1314,12 @@ namespace FlowWheel.UI
                 // Update UI on dispatcher thread
                 Dispatcher.Invoke(() =>
                 {
+                    _isUpdatingHotkeyInput = true;
                     TriggerKeyInput.Text = fullKeyName;
+                    _isUpdatingHotkeyInput = false;
                     ConfigManager.Current.TriggerKey = fullKeyName;
                     ConfigManager.Save();
+                    CheckHotkeyConflicts();
                     StopListening();
                 });
             }
@@ -1417,9 +1474,12 @@ namespace FlowWheel.UI
 
                 Dispatcher.Invoke(() =>
                 {
+                    _isUpdatingHotkeyInput = true;
                     TriggerKeyInput.Text = fullKeyName;
+                    _isUpdatingHotkeyInput = false;
                     ConfigManager.Current.TriggerKey = fullKeyName;
                     ConfigManager.Save();
+                    CheckHotkeyConflicts();
                     StopListening();
                 });
             }
@@ -1437,6 +1497,21 @@ namespace FlowWheel.UI
                 e.VkCode == NativeMethods.VK_RMENU)
                 return;
 
+            if (e.VkCode == NativeMethods.VK_ESCAPE)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    _isUpdatingHotkeyInput = true;
+                    ReadingModeHotkeyInput.Text = "";
+                    _isUpdatingHotkeyInput = false;
+                    ConfigManager.Current.ReadingModeHotkey = "";
+                    ConfigManager.Save();
+                    CheckHotkeyConflicts();
+                    StopReadingModeListening();
+                });
+                return;
+            }
+
             string? keyName = GetKeyName(e.VkCode);
 
             if (!string.IsNullOrEmpty(keyName))
@@ -1445,9 +1520,12 @@ namespace FlowWheel.UI
 
                 Dispatcher.Invoke(() =>
                 {
+                    _isUpdatingHotkeyInput = true;
                     ReadingModeHotkeyInput.Text = fullKeyName;
+                    _isUpdatingHotkeyInput = false;
                     ConfigManager.Current.ReadingModeHotkey = fullKeyName;
                     ConfigManager.Save();
+                    CheckHotkeyConflicts();
                     StopReadingModeListening();
                 });
             }
@@ -1480,9 +1558,12 @@ namespace FlowWheel.UI
 
                 Dispatcher.Invoke(() =>
                 {
+                    _isUpdatingHotkeyInput = true;
                     ReadingModeHotkeyInput.Text = fullKeyName;
+                    _isUpdatingHotkeyInput = false;
                     ConfigManager.Current.ReadingModeHotkey = fullKeyName;
                     ConfigManager.Save();
+                    CheckHotkeyConflicts();
                     StopReadingModeListening();
                 });
             }
@@ -1868,6 +1949,7 @@ namespace FlowWheel.UI
             ConfigManager.Current.BreakSpeedLimit = d.BreakSpeedLimit;
             ConfigManager.Current.BreakSpeedLimitMax = d.BreakSpeedLimitMax;
             ConfigManager.Current.MiddleClickDelay = d.MiddleClickDelay;
+            ConfigManager.Current.DelayStartEnabled = d.DelayStartEnabled;
             ConfigManager.Save();
 
             FrictionSlider.Value = d.Friction;
@@ -1879,10 +1961,10 @@ namespace FlowWheel.UI
             MinStepSlider.Value = d.MinStep;
             BreakSpeedLimitToggle.IsOn = d.BreakSpeedLimit;
             BreakSpeedMaxSlider.Value = d.BreakSpeedLimitMax;
-            DelayStartToggle.IsOn = d.MiddleClickDelay > 0;
+            MiddleClickDelaySlider.Value = d.MiddleClickDelay;
+            DelayStartToggle.IsOn = d.DelayStartEnabled;
             if (DelayStartToggle.IsOn)
             {
-                MiddleClickDelaySlider.Value = d.MiddleClickDelay;
                 DelaySliderPanel.Visibility = Visibility.Visible;
             }
             else

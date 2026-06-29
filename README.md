@@ -2,19 +2,13 @@
   <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/flowwheel.png" width="120" alt="FlowWheel Logo" />
 </div>
 
-<div align="center">
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/1.gif" width="25%" alt="Demo 1" />
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/2.gif" width="25%" alt="Demo 2" />
-  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/3.gif" width="25%" alt="Demo 3" />
-</div>
-
 <h1 align="center">FlowWheel</h1>
 
 <div align="center">
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build Status](https://github.com/humanfirework/FlowWheel/actions/workflows/build.yml/badge.svg)](https://github.com/humanfirework/FlowWheel/actions)
-[![Version](https://img.shields.io/badge/version-v1.7.9-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
+[![Version](https://img.shields.io/badge/version-v1.8.0-green.svg)](https://github.com/humanfirework/FlowWheel/releases)
 
 **中文** | [English](./README.en.md)
 
@@ -41,6 +35,10 @@
 - **惯性物理**：在移动时释放鼠标，让内容"抛掷"滑行
 - **防误触死区**：防止手部轻微颤抖导致的意外滚动
 
+<div align="center">
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/1.gif" width="60%" alt="拖拽滚动演示" />
+</div>
+
 
 ### 自定义选项
 
@@ -57,6 +55,10 @@
 - **突破速度限制**：移除速度上限，支持极高滚动速度
 - **延时启动**：中键短按延迟触发，减少误操作
 - **应用配置**：为不同应用配置不同的滚动行为
+
+<div align="center">
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/2.gif" width="60%" alt="自定义选项演示" />
+</div>
 
 ### 智能特性
 
@@ -85,6 +87,10 @@ scoop update flowwheel
 1. 启动 FlowWheel（托盘运行）
 2. **按住中键**拖拽任意位置开始滚动
 3. **双击中键**激活阅读模式，滚轮调整速度
+
+<div align="center">
+  <img src="https://github.com/humanfirework/FlowWheel/raw/main/Assets_for_GitHub_Readme/3.gif" width="60%" alt="快速开始演示" />
+</div>
 
 ## 触发模式
 
@@ -118,7 +124,7 @@ FlowWheel 支持两种触发模式，可在设置中配置：
 
 ## 架构设计
 
-FlowWheel 基于 .NET 10 和 WPF 构建，采用清晰、模块化的架构：
+FlowWheel 基于 .NET 10 和 WPF 构建，采用清晰、模块化的架构
 
 ## 系统要求
 

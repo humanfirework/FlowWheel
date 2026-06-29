@@ -191,6 +191,13 @@ namespace FlowWheel.Core
             set => SetField(ref _middleClickDelay, value); 
         }
         
+        private bool _delayStartEnabled = false;
+        public bool DelayStartEnabled
+        {
+            get => _delayStartEnabled;
+            set => SetField(ref _delayStartEnabled, value);
+        }
+        
         private bool _isDarkMode = false;
         public bool IsDarkMode 
         { 

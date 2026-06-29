@@ -35,6 +35,9 @@ namespace FlowWheel.Core
         public const int VK_LMENU = 0xA4;
         public const int VK_RMENU = 0xA5;
         
+        // Virtual Key Codes for special keys
+        public const int VK_ESCAPE = 0x1B;
+        
         // Virtual Key Codes for F keys
         public const int VK_F1 = 0x70;
         public const int VK_F2 = 0x71;
@@ -229,6 +232,23 @@ namespace FlowWheel.Core
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetForegroundWindow();
 
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        public const int SW_SHOWNORMAL = 1;
+        public const int SW_SHOW = 5;
+        public const int SW_RESTORE = 9;
         public const int MONITOR_DEFAULTTONEAREST = 0x00000002;
 
         public static bool IsCtrlPressed() => IsKeyDown(VK_CONTROL) || IsKeyDown(VK_LCONTROL) || IsKeyDown(VK_RCONTROL);
