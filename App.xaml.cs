@@ -230,6 +230,9 @@ namespace FlowWheel
             if (_isDisposed) return;
             _isDisposed = true;
 
+            // 退出前强制保存配置，确保防抖中未写入的设置不丢失
+            ConfigManager.Save();
+
             if (_notifyIcon != null)
             {
                 _notifyIcon.Visible = false;
@@ -250,6 +253,8 @@ namespace FlowWheel
             if (!_isDisposed)
             {
                 _isDisposed = true;
+                // 退出前强制保存配置，确保防抖中未写入的设置不丢失
+                ConfigManager.Save();
                 _notifyIcon?.Dispose();
                 _autoScrollManager?.Dispose();
                 _mouseHook?.Dispose();
