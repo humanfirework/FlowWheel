@@ -170,7 +170,7 @@
         <Setter Property="Background" Value="{DynamicResource Brush.Card.Background}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="16"/>
-        <Setter Property="Margin" Value="0,0,0,10"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.06" Direction="270"/>
@@ -179,7 +179,7 @@
     </Style>
     
     <Style x:Key="SectionTitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}"/>
         <Setter Property="Margin" Value="0,0,0,12"/>
@@ -282,7 +282,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"/>
+                                CornerRadius="6"/>
                         
                         <ToggleButton x:Name="PART_ToggleButton"
                                       Background="Transparent"
@@ -330,7 +330,7 @@
                             <Border Background="{DynamicResource Brush.Card.Background}"
                                     BorderBrush="{DynamicResource Brush.Border}"
                                     BorderThickness="1"
-                                    CornerRadius="5"
+                                    CornerRadius="6"
                                     Margin="0,2,0,0"
                                     MaxHeight="200"
                                     MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
@@ -400,7 +400,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
+                            CornerRadius="6">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       VerticalAlignment="Center"
                                       Margin="8,0"/>
@@ -429,7 +429,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
+                            CornerRadius="6">
                         <ScrollViewer Padding="{TemplateBinding Padding}">
                             <ItemsPresenter/>
                         </ScrollViewer>
@@ -508,7 +508,7 @@
                                         <ControlTemplate TargetType="Thumb">
                                             <Ellipse x:Name="ThumbEllipse" Fill="White" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" Width="12" Height="12" ClipToBounds="False">
                                                 <Ellipse.Effect>
-                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.2"/>
+                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.2" Direction="270"/>
                                                 </Ellipse.Effect>
                                             </Ellipse>
                                             <ControlTemplate.Triggers>

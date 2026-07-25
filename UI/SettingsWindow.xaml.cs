@@ -34,12 +34,16 @@ namespace FlowWheel.UI
         private string _previousReadingModeHotkey = "";
         private string _previousToggleHotkey = "";
         private bool _isUpdatingHotkeyInput = false;
+        // 初始化保护标志：为 true 时各事件处理器直接返回，避免 XAML 设计时默认值覆盖已从 config.json 加载的配置
+        private bool _isInitializing = false;
         private DispatcherTimer? _starTimer;
         private List<System.Windows.Shapes.Path>? _starPaths;
         private (double baseOpacity, double phase, double speed)[] _starStates = Array.Empty<(double, double, double)>();
 
         public SettingsWindow(ScrollEngine engine, AutoScrollManager manager, WindowManager windowManager, MouseHook? mouseHook = null, KeyboardHook? keyboardHook = null)
         {
+            // 在 InitializeComponent 解析 XAML 之前进入初始化状态，防止设计时默认值触发处理器写配置
+            _isInitializing = true;
             InitializeComponent();
             _engine = engine;
             _manager = manager;
@@ -55,6 +59,8 @@ namespace FlowWheel.UI
             }
 
             InitializeValues();
+            // 控件已装载真实配置值，初始化结束，恢复事件处理器的正常行为
+            _isInitializing = false;
             SetupNavigation();
             SetupEventHandlers();
             SetupDarkMode();
@@ -64,17 +70,23 @@ namespace FlowWheel.UI
         private void InitializeValues()
         {
             SpeedSlider.Value = ConfigManager.Current.Sensitivity;
+            if (SpeedValueText != null) SpeedValueText.Text = $"{ConfigManager.Current.Sensitivity:F1}x";
             DeadzoneSlider.Value = ConfigManager.Current.Deadzone;
-            
+            if (DeadzoneValueText != null) DeadzoneValueText.Text = $"{ConfigManager.Current.Deadzone}px";
+
             // 独立灵敏度设置
             IndependentSensitivityToggle.IsOn = ConfigManager.Current.UseIndependentSensitivity;
             VerticalSpeedSlider.Value = ConfigManager.Current.SensitivityVertical;
+            if (VerticalSpeedValueText != null) VerticalSpeedValueText.Text = $"{ConfigManager.Current.SensitivityVertical:F1}x";
             HorizontalSpeedSlider.Value = ConfigManager.Current.SensitivityHorizontal;
+            if (HorizontalSpeedValueText != null) HorizontalSpeedValueText.Text = $"{ConfigManager.Current.SensitivityHorizontal:F1}x";
             UpdateSensitivityPanelVisibility();
-            
+
             // 阅读模式设置
             ReadingSpeedSlider.Value = ConfigManager.Current.ReadingModeSpeed;
+            if (ReadingSpeedValueText != null) ReadingSpeedValueText.Text = $"{(int)ConfigManager.Current.ReadingModeSpeed} px/s";
             ReadingMaxSpeedSlider.Value = ConfigManager.Current.ReadingModeMaxSpeed;
+            if (ReadingMaxSpeedValueText != null) ReadingMaxSpeedValueText.Text = $"{(int)ConfigManager.Current.ReadingModeMaxSpeed} px/s";
             
             // 加速度曲线设置
             foreach (ComboBoxItem item in AccelerationCurveCombo.Items)
@@ -86,9 +98,13 @@ namespace FlowWheel.UI
                 }
             }
             ExponentSlider.Value = ConfigManager.Current.AccelerationExponent;
+            if (ExponentValueText != null) ExponentValueText.Text = $"{ConfigManager.Current.AccelerationExponent:F1}";
             LogBaseSlider.Value = ConfigManager.Current.AccelerationLogBase;
+            if (LogBaseValueText != null) LogBaseValueText.Text = $"{ConfigManager.Current.AccelerationLogBase:F1}";
             SigmoidMidpointSlider.Value = ConfigManager.Current.SigmoidMidpoint;
+            if (SigmoidMidpointValueText != null) SigmoidMidpointValueText.Text = $"{ConfigManager.Current.SigmoidMidpoint:F2}";
             SigmoidSteepnessSlider.Value = ConfigManager.Current.SigmoidSteepness;
+            if (SigmoidSteepnessValueText != null) SigmoidSteepnessValueText.Text = $"{ConfigManager.Current.SigmoidSteepness:F1}";
             
             if (CurveEditorControl != null)
             {
@@ -110,14 +126,22 @@ namespace FlowWheel.UI
             // 高级参数设置
             AdvancedSettingsToggle.IsOn = ConfigManager.Current.ShowAdvancedSettings;
             FrictionSlider.Value = ConfigManager.Current.Friction;
+            if (FrictionValueText != null) FrictionValueText.Text = $"{ConfigManager.Current.Friction:F1}";
             InertiaSlider.Value = ConfigManager.Current.InertiaMultiplier;
+            if (InertiaValueText != null) InertiaValueText.Text = $"{ConfigManager.Current.InertiaMultiplier:F1}x";
             ResponseTimeSlider.Value = ConfigManager.Current.ResponseTime * 1000;
+            if (ResponseTimeValueText != null) ResponseTimeValueText.Text = $"{(int)(ConfigManager.Current.ResponseTime * 1000)}ms";
             AxisLockSlider.Value = ConfigManager.Current.AxisLockRatio;
+            if (AxisLockValueText != null) AxisLockValueText.Text = $"{ConfigManager.Current.AxisLockRatio:F1}";
             SoftStartSlider.Value = ConfigManager.Current.SoftStartRange;
+            if (SoftStartValueText != null) SoftStartValueText.Text = $"{ConfigManager.Current.SoftStartRange}px";
             MaxScrollSpeedSlider.Value = ConfigManager.Current.MaxScrollSpeed;
+            if (MaxScrollSpeedValueText != null) MaxScrollSpeedValueText.Text = $"{(int)ConfigManager.Current.MaxScrollSpeed} px/s";
             MinStepSlider.Value = ConfigManager.Current.MinStep;
+            if (MinStepValueText != null) MinStepValueText.Text = $"{ConfigManager.Current.MinStep} px";
             BreakSpeedLimitToggle.IsOn = ConfigManager.Current.BreakSpeedLimit;
             BreakSpeedMaxSlider.Value = ConfigManager.Current.BreakSpeedLimitMax;
+            if (BreakSpeedMaxValueText != null) BreakSpeedMaxValueText.Text = $"{(int)ConfigManager.Current.BreakSpeedLimitMax} px/s";
             if (BreakSpeedLimitToggle.IsOn)
             {
                 BreakSpeedLimitPanel.Visibility = Visibility.Visible;
@@ -152,6 +176,7 @@ namespace FlowWheel.UI
             DelayStartToggle.IsOn = ConfigManager.Current.DelayStartEnabled;
             UpdateDelayStatusText();
             MiddleClickDelaySlider.Value = ConfigManager.Current.MiddleClickDelay;
+            if (MiddleClickDelayValueText != null) MiddleClickDelayValueText.Text = $"{ConfigManager.Current.MiddleClickDelay}ms";
             if (DelayStartToggle.IsOn)
             {
                 DelaySliderPanel.Visibility = Visibility.Visible;
@@ -199,6 +224,7 @@ namespace FlowWheel.UI
 
             CustomIconPathInput.Text = ConfigManager.Current.CustomIconPath;
             IconSizeSlider.Value = ConfigManager.Current.IconSize;
+            if (IconSizeValueText != null) IconSizeValueText.Text = $"{ConfigManager.Current.IconSize}px";
 
             RefreshBlacklist();
         }
@@ -262,8 +288,8 @@ namespace FlowWheel.UI
                     EnableToggle.IsOn = AppStatusToggle.IsOn;
             };
 
-            RadioClickToggle.Checked += (s, e) => { ConfigManager.Current.TriggerMode = "Toggle"; ConfigManager.Save(); };
-            RadioHoldDrag.Checked += (s, e) => { ConfigManager.Current.TriggerMode = "Hold"; ConfigManager.Save(); };
+            RadioClickToggle.Checked += (s, e) => { if (_isInitializing) return; ConfigManager.Current.TriggerMode = "Toggle"; ConfigManager.Save(); };
+            RadioHoldDrag.Checked += (s, e) => { if (_isInitializing) return; ConfigManager.Current.TriggerMode = "Hold"; ConfigManager.Save(); };
 
             RadioBlacklist.Checked += RadioFilterMode_Changed;
             RadioWhitelist.Checked += RadioFilterMode_Changed;
@@ -801,7 +827,7 @@ namespace FlowWheel.UI
 
         private void RadioFilterMode_Changed(object sender, RoutedEventArgs e)
         {
-            if (RadioWhitelist == null) return;
+            if (RadioWhitelist == null || _isInitializing) return;
 
             if (RadioWhitelist.IsChecked == true)
             {
@@ -880,7 +906,7 @@ namespace FlowWheel.UI
 
         private void TriggerKeyInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (TriggerKeyInput == null || _isUpdatingHotkeyInput) return;
+            if (TriggerKeyInput == null || _isUpdatingHotkeyInput || _isInitializing) return;
             
             string key = TriggerKeyInput.Text.Trim();
             ConfigManager.Current.TriggerKey = key;
@@ -890,7 +916,7 @@ namespace FlowWheel.UI
 
         private void ReadingModeHotkeyInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ReadingModeHotkeyInput == null || _isUpdatingHotkeyInput) return;
+            if (ReadingModeHotkeyInput == null || _isUpdatingHotkeyInput || _isInitializing) return;
 
             string key = ReadingModeHotkeyInput.Text.Trim();
             ConfigManager.Current.ReadingModeHotkey = key;
@@ -900,7 +926,7 @@ namespace FlowWheel.UI
 
         private void ToggleHotkeyInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ToggleHotkeyInput == null || _isUpdatingHotkeyInput) return;
+            if (ToggleHotkeyInput == null || _isUpdatingHotkeyInput || _isInitializing) return;
 
             string key = ToggleHotkeyInput.Text.Trim();
             ConfigManager.Current.ToggleHotkey = key;
@@ -960,6 +986,7 @@ namespace FlowWheel.UI
 
         private void DelayStartToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
+            if (_isInitializing) return;
             UpdateDelayStatusText();
             ConfigManager.Current.DelayStartEnabled = e.NewValue;
             if (e.NewValue)
@@ -993,12 +1020,18 @@ namespace FlowWheel.UI
             }
         }
 
+        // 滑块处理器通用样板：初始化期间直接返回，否则写配置、更新数值文本并防抖保存
+        private void UpdateSliderSetting(double newValue, Action<double> apply, TextBlock? valueText, string format)
+        {
+            if (_isInitializing) return;
+            apply(newValue);
+            if (valueText != null) valueText.Text = string.Format(format, newValue);
+            ConfigManager.DebouncedSave();
+        }
+
         private void MiddleClickDelaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int value = (int)e.NewValue;
-            ConfigManager.Current.MiddleClickDelay = value;
-            if (MiddleClickDelayValueText != null) MiddleClickDelayValueText.Text = $"{value}ms";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v => ConfigManager.Current.MiddleClickDelay = (int)v, MiddleClickDelayValueText, "{0}ms");
         }
 
         private void TriggerKeyPreset_Click(object sender, RoutedEventArgs e)
@@ -1586,7 +1619,7 @@ namespace FlowWheel.UI
 
         private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LanguageCombo == null) return;
+            if (LanguageCombo == null || _isInitializing) return;
 
             if (LanguageCombo.SelectedItem is ComboBoxItem item && item.Tag is string langCode)
             {
@@ -1598,7 +1631,7 @@ namespace FlowWheel.UI
 
         private void PerformanceModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PerformanceModeCombo == null) return;
+            if (PerformanceModeCombo == null || _isInitializing) return;
 
             if (PerformanceModeCombo.SelectedItem is ComboBoxItem item && item.Tag is string modeStr)
             {
@@ -1648,14 +1681,12 @@ namespace FlowWheel.UI
 
         private void IconSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int size = (int)e.NewValue;
-            ConfigManager.Current.IconSize = size;
-            if (IconSizeValueText != null) IconSizeValueText.Text = $"{size}px";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v => ConfigManager.Current.IconSize = (int)v, IconSizeValueText, "{0}px");
         }
 
         private void AdvancedSettingsToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
+            if (_isInitializing) return;
             bool showAdvanced = AdvancedSettingsToggle.IsOn;
             ConfigManager.Current.ShowAdvancedSettings = showAdvanced;
             UpdateAdvancedParamsVisibility();
@@ -1673,6 +1704,7 @@ namespace FlowWheel.UI
 
         private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (_isInitializing) return;
             if (_engine != null)
             {
                 _engine.Sensitivity = (float)e.NewValue;
@@ -1685,6 +1717,7 @@ namespace FlowWheel.UI
         
         private void IndependentSensitivityToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
+            if (_isInitializing) return;
             bool useIndependent = IndependentSensitivityToggle.IsOn;
             ConfigManager.Current.UseIndependentSensitivity = useIndependent;
             if (_engine != null) _engine.UseIndependentSensitivity = useIndependent;
@@ -1702,43 +1735,43 @@ namespace FlowWheel.UI
         
         private void VerticalSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)e.NewValue;
-            ConfigManager.Current.SensitivityVertical = value;
-            if (_engine != null) _engine.SensitivityVertical = value;
-            if (VerticalSpeedValueText != null) VerticalSpeedValueText.Text = $"{value:F1}x";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.SensitivityVertical = (float)v;
+                if (_engine != null) _engine.SensitivityVertical = (float)v;
+            }, VerticalSpeedValueText, "{0:F1}x");
         }
-        
+
         private void HorizontalSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)e.NewValue;
-            ConfigManager.Current.SensitivityHorizontal = value;
-            if (_engine != null) _engine.SensitivityHorizontal = value;
-            if (HorizontalSpeedValueText != null) HorizontalSpeedValueText.Text = $"{value:F1}x";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.SensitivityHorizontal = (float)v;
+                if (_engine != null) _engine.SensitivityHorizontal = (float)v;
+            }, HorizontalSpeedValueText, "{0:F1}x");
         }
-        
+
         private void ReadingSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)e.NewValue;
-            ConfigManager.Current.ReadingModeSpeed = value;
-            if (_engine != null) _engine.ReadingModeSpeed = value;
-            if (ReadingSpeedValueText != null) ReadingSpeedValueText.Text = $"{(int)value} px/s";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.ReadingModeSpeed = (float)v;
+                if (_engine != null) _engine.ReadingModeSpeed = (float)v;
+            }, ReadingSpeedValueText, "{0} px/s");
         }
-        
+
         private void ReadingMaxSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)e.NewValue;
-            ConfigManager.Current.ReadingModeMaxSpeed = value;
-            if (_engine != null) _engine.ReadingModeMaxSpeed = value;
-            if (ReadingMaxSpeedValueText != null) ReadingMaxSpeedValueText.Text = $"{(int)value} px/s";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.ReadingModeMaxSpeed = (float)v;
+                if (_engine != null) _engine.ReadingModeMaxSpeed = (float)v;
+            }, ReadingMaxSpeedValueText, "{0} px/s");
         }
         
         private void AccelerationCurveCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (AccelerationCurveCombo == null) return;
+            if (AccelerationCurveCombo == null || _isInitializing) return;
             
             if (AccelerationCurveCombo.SelectedItem is ComboBoxItem item && item.Tag is string curveStr)
             {
@@ -1783,42 +1816,43 @@ namespace FlowWheel.UI
         
         private void ExponentSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.AccelerationExponent = value;
-            if (ExponentValueText != null) ExponentValueText.Text = $"{value:F1}";
-            if (CurvePreviewControl != null) CurvePreviewControl.Exponent = value;
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.AccelerationExponent = v;
+                if (CurvePreviewControl != null) CurvePreviewControl.Exponent = v;
+            }, ExponentValueText, "{0:F1}");
         }
 
         private void LogBaseSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.AccelerationLogBase = value;
-            if (LogBaseValueText != null) LogBaseValueText.Text = $"{value:F1}";
-            if (CurvePreviewControl != null) CurvePreviewControl.LogBase = value;
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.AccelerationLogBase = v;
+                if (CurvePreviewControl != null) CurvePreviewControl.LogBase = v;
+            }, LogBaseValueText, "{0:F1}");
         }
 
         private void SigmoidMidpointSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.SigmoidMidpoint = value;
-            if (SigmoidMidpointValueText != null) SigmoidMidpointValueText.Text = $"{value:F2}";
-            if (CurvePreviewControl != null) CurvePreviewControl.SigmoidMidpoint = value;
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.SigmoidMidpoint = v;
+                if (CurvePreviewControl != null) CurvePreviewControl.SigmoidMidpoint = v;
+            }, SigmoidMidpointValueText, "{0:F2}");
         }
 
         private void SigmoidSteepnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.SigmoidSteepness = value;
-            if (SigmoidSteepnessValueText != null) SigmoidSteepnessValueText.Text = $"{value:F1}";
-            if (CurvePreviewControl != null) CurvePreviewControl.SigmoidSteepness = value;
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.SigmoidSteepness = v;
+                if (CurvePreviewControl != null) CurvePreviewControl.SigmoidSteepness = v;
+            }, SigmoidSteepnessValueText, "{0:F1}");
         }
 
         private void CurveEditorControl_CurveChanged(object sender, EventArgs e)
         {
+            if (_isInitializing) return;
             if (CurveEditorControl?.CurvePoints != null)
             {
                 ConfigManager.Current.CustomCurvePoints = CurveEditorControl.CurvePoints;
@@ -1834,69 +1868,73 @@ namespace FlowWheel.UI
         
         private void FrictionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.Friction = value;
-            if (_engine != null) _engine.Friction = value;
-            if (FrictionValueText != null) FrictionValueText.Text = $"{value:F1}";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.Friction = v;
+                if (_engine != null) _engine.Friction = v;
+            }, FrictionValueText, "{0:F1}");
         }
-        
+
         private void InertiaSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.InertiaMultiplier = value;
-            if (_engine != null) _engine.InertiaMultiplier = value;
-            if (InertiaValueText != null) InertiaValueText.Text = $"{value:F1}x";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.InertiaMultiplier = v;
+                if (_engine != null) _engine.InertiaMultiplier = v;
+            }, InertiaValueText, "{0:F1}x");
         }
-        
+
         private void ResponseTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue / 1000.0;
-            ConfigManager.Current.ResponseTime = value;
-            if (_engine != null) _engine.ResponseTime = value;
-            if (ResponseTimeValueText != null) ResponseTimeValueText.Text = $"{(int)e.NewValue}ms";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                double value = v / 1000.0;
+                ConfigManager.Current.ResponseTime = value;
+                if (_engine != null) _engine.ResponseTime = value;
+            }, ResponseTimeValueText, "{0}ms");
         }
-        
+
         private void AxisLockSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.AxisLockRatio = value;
-            if (_engine != null) _engine.AxisLockRatio = value;
-            if (AxisLockValueText != null) AxisLockValueText.Text = $"{value:F1}";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.AxisLockRatio = v;
+                if (_engine != null) _engine.AxisLockRatio = v;
+            }, AxisLockValueText, "{0:F1}");
         }
-        
+
         private void SoftStartSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int value = (int)e.NewValue;
-            ConfigManager.Current.SoftStartRange = value;
-            if (_engine != null) _engine.SoftStartRange = value;
-            if (SoftStartValueText != null) SoftStartValueText.Text = $"{value}px";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                int value = (int)v;
+                ConfigManager.Current.SoftStartRange = value;
+                if (_engine != null) _engine.SoftStartRange = value;
+            }, SoftStartValueText, "{0}px");
         }
 
         private void MaxScrollSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.MaxScrollSpeed = value;
-            if (_engine != null) _engine.MaxScrollSpeed = value;
-            if (MaxScrollSpeedValueText != null) MaxScrollSpeedValueText.Text = $"{(int)value} px/s";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                ConfigManager.Current.MaxScrollSpeed = v;
+                if (_engine != null) _engine.MaxScrollSpeed = v;
+            }, MaxScrollSpeedValueText, "{0} px/s");
         }
 
         private void MinStepSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int value = (int)e.NewValue;
-            ConfigManager.Current.MinStep = value;
-            if (_engine != null) _engine.MinStep = value;
-            if (MinStepValueText != null) MinStepValueText.Text = $"{value} px";
-            ConfigManager.DebouncedSave();
+            UpdateSliderSetting(e.NewValue, v =>
+            {
+                int value = (int)v;
+                ConfigManager.Current.MinStep = value;
+                if (_engine != null) _engine.MinStep = value;
+            }, MinStepValueText, "{0} px");
         }
 
         private void BreakSpeedLimitToggle_IsOnChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
+            if (_isInitializing) return;
             ConfigManager.Current.BreakSpeedLimit = e.NewValue;
             if (_engine != null) _engine.BreakSpeedLimit = e.NewValue;
             if (e.NewValue)
@@ -1918,15 +1956,15 @@ namespace FlowWheel.UI
 
         private void BreakSpeedMaxSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double value = e.NewValue;
-            ConfigManager.Current.BreakSpeedLimitMax = value;
-            if (_engine != null) _engine.BreakSpeedLimitMax = value;
-            if (BreakSpeedMaxValueText != null) BreakSpeedMaxValueText.Text = $"{(int)value} px/s";
-            if (BreakSpeedLimitToggle.IsOn && MaxScrollSpeedSlider != null)
+            UpdateSliderSetting(e.NewValue, v =>
             {
-                MaxScrollSpeedSlider.Maximum = value;
-            }
-            ConfigManager.DebouncedSave();
+                ConfigManager.Current.BreakSpeedLimitMax = v;
+                if (_engine != null) _engine.BreakSpeedLimitMax = v;
+                if (BreakSpeedLimitToggle.IsOn && MaxScrollSpeedSlider != null)
+                {
+                    MaxScrollSpeedSlider.Maximum = v;
+                }
+            }, BreakSpeedMaxValueText, "{0} px/s");
         }
 
         private void ResetAllDefaults_Click(object sender, RoutedEventArgs e)
@@ -1977,6 +2015,7 @@ namespace FlowWheel.UI
 
         private void DeadzoneSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (_isInitializing) return;
             if (_engine != null)
             {
                 _engine.Deadzone = (int)e.NewValue;

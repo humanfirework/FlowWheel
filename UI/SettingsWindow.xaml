@@ -104,7 +104,7 @@
                         </Path>
                         <TextBlock Text="FlowWheel" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Brush.Text.Primary}"/>
                     </StackPanel>
-                    <Border x:Name="VersionBadge" Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" Margin="0,6,0,0" Opacity="0.8">
+                    <Border x:Name="VersionBadge" Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" Margin="0,8,0,0" Opacity="0.8">
                                     <TextBlock x:Name="VersionLabel" Text="v1.8.0" FontSize="10" FontWeight="SemiBold"
                                                Foreground="White"/>
                                 </Border>
@@ -125,7 +125,7 @@
                                  Tag="{StaticResource IconInfo}" Style="{StaticResource NavButtonStyle}"/>
                 </StackPanel>
                 
-                <Border Grid.Row="2" Margin="12,0,12,12" Background="{DynamicResource Brush.Control.Background}" CornerRadius="6" Padding="10">
+                <Border Grid.Row="2" Margin="12,0,12,12" Background="{DynamicResource Brush.Control.Background}" CornerRadius="6" Padding="12">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -494,7 +494,7 @@
                                     </ComboBox>
                                 </Grid>
 
-                                <controls:CurvePreview x:Name="CurvePreviewControl" Margin="0,10,0,0"
+                                <controls:CurvePreview x:Name="CurvePreviewControl" Margin="0,12,0,0"
                                                       Width="280" Height="180"
                                                       Visibility="Visible"/>
 
@@ -584,7 +584,7 @@
                                         <TextBlock Text="高级设置" Style="{StaticResource SectionTitle}"/>
                                         <TextBlock Text="启用后可以调整滚动的精细参数，适合高级用户" 
                                                    Style="{StaticResource SettingDescription}"
-                                                   Foreground="{DynamicResource Brush.TextSecondary}"/>
+                                                   Foreground="{DynamicResource Brush.Text.Secondary}"/>
                                     </StackPanel>
                                     <controls:ToggleSwitch x:Name="AdvancedSettingsToggle" Grid.Column="1" Width="44" Height="24" 
                                                           IsOnChanged="AdvancedSettingsToggle_IsOnChanged"/>
@@ -737,10 +737,10 @@
                                     <TextBox x:Name="CustomIconPathInput" Style="{StaticResource ModernTextBox}" 
                                              IsReadOnly="True" ToolTip="{DynamicResource DescCustomIcon}"/>
                                     <Button Grid.Column="1" Content="..." 
-                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="6,0,6,0"
+                                            Style="{StaticResource ModernButton}" Padding="8,4" Margin="8,0,8,0"
                                             Click="BrowseIcon_Click" ToolTip="{DynamicResource BtnBrowse}"/>
                                     <Button Grid.Column="2" Content="×" 
-                                            Style="{StaticResource ModernButton}" Padding="10,6"
+                                            Style="{StaticResource ModernButton}" Padding="8,4"
                                             Click="ClearIcon_Click" ToolTip="{DynamicResource BtnClear}"/>
                                 </Grid>
                                 
@@ -793,12 +793,12 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="BlacklistInput" Style="{StaticResource ModernTextBox}" 
-                                             Margin="0,0,6,0" ToolTip="{DynamicResource TipProcessName}"/>
+                                             Margin="0,0,8,0" ToolTip="{DynamicResource TipProcessName}"/>
                                     <Button Grid.Column="1" Content="..." 
-                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="0,0,6,0"
+                                            Style="{StaticResource ModernButton}" Padding="8,4" Margin="0,0,8,0"
                                             Click="BrowseApp_Click" ToolTip="{DynamicResource BtnBrowse}"/>
                                     <Button Grid.Column="2" Content="+" 
-                                            Style="{StaticResource ModernButton}" Padding="10,6"
+                                            Style="{StaticResource ModernButton}" Padding="8,4"
                                             Click="AddBlacklist_Click" ToolTip="{DynamicResource TipAdd}"/>
                                 </Grid>
                                 
@@ -813,7 +813,7 @@
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="{Binding ProcessName}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"/>
                                                 <Button Grid.Column="1" Content="×" 
-                                                        Style="{StaticResource ModernButton}" Padding="6,4" 
+                                                        Style="{StaticResource ModernButton}" Padding="8,4" 
                                                         Background="Transparent" Foreground="#E74C3C"
                                                         Click="RemoveBlacklist_Click" Tag="{Binding ProcessName}"/>
                                             </Grid>
@@ -871,7 +871,7 @@
                                              TextChanged="ToggleHotkeyInput_TextChanged"
                                              ToolTip="{DynamicResource DescToggleHotkey}"/>
                                     <Button x:Name="BtnToggleHotkeyListen" Grid.Column="1" Content="{DynamicResource BtnListen}" 
-                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="6,0,0,0"
+                                            Style="{StaticResource ModernButton}" Padding="8,4" Margin="8,0,0,0"
                                             Click="BtnToggleHotkeyListen_Click" ToolTip="{DynamicResource BtnListenTip}"/>
                                 </Grid>
                             </StackPanel>
@@ -901,10 +901,10 @@
                                              TextChanged="TriggerKeyInput_TextChanged"
                                              ToolTip="{DynamicResource DescTriggerKey}"/>
                                     <Button x:Name="BtnListen" Grid.Column="1" Content="{DynamicResource BtnListen}" 
-                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="6,0,0,0"
+                                            Style="{StaticResource ModernButton}" Padding="8,4" Margin="8,0,0,0"
                                             Click="BtnListen_Click" ToolTip="{DynamicResource BtnListenTip}"/>
                                     <Button Grid.Column="2" Content="{DynamicResource BtnPreset}" 
-                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="6,0,0,0"
+                                            Style="{StaticResource ModernButton}" Padding="8,4" Margin="8,0,0,0"
                                             Click="TriggerKeyPreset_Click" ToolTip="{DynamicResource BtnPresetTip}"/>
                                 </Grid>
                                 
@@ -941,7 +941,7 @@
                                              TextChanged="ReadingModeHotkeyInput_TextChanged"
                                              ToolTip="{DynamicResource DescReadingModeHotkey}"/>
                                     <Button x:Name="BtnReadingModeListen" Grid.Column="1" Content="{DynamicResource BtnListen}" 
-                                            Style="{StaticResource ModernButton}" Padding="10,6" Margin="6,0,0,0"
+                                            Style="{StaticResource ModernButton}" Padding="8,4" Margin="8,0,0,0"
                                             Click="BtnReadingModeListen_Click" ToolTip="{DynamicResource BtnListenTip}"/>
                                 </Grid>
                             </StackPanel>
@@ -962,7 +962,7 @@
                                 </Path>
                                 <TextBlock Text="FlowWheel" FontSize="24" FontWeight="Bold" 
                                            Foreground="{DynamicResource Brush.Text.Primary}" HorizontalAlignment="Center"/>
-                                <Border Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="10,3" Margin="0,6,0,0" Opacity="0.85">
+                                <Border Background="{DynamicResource Brush.Accent}" CornerRadius="10" Padding="12,4" Margin="0,8,0,0" Opacity="0.85">
                                     <TextBlock x:Name="VersionText" Text="Version 1.8.0" FontSize="11" FontWeight="SemiBold"
                                                Foreground="White" HorizontalAlignment="Center"/>
                                 </Border>
@@ -981,13 +981,13 @@
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource ModernButton}" Margin="0,0,8,0" Click="OpenGitHub_Click">
                                         <StackPanel Orientation="Horizontal">
-                                            <Path Data="{StaticResource IconGitHub}" Fill="White" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0"/>
+                                            <Path Data="{StaticResource IconGitHub}" Fill="White" Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0"/>
                                             <TextBlock Text="GitHub"/>
                                         </StackPanel>
                                     </Button>
                                     <Button Style="{StaticResource ModernButton}" BorderThickness="1" BorderBrush="{DynamicResource Brush.Accent}" Background="Transparent" Foreground="{DynamicResource Brush.Accent}" Click="OpenLicense_Click">
                                         <StackPanel Orientation="Horizontal">
-                                            <Path Data="{StaticResource IconLicense}" Fill="{DynamicResource Brush.Accent}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0"/>
+                                            <Path Data="{StaticResource IconLicense}" Fill="{DynamicResource Brush.Accent}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0"/>
                                             <TextBlock Text="{DynamicResource BtnLicense}"/>
                                         </StackPanel>
                                     </Button>
@@ -1011,7 +1011,7 @@
                                             </Border.RenderTransform>
                                             <Image Source="pack://application:,,,/Assets/alipay_qr.jpg" Stretch="UniformToFill"/>
                                         </Border>
-                                        <TextBlock Text="{DynamicResource LabelAlipay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                        <TextBlock Text="{DynamicResource LabelAlipay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Center">
                                         <Border x:Name="WeChatQrBorder" CornerRadius="8" ClipToBounds="True" Width="120" Height="120"
@@ -1024,7 +1024,7 @@
                                             </Border.RenderTransform>
                                             <Image Source="pack://application:,,,/Assets/weixin.jpg" Stretch="UniformToFill"/>
                                         </Border>
-                                        <TextBlock Text="{DynamicResource LabelWeChatPay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                        <TextBlock Text="{DynamicResource LabelWeChatPay}" FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
