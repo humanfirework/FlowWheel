@@ -4,7 +4,7 @@
   "homepage": "https://github.com/humanfirework/FlowWheel",
   "license": "MIT",
   "url": "https://github.com/humanfirework/FlowWheel/releases/download/v1.8.1/FlowWheel-Windows-x64.zip",
-  "hash": "1350D5C75B664ADBD2E08B759775FEBA8BC658BEF0D40FE3D6CE85014AE797D5",
+  "hash": "4B39043A003A9560D2B347BCF63EE3E245B0BAB08484E8D3EA0CE21BC585E1F3",
   "bin": "FlowWheel.exe",
   "shortcuts": [
     [
