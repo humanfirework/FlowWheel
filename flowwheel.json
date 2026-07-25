@@ -1,10 +1,10 @@
 {
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Smooth, browser-style 'Middle-Click Auto-Scroll' for Windows with Inertia and Sync.",
   "homepage": "https://github.com/humanfirework/FlowWheel",
   "license": "MIT",
-  "url": "https://github.com/humanfirework/FlowWheel/releases/download/v1.8.0/FlowWheel-Windows-x64.zip",
-  "hash": "D3AEC19AE2CB504B66FD4B94F80C2C335B3BFED7D4603430370E4E93A36B7E4F",
+  "url": "https://github.com/humanfirework/FlowWheel/releases/download/v1.8.1/FlowWheel-Windows-x64.zip",
+  "hash": "1350D5C75B664ADBD2E08B759775FEBA8BC658BEF0D40FE3D6CE85014AE797D5",
   "bin": "FlowWheel.exe",
   "shortcuts": [
     [
